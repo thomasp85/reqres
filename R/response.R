@@ -2,14 +2,12 @@
 #' @importFrom assertthat is.scalar is.count is.string
 Response <- R6Class('Response',
     public = list(
-        # Data
-        extraData = list(),
-
         # Methods
         initialize = function() {
             private$STATUS = 404L
             private$HEADERS = new.env(parent = emptyenv())
             private$BODY = ''
+            private$DATA = new.env(parent = emptyenv())
         },
         set_header = function(name, value) {
             assert_that(is.scalar(name))
@@ -25,6 +23,18 @@ Response <- R6Class('Response',
                 headers = as.list(private$HEADERS),
                 body = private$BODY
             )
+        },
+        set_data = function(key, value) {
+            assert_that(is.string(key))
+            assign(key, value, envir = private$DATA)
+        },
+        get_data = function(key) {
+            assert_that(is.string(key))
+            private$DATA[[key]]
+        },
+        remove_data = function(key) {
+            assert_that(is.string(key))
+            rm(key, envir = private$DATA)
         }
     ),
     active = list(
@@ -59,6 +69,7 @@ Response <- R6Class('Response',
         # Data
         STATUS = NULL,
         HEADERS = NULL,
-        BODY = NULL
+        BODY = NULL,
+        DATA = NULL
     )
 )
