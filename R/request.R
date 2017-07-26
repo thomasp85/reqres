@@ -4,7 +4,7 @@
 #' @importFrom urltools url_decode
 Request <- R6Class('Request',
     public = list(
-        initialize = function(rook, trust = FALSE, bodyParser) {
+        initialize = function(rook, trust = FALSE) {
             self$trust <- trust
             private$ROOK <- rook
             private$METHOD <- tolower(rook$REQUEST_METHOD)
@@ -22,9 +22,6 @@ Request <- R6Class('Request',
                                   rook$QUERY_STRING)
             private$QUERY <- private$parse_query(rook$QUERY_STRING)
 
-            if (!missing(bodyParser)) {
-                private$BODY <- private$parse_body(bodyParser)
-            }
             private$COOKIES <- private$parse_cookies()
         },
         set_body = function(content) {
@@ -145,18 +142,6 @@ Request <- R6Class('Request',
         BODY = NULL,
         COOKIES = NULL,
 
-        parse_body = function(fun) {
-            if (!is.list(fun)) {
-                fun(self$rook$input)
-            } else {
-                assert_that(has_attr(fun, 'names'))
-                for (i in names(fun)) {
-                    if (self$is(i)) {
-                        return(fun[[i]](self$rook$input))
-                    }
-                }
-            }
-        },
         parse_cookies = function() {
             cookies <- trimws(strsplit(self$headers$Cookie, ';')[[1]])
             cookies <- unlist(strsplit(cookies, '='))
