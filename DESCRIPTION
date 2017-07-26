@@ -1,0 +1,22 @@
+Package: reqres
+Type: Package
+Title: Powerful Classes for HTTP Requests and Responses
+Version: 0.1.0
+Authors@R:
+    person(given = "Thomas Lin",
+           family = "Pedersen",
+           role = c("cre", "aut"),
+           email = "thomasp85@gmail.com")
+Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>
+Description: In order to facilitate parsing of http requests and creating 
+    appropriate responses this package provides two classes to handle a lot of
+    the housekeeping involved in working with http exchanges. The infrastructure
+    builds upon the `rook` specification and is thus well suited to be combined
+    with `httpuv` based web servers.
+License: MIT + file LICENSE
+LazyData: FALSE
+Imports: R6,
+    assertthat,
+    stringi,
+    urltools
+RoxygenNote: 6.0.1
