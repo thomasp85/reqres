@@ -18,5 +18,6 @@ LazyData: FALSE
 Imports: R6,
     assertthat,
     stringi,
-    urltools
+    urltools,
+    tools
 RoxygenNote: 6.0.1
