@@ -1,7 +1,142 @@
+#' HTTP Request Handling
+#'
+#' This class wraps all functionality related to extracting information from a
+#' http request. Much of the functionality is inspired by the Request class in
+#' Express.js, so [the documentation](https://expressjs.com/en/4x/api.html#req)
+#' for this will complement this document. As `reqres` is build on top of the
+#' [Rook specifications](https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md)
+#' the `Request` object is initialised from a Rook-compliant object. This will
+#' often be the request object provided by the `httpuv` framework. While it
+#' shouldn't be needed, the original Rook object is always accessible and can be
+#' modified, though any modifications will not propagate to derived values in
+#' the `Request` object (e.g. changing the `HTTP_HOST` element of the Rook
+#' object will not change the `host` field of the `Request` object). Because of
+#' this, direct manipulation of the Rook object is generally discouraged.
+#'
+#' @usage NULL
+#' @format NULL
+#'
+#' @section Initialization:
+#' A new 'Request'-object is initialized using the \code{new()} method on the
+#' generator:
+#'
+#' \strong{Usage}
+#' \tabular{l}{
+#'  \code{req <- Request$new(rook, trust = FALSE)}
+#' }
+#'
+#' \strong{Arguments}
+#' \tabular{lll}{
+#'  \code{rook} \tab  \tab The rook request that the new object should wrap\cr
+#'  \code{trust} \tab  \tab Is this request trusted blindly. If `TRUE` `X-Forwarded-*` headers will be returned when quering host, ip, and protocol
+#' }
+#'
+#' @section Fields:
+#' The following fields are accessible in a `Request` object:
+#'
+#' \describe{
+#'  \item{`trust`}{A logical indicating whether the request is trusted. *Mutable*}
+#'  \item{`method`}{A string indicating the request method (in lower case, e.g.
+#'  'get', 'put', etc.). *Immutable*}
+#'  \item{`body`}{An object holding the body of the request. This is an empty
+#'  string by default and needs to be populated using the `set_body()` method
+#'  (this is often done using a body parser that accesses the Rook$input
+#'  stream). *Immutable*}
+#'  \item{`cookies`}{Access a named list of all cookies in the request. These
+#'  have been URI decoded. *Immutable*}
+#'  \item{`headers`}{Access a named list of all headers in the request. In order
+#'  to follow R variable naming standards `-` have been substituted with `_`.
+#'  Use the `get_header()` method to lookup based on the correct header name.
+#'  *Immutable*}
+#'  \item{`host`}{Return the domain of the server given by the "Host" header if
+#'  `trust == FALSE`. If `trust == true` returns the `X-Forwarded-Host` instead.}
+#'  \item{`ip`}{Returns the remote address of the request if `trust == FALSE`.
+#'  if `trust == TRUE` it will instead return the first value of the
+#'  `X-Forwarded-For` header. *Immutable*}
+#'  \item{`ips`}{If `trust == TRUE` it will return the full list of ips in the
+#'  `X-Forwarded-For` header. If `trust == FALSE` it will return an empty
+#'  vector. *Immutable*}
+#'  \item{`protocol`}{Returns the protocol (e.g. 'http') used for the request.
+#'  If `trust == TRUE` it will use the value of the `X-Forwarded-Proto` header.
+#'  *Immutable*}
+#'  \item{`root`}{The mount point of the application recieving this request. Can
+#'  be empty if the application is mounted on the server root. *Immutable*}
+#'  \item{`path`}{The part of the url following the root. Defines the local
+#'  target of the request (irrespectible of where it is mounted). *Immutable*}
+#'  \item{`url`}{The full URL of the request. *Immutable*}
+#'  \item{`query`}{The query string of the request (anything following "?" in
+#'  the URL) parsed into a named list. The query has been url decoded and "+"
+#'  has been substituted with space. Multiple queries are expected to be
+#'  separated by either "&" or "|". *Immutable*}
+#'  \item{`xhr`}{A logical indicating whether the `X-Requested-With` header
+#'  equals `XMLHttpRequest` thus indicating that the request was performed using
+#'  a JavaScript library such as jQuery. *Immutable*}
+#'  \item{`secure`}{A logical indicating whether the request was performed using
+#'  a secure connection, i.e. `protocol == 'https'`. *Immutable*}
+#'  \item{`rook`}{The original rook object used to create the `Request` object.
+#'  *Immutable*, though the content of the rook object itself might be
+#'  manipulated as it is an environment.}
+#' }
+#'
+#' @section Methods:
+#' The following methods are available in a `Request` object:
+#'
+#' \describe{
+#'  \item{`set_body(content)`}{Sets the content of the request body. This method
+#'  should mainly be used in concert with a body parser that reads the
+#'  `rook$input` stream}
+#'  \item{`set_cookies(cookies)`}{Sets the cookies of the request. The cookies
+#'  are automatically parsed and populated, so this method is mainly available
+#'  to facilitate cookie signing and encryption}
+#'  \item{`get_header(name)`}{Get the header of the specified name.}
+#'  \item{`accepts(types)`}{Given a vector of response content types it returns
+#'  the preferred one based on the `Accept` header.}
+#'  \item{`accepts_charsets(charsets)`}{Given a vector of possible character
+#'  encodings it returns the preferred one based on the `Accept-Charset`
+#'  header.}
+#'  \item{`accepts_encoding(encoding)`}{Given a vector of possible content
+#'  encodings (usually compression algorithms) it selects the preferred one
+#'  based on the `Accept-Encoding` header.}
+#'  \item{`accepts_language(language)`}{Given a vector of possible content
+#'  languages it selects the best one based on the `Accept-Language` header.}
+#'  \item{`is(type)`}{Queries whether the body of the request is in a given
+#'  format by looking at the `Content-Type` header. Used for selecting the best
+#'  parsing method.}
+#' }
+#'
+#' @seealso [`Response`] for handling http responses
+#'
 #' @importFrom R6 R6Class
 #' @importFrom assertthat assert_that is.flag has_attr
 #' @importFrom stringi stri_match_first_regex
 #' @importFrom urltools url_decode
+#'
+#' @export
+#'
+#' @examples
+#' fake_rook <- test <- fiery::fake_request(
+#'   'http://example.com/test?id=34632&question=who+is+hadley',
+#'   content = 'This is elaborate ruse',
+#'   headers = list(
+#'     Accept = 'application/json; text/*',
+#'     Content_Type = 'text/plain'
+#'   )
+#' )
+#'
+#' req <- Request$new(fake_rook)
+#'
+#' # Get full URL
+#' req$url
+#'
+#' # Get list of query parameters
+#' req$queries
+#'
+#' # Test if content is text
+#' req$is('txt')
+#'
+#' # Perform content negotiation for the response
+#' req$accepts(c('html', 'json', 'txt'))
+#'
 Request <- R6Class('Request',
     public = list(
         initialize = function(rook, trust = FALSE) {
@@ -15,14 +150,22 @@ Request <- R6Class('Request',
                 private$HOST <- rook$HTTP_HOST
             }
             private$IP <- rook$REMOTE_ADDR
-            private$URL <- paste0(rook$rook.url_scheme,
+            private$URL <- paste0(rook$rook.url_scheme, '://',
                                   private$HOST,
                                   rook$SCRIPT_NAME,
                                   rook$PATH_INFO,
-                                  rook$QUERY_STRING)
+                                  if(rook$QUERY_STRING == '') ''
+                                  else paste0('?', rook$QUERY_STRING))
             private$QUERY <- private$parse_query(rook$QUERY_STRING)
 
             private$COOKIES <- private$parse_cookies()
+        },
+        print = function(...) {
+            cat('A HTTP request\n')
+            cat('==============\n')
+            cat('Trusted: ', if (self$trust) 'Yes' else 'No', '\n', sep = '')
+            cat(' Method: ', self$method, '\n', sep = '')
+            cat('    URL: ', self$url, '\n', sep = '')
         },
         set_body = function(content) {
             private$BODY <- content
@@ -60,9 +203,13 @@ Request <- R6Class('Request',
             language[ind]
         },
         is = function(type) {
-            content <- private$format_mime(self$headers$Content_Type)
+            content <- private$format_mimes(self$headers$Content_Type)
             full_type <- private$format_types(type)
+            if (nrow(full_type) == 0) return(FALSE)
             !is.null(private$get_format_spec(full_type, content))
+        },
+        get_header = function(name) {
+            self$headers[[gsub('-', '_', name)]]
         }
     ),
     active = list(
@@ -139,10 +286,14 @@ Request <- R6Class('Request',
         METHOD = NULL,
         HOST = NULL,
         IP = NULL,
+        URL = NULL,
+        QUERY = NULL,
         BODY = NULL,
+        HEADERS = NULL,
         COOKIES = NULL,
 
         parse_cookies = function() {
+            if (is.null(self$headers$Cookie)) return(list())
             cookies <- trimws(strsplit(self$headers$Cookie, ';')[[1]])
             cookies <- unlist(strsplit(cookies, '='))
             structure(
