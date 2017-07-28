@@ -14,7 +14,8 @@ Description: In order to facilitate parsing of http requests and creating
     builds upon the `rook` specification and is thus well suited to be combined
     with `httpuv` based web servers.
 License: MIT + file LICENSE
-LazyData: FALSE
+LazyData: TRUE
+Depends: R (>= 2.10)
 Imports: R6,
     assertthat,
     stringi,
