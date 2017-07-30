@@ -158,6 +158,9 @@ Response <- R6Class('Response',
     public = list(
         # Methods
         initialize = function(request) {
+            if (!is.null(request$response)) {
+                stop('Response already created for this request. Access it using the `response` field', call. = FALSE)
+            }
             private$REQUEST = request
             private$STATUS = 404L
             private$HEADERS = new.env(parent = emptyenv())
@@ -165,6 +168,7 @@ Response <- R6Class('Response',
             private$BODY = ''
             private$DATA = new.env(parent = emptyenv())
             self$type <- 'text/plain'
+            request$response <- self
         },
         print = function(...) {
             cat('A HTTP response\n')
@@ -173,10 +177,12 @@ Response <- R6Class('Response',
             cat('  Content type: ', self$type, '\n', sep = '')
             cat('\n')
             cat('In response to: ', private$REQUEST$url, '\n', sep = '')
+            invisible(self)
         },
         set_header = function(name, value) {
             assert_that(is.string(name))
             assign(as.character(name), as.character(value), envir = private$HEADERS)
+            invisible(self)
         },
         get_header = function(name) {
             assert_that(is.string(name))
@@ -184,6 +190,7 @@ Response <- R6Class('Response',
         },
         remove_header = function(name) {
             rm(name, envir = private$HEADERS)
+            invisible(self)
         },
         has_header = function(name) {
             assert_that(is.string(name))
@@ -194,10 +201,12 @@ Response <- R6Class('Response',
                 value <- c(self$get_header(name), as.character(value))
             }
             self$set_header(name, value)
+            invisible(self)
         },
         set_data = function(key, value) {
             assert_that(is.string(key))
             assign(key, value, envir = private$DATA)
+            invisible(self)
         },
         get_data = function(key) {
             assert_that(is.string(key))
@@ -206,6 +215,7 @@ Response <- R6Class('Response',
         remove_data = function(key) {
             assert_that(is.string(key))
             rm(key, envir = private$DATA)
+            invisible(self)
         },
         has_data = function(key) {
             !is.null(self$get_data(key))
@@ -215,6 +225,7 @@ Response <- R6Class('Response',
             assert_that(is.string(filename))
             if (!is.null(type)) self$type <- type
             self$set_header('Content-Disposition', paste0('attachment; filename=', filename))
+            invisible(self)
         },
         status_with_text = function(code) {
             self$status <- code
@@ -222,6 +233,7 @@ Response <- R6Class('Response',
             if (is.na(body)) body <- as.character(code)
             self$body <- body
             self$type <- 'txt'
+            invisible(self)
         },
         set_cookie = function(name, value, encode = TRUE, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
             assert_that(is.string(name))
@@ -235,10 +247,12 @@ Response <- R6Class('Response',
                 cookie <- cookie(value, encode, expires, http_only, max_age, path, secure, same_site)
                 assign(as.character(name), cookie, envir = private$COOKIES)
             }
+            invisible(self)
         },
         remove_cookie = function(name) {
             assert_that(is.string(name))
             rm(name, envir = private$COOKIES)
+            invisible(self)
         },
         has_cookie = function(name) {
             assert_that(is.string(name))
@@ -250,6 +264,7 @@ Response <- R6Class('Response',
             rel <- paste('rel="', names(links), '"')
             links <- paste(paste0(url, '; ', rel), collapse = ', ')
             self$set_header('Link', links)
+            invisible(self)
         },
         as_list = function() {
             list(

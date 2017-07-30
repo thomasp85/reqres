@@ -76,6 +76,8 @@
 #'  \item{`rook`}{The original rook object used to create the `Request` object.
 #'  *Immutable*, though the content of the rook object itself might be
 #'  manipulated as it is an environment.}
+#'  \item{`response`}{If a `Response` object has been created for this request
+#'  it is accessible through this field. *Immutable*}
 #' }
 #'
 #' @section Methods:
@@ -102,6 +104,7 @@
 #'  \item{`is(type)`}{Queries whether the body of the request is in a given
 #'  format by looking at the `Content-Type` header. Used for selecting the best
 #'  parsing method.}
+#'  \item{`respond()`}{Creates a new `Response` object from the request}
 #' }
 #'
 #' @seealso [`Response`] for handling http responses
@@ -166,12 +169,15 @@ Request <- R6Class('Request',
             cat('Trusted: ', if (self$trust) 'Yes' else 'No', '\n', sep = '')
             cat(' Method: ', self$method, '\n', sep = '')
             cat('    URL: ', self$url, '\n', sep = '')
+            invisible(self)
         },
         set_body = function(content) {
             private$BODY <- content
+            invisible(self)
         },
         set_cookies = function(cookies) {
             private$COOKIES <- cookies
+            invisible(self)
         },
         accepts = function(types) {
             accept <- private$format_mimes(self$headers$Accept)
@@ -210,6 +216,9 @@ Request <- R6Class('Request',
         },
         get_header = function(name) {
             self$headers[[gsub('-', '_', name)]]
+        },
+        respond = function() {
+            Response$new(self)
         }
     ),
     active = list(
@@ -278,6 +287,17 @@ Request <- R6Class('Request',
         },
         rook = function() {
             private$ROOK
+        },
+        response = function(res) {
+            if (missing(res)) return(private$RESPONSE)
+            if (!is.null(private$RESPONSE)) {
+                stop('Response can only be assigned once', call. = FALSE)
+            }
+            stopifnot(inherits(res, 'Response'))
+            if (self != res$request) {
+                stop('response can only be set to an object responding to this request', call. = FALSE)
+            }
+            private$RESPONSE <- res
         }
     ),
     private = list(
@@ -291,6 +311,7 @@ Request <- R6Class('Request',
         BODY = NULL,
         HEADERS = NULL,
         COOKIES = NULL,
+        RESPONSE = NULL,
 
         parse_cookies = function() {
             if (is.null(self$headers$Cookie)) return(list())
