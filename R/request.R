@@ -294,7 +294,7 @@ Request <- R6Class('Request',
                 stop('Response can only be assigned once', call. = FALSE)
             }
             stopifnot(inherits(res, 'Response'))
-            if (self != res$request) {
+            if (!identical(self, res$request)) {
                 stop('response can only be set to an object responding to this request', call. = FALSE)
             }
             private$RESPONSE <- res
