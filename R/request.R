@@ -105,14 +105,28 @@
 #'  format by looking at the `Content-Type` header. Used for selecting the best
 #'  parsing method.}
 #'  \item{`respond()`}{Creates a new `Response` object from the request}
+#'  \item{`parse(..., autofail = TRUE)`}{Based on provided parsers it selects
+#'  the appropriate one by looking at the `Content-Type` header and assings the
+#'  result to the request body. A parser is a function accepting a raw vector,
+#'  and a named list of additional directives,
+#'  and returns an R object of any kind (if the parser knows the input to be
+#'  plain text, simply wrap it in [rawToChar()]). If the body is compressed, it
+#'  will be decompressed based on the `Content-Encoding` header prior to passing
+#'  it on to the parser. See [parsers] for a list of presupplied parsers.
+#'  Parsers are either supplied in a named list or as named arguments to the
+#'  parse method. The names should correspond to mime types or known file
+#'  extensions. If `autofail = TRUE` the response will be set with the correct
+#'  error code if parsing fails.}
 #' }
 #'
 #' @seealso [`Response`] for handling http responses
 #'
 #' @importFrom R6 R6Class
-#' @importFrom assertthat assert_that is.flag has_attr
+#' @importFrom assertthat assert_that is.flag has_attr is.error
 #' @importFrom stringi stri_match_first_regex
 #' @importFrom urltools url_decode
+#' @importFrom brotli brotli_decompress
+#' @importFrom utils modifyList
 #'
 #' @export
 #'
@@ -209,7 +223,10 @@ Request <- R6Class('Request',
             language[ind]
         },
         is = function(type) {
-            content <- private$format_mimes(self$headers$Content_Type)
+            type <- self$get_header('Content-Type')
+            if (is.null(type)) return(NULL)
+            type <- trimws(strsplit(type, ';')[[1]])[1]
+            content <- private$format_mimes(type)
             full_type <- private$format_types(type)
             if (nrow(full_type) == 0) return(FALSE)
             !is.null(private$get_format_spec(full_type, content))
@@ -219,6 +236,48 @@ Request <- R6Class('Request',
         },
         respond = function() {
             Response$new(self)
+        },
+        parse = function(..., autofail = TRUE) {
+            parsers <- list(...)
+            if (is.list(..1)) {
+                first_parsers <- names(parsers)[-1]
+                parsers <- modifyList(..1, list(...)[-1])
+                first_parsers <- names(parsers %in% first_parsers)
+                parsers <- c(parsers[first_parsers], parsers[!first_parsers])
+            }
+            assert_that(has_attr(parsers, 'names'))
+
+            type <- self$get_header('Content-Type')
+            if (is.null(type)) return(FALSE)
+            directives <- trimws(strsplit(type, ';')[[1]])[-1]
+            directives <- strsplit(directives, '=')
+            directives <- structure(
+                lapply(directives, `[`, 2),
+                names = lapply(directives, `[`, 1)
+            )
+
+            success <- FALSE
+            for (i in names(parsers)) {
+                if (self$is(i)) {
+                    content <- self$rook$rook.input$read()
+                    self$rook$rook.input$rewind()
+                    content <- try(private$unpack(content))
+                    if (is.error(content)) {
+                        if (autofail) self$response$status_with_text(415L)
+                        return(FALSE)
+                    }
+                    content <- try(parsers[[i]](content, directives))
+                    if (!is.error(content)) {
+                        private$BODY <- content
+                        success <- TRUE
+                        break
+                    }
+                }
+            }
+            if (!success && autofail && !is.null(self$response)) {
+                self$response$status_with_text(400L)
+            }
+            success
         }
     ),
     active = list(
@@ -449,6 +508,27 @@ Request <- R6Class('Request',
             }))
             if (all(is.na(spec[, 1]))) return(NULL)
             order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(lang), decreasing = TRUE)[1]
+        },
+        unpack = function(raw) {
+            compression <- self$get_header('Content-Encoding')
+            if (is.null(compression)) return(raw)
+            compression <- rev(trimws(strsplit(compression, ',')[[1]]))
+            Reduce(function(l, r) {
+                switch(
+                    r,
+                    identity = l,
+                    br = brotli_decompress(l),
+                    gzip =,
+                    "x-gzip" = {
+                        con <- gzcon(rawConnection(l))
+                        l <- readBin(con, raw(), length(l))
+                        close(con)
+                        l
+                    },
+                    deflate = memDecompress(l, type = 'gzip'),
+                    stop('Unsupported compression', call. = FALSE)
+                )
+            }, x = compression, init = raw)
         }
     )
 )

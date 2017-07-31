@@ -20,7 +20,12 @@ Imports: R6,
     assertthat,
     stringi,
     urltools,
-    tools
+    tools,
+    brotli,
+    jsonlite,
+    xml2,
+    webutils,
+    utils
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
 Suggests: fiery

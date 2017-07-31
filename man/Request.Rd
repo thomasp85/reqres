@@ -81,6 +81,8 @@ a secure connection, i.e. \code{protocol == 'https'}. \emph{Immutable}}
 \item{\code{rook}}{The original rook object used to create the \code{Request} object.
 \emph{Immutable}, though the content of the rook object itself might be
 manipulated as it is an environment.}
+\item{\code{response}}{If a \code{Response} object has been created for this request
+it is accessible through this field. \emph{Immutable}}
 }
 }
 
@@ -109,6 +111,19 @@ languages it selects the best one based on the \code{Accept-Language} header.}
 \item{\code{is(type)}}{Queries whether the body of the request is in a given
 format by looking at the \code{Content-Type} header. Used for selecting the best
 parsing method.}
+\item{\code{respond()}}{Creates a new \code{Response} object from the request}
+\item{\code{parse(..., autofail = TRUE)}}{Based on provided parsers it selects
+the appropriate one by looking at the \code{Content-Type} header and assings the
+result to the request body. A parser is a function accepting a raw vector,
+and a named list of additional directives,
+and returns an R object of any kind (if the parser knows the input to be
+plain text, simply wrap it in \code{\link[=rawToChar]{rawToChar()}}). If the body is compressed, it
+will be decompressed based on the \code{Content-Encoding} header prior to passing
+it on to the parser. See \link{parsers} for a list of presupplied parsers.
+Parsers are either supplied in a named list or as named arguments to the
+parse method. The names should correspond to mime types or known file
+extensions. If \code{autofail = TRUE} the response will be set with the correct
+error code if parsing fails.}
 }
 }
 
