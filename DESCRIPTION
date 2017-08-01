@@ -28,6 +28,8 @@ Imports: R6,
     utils
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
-Suggests: fiery
+Suggests: fiery,
+    testthat,
+    covr
 URL: https://github.com/thomasp85/reqres#reqres
 BugReports: https://github.com/thomasp85/reqres/issues
