@@ -342,7 +342,8 @@ Request <- R6Class('Request',
             private$QUERY
         },
         xhr = function() {
-            self$headers$X_Requested_With == 'XMLHttpRequest'
+            xhr <- self$get_header('X-Requested-With')
+            !is.null(xhr) && xhr == 'XMLHttpRequest'
         },
         secure = function() {
             self$protocol == 'https'
