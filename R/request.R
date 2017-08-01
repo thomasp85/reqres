@@ -226,10 +226,10 @@ Request <- R6Class('Request',
             language[ind]
         },
         is = function(type) {
-            type <- self$get_header('Content-Type')
-            if (is.null(type)) return(NULL)
-            type <- trimws(strsplit(type, ';')[[1]])[1]
-            content <- private$format_mimes(type)
+            accept <- self$get_header('Content-Type')
+            if (is.null(accept)) return(NULL)
+            accept <- trimws(strsplit(accept, ';')[[1]])[1]
+            content <- private$format_mimes(accept)
             full_type <- private$format_types(type)
             if (nrow(full_type) == 0) return(FALSE)
             !is.null(private$get_format_spec(full_type, content))

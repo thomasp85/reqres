@@ -90,17 +90,24 @@ req$parse(
 )
 #> [1] TRUE
 req$body
-#> [1] "{\"name\":[\"Thomas Lin Pedersen\"],\"age\":[31],\"homepage\":[\"www.data-imaginist.com\",\"www.github.com/thomasp85\"]}"
+#> $name
+#> [1] "Thomas Lin Pedersen"
+#> 
+#> $age
+#> [1] 31
+#> 
+#> $homepage
+#> [1] "www.data-imaginist.com"   "www.github.com/thomasp85"
 
 # If no parser fits the bill the correct error code will be set
 # on the response
 req$set_body(NULL)
 req$parse(txt = parse_plain())
-#> [1] TRUE
+#> [1] FALSE
 res
 #> A HTTP response
 #> ===============
-#>         Status: 404 - Not Found
+#>         Status: 400 - Bad Request
 #>   Content type: text/plain
 #> 
 #> In response to: http://www.example.com:80/summary?id=2347&user=Thomas+Lin+Pedersen
@@ -122,7 +129,7 @@ req$body
 # The response allow you to easily set headers, cookies, etc
 res$set_header('Date', to_http_date(Sys.time()))
 res$get_header('Date')
-#> [1] "Tue, 01 Aug 2017 11:48:53 GMT"
+#> [1] "Tue, 01 Aug 2017 11:59:31 GMT"
 res$set_cookie('user', req$query$id, max_age = 9000L)
 res$get_header('Set-Cookie')
 #> NULL
