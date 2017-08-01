@@ -3,7 +3,20 @@
 \docType{data}
 \name{Request}
 \alias{Request}
+\alias{as.Request}
 \title{HTTP Request Handling}
+\usage{
+as.Request(req, ...)
+}
+\arguments{
+\item{req}{An object coercible to a \code{Request}. Currently only rook
+environments}
+
+\item{...}{Parameters passed on to \code{Request$new()}}
+}
+\value{
+A \code{Request} object
+}
 \description{
 This class wraps all functionality related to extracting information from a
 http request. Much of the functionality is inspired by the Request class in
@@ -105,7 +118,8 @@ encodings it returns the preferred one based on the \code{Accept-Charset}
 header.}
 \item{\code{accepts_encoding(encoding)}}{Given a vector of possible content
 encodings (usually compression algorithms) it selects the preferred one
-based on the \code{Accept-Encoding} header.}
+based on the \code{Accept-Encoding} header. If there is no match it will return
+\code{"identity"} signaling no compression.}
 \item{\code{accepts_language(language)}}{Given a vector of possible content
 languages it selects the best one based on the \code{Accept-Language} header.}
 \item{\code{is(type)}}{Queries whether the body of the request is in a given
@@ -123,14 +137,15 @@ it on to the parser. See \link{parsers} for a list of presupplied parsers.
 Parsers are either supplied in a named list or as named arguments to the
 parse method. The names should correspond to mime types or known file
 extensions. If \code{autofail = TRUE} the response will be set with the correct
-error code if parsing fails.}
+error code if parsing fails. \code{parse()} returns \code{TRUE} if parsing was
+successful and \code{FALSE} if not}
 }
 }
 
 \examples{
 fake_rook <- test <- fiery::fake_request(
   'http://example.com/test?id=34632&question=who+is+hadley',
-  content = 'This is elaborate ruse',
+  content = 'This is an elaborate ruse',
   headers = list(
     Accept = 'application/json; text/*',
     Content_Type = 'text/plain'

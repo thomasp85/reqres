@@ -98,7 +98,8 @@
 #'  header.}
 #'  \item{`accepts_encoding(encoding)`}{Given a vector of possible content
 #'  encodings (usually compression algorithms) it selects the preferred one
-#'  based on the `Accept-Encoding` header.}
+#'  based on the `Accept-Encoding` header. If there is no match it will return
+#'  `"identity"` signaling no compression.}
 #'  \item{`accepts_language(language)`}{Given a vector of possible content
 #'  languages it selects the best one based on the `Accept-Language` header.}
 #'  \item{`is(type)`}{Queries whether the body of the request is in a given
@@ -116,7 +117,8 @@
 #'  Parsers are either supplied in a named list or as named arguments to the
 #'  parse method. The names should correspond to mime types or known file
 #'  extensions. If `autofail = TRUE` the response will be set with the correct
-#'  error code if parsing fails.}
+#'  error code if parsing fails. `parse()` returns `TRUE` if parsing was
+#'  successful and `FALSE` if not}
 #' }
 #'
 #' @seealso [`Response`] for handling http responses
@@ -133,7 +135,7 @@
 #' @examples
 #' fake_rook <- test <- fiery::fake_request(
 #'   'http://example.com/test?id=34632&question=who+is+hadley',
-#'   content = 'This is elaborate ruse',
+#'   content = 'This is an elaborate ruse',
 #'   headers = list(
 #'     Accept = 'application/json; text/*',
 #'     Content_Type = 'text/plain'

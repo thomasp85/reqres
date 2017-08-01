@@ -8,6 +8,10 @@
 #' @rdname parsers
 #' @name parsers
 #'
+#' @seealso [formatters] for converting `Response` bodies into compatible types
+#' @seealso [default_parsers] for a list that maps the most common mime types
+#' to their respective parsers
+#'
 #' @examples
 #' fake_rook <- test <- fiery::fake_request(
 #'   'http://example.com/test',
@@ -112,6 +116,8 @@ parse_table <- function(...) {
 #'
 #' @format NULL
 #' @export
+#'
+#' @seealso [formatters] for an overview of the build in parsers in `reqres`
 #'
 #' @examples
 #' \dontrun{

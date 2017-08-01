@@ -98,3 +98,9 @@ req$parse(json = parse_json())
 req$body
 
 }
+\seealso{
+\link{formatters} for converting \code{Response} bodies into compatible types
+
+\link{default_parsers} for a list that maps the most common mime types
+to their respective parsers
+}
