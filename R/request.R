@@ -457,13 +457,13 @@ Request <- R6Class('Request',
         get_format_spec = function(format, accepts) {
             f_split <- strsplit(format$name, '/')
             spec <- do.call(rbind, lapply(f_split, function(n) {
-                spec <- ifelse(n[1] == accepts$main, 4, if (accepts$main == '*') 0 else NA)
-                spec <- spec + ifelse(n[2] == accepts$sub, 2, if (accepts$sub == '*') 0 else NA)
+                spec <- ifelse(n[1] == accepts$main, 4, ifelse(accepts$main == '*', 0, NA))
+                spec <- spec + ifelse(n[2] == accepts$sub, 2, ifelse(accepts$sub == '*', 0, NA))
                 win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
                 if (is.na(spec[win])) {
                     c(NA, NA)
                 } else {
-                    c(spec, win)
+                    c(spec[win], win)
                 }
             }))
             if (all(is.na(spec[, 1]))) return(NULL)
@@ -471,12 +471,12 @@ Request <- R6Class('Request',
         },
         get_charset_spec = function(charset, accepts) {
             spec <- do.call(rbind, lapply(charset, function(n) {
-                spec <- ifelse(n == accepts$main, 1, if (accepts$main == '*') 0 else NA)
+                spec <- ifelse(n == accepts$main, 1, ifelse(accepts$main == '*', 0, NA))
                 win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
                 if (is.na(spec[win])) {
                     c(NA, NA)
                 } else {
-                    c(spec, win)
+                    c(spec[win], win)
                 }
             }))
             if (all(is.na(spec[, 1]))) return(NULL)
@@ -484,12 +484,12 @@ Request <- R6Class('Request',
         },
         get_encoding_spec = function(encoding, accepts) {
             spec <- do.call(rbind, lapply(encoding, function(n) {
-                spec <- ifelse(n == accepts$main, 1, if (accepts$main == '*') 0 else NA)
+                spec <- ifelse(n == accepts$main, 1, ifelse(accepts$main == '*', 0, NA))
                 win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
                 if (is.na(spec[win])) {
                     c(NA, NA)
                 } else {
-                    c(spec, win)
+                    c(spec[win], win)
                 }
             }))
             if (all(is.na(spec[, 1]))) return(NULL)
@@ -506,7 +506,7 @@ Request <- R6Class('Request',
                 if (is.na(spec[win])) {
                     c(NA, NA)
                 } else {
-                    c(spec, win)
+                    c(spec[win], win)
                 }
             }))
             if (all(is.na(spec[, 1]))) return(NULL)
