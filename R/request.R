@@ -211,10 +211,11 @@ Request <- R6Class('Request',
             charsets[ind]
         },
         accepts_encoding = function(encoding) {
-            accept <- private$format_encodings(self$headers$Accept_Encoding)
-            if (is.null(accept)) return(encoding[1])
+            acc_enc <- self$get_header('Accept-Encoding')
+            if (is.null(acc_enc)) acc_enc <- 'identity'
+            accept <- private$format_encodings(acc_enc)
             ind <- private$get_encoding_spec(tolower(encoding), accept)
-            if (is.null(ind)) return(NULL)
+            if (is.null(ind)) return('identity')
             encoding[ind]
         },
         accepts_language = function(language) {
