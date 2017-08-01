@@ -245,7 +245,7 @@ Response <- R6Class('Response',
             } else {
                 if (encode) value <- url_encode(value)
                 if (grepl('(^__Secure-)|(^__Host-)', name)) secure <- TRUE
-                cookie <- cookie(value, encode, expires, http_only, max_age, path, secure, same_site)
+                cookie <- cookie(value, expires, http_only, max_age, path, secure, same_site)
                 assign(as.character(name), cookie, envir = private$COOKIES)
             }
             invisible(self)
