@@ -13,6 +13,18 @@ Features
 
 `reqres` comes with a range of parsers and formatters making it work out of the box with json, xml, html, csv, tab, multipart, and www-form-urlencoded payloads. It is easy to either modify these or provide your own parsers and formatters if needed - `reqres` will take care of the content negotiation and simply call your custom parser/formatter if chosen.
 
+Installation
+------------
+
+Currently `reqres` only lives on GitHub and can thus be installed with:
+
+``` r
+# install.packages('devtools')
+devtools::install_github('thomasp85/reqres')
+```
+
+A CRAN submission is not to far away though...
+
 Demo
 ----
 
@@ -147,7 +159,7 @@ While the request is mainly intended to be read from, the response should be wri
 ``` r
 res$set_header('Date', to_http_date(Sys.time()))
 res$get_header('Date')
-#> [1] "Tue, 01 Aug 2017 12:21:19 GMT"
+#> [1] "Tue, 01 Aug 2017 12:28:32 GMT"
 res$set_cookie('user', req$query$id, max_age = 9000L)
 res$has_cookie('user')
 #> [1] TRUE

@@ -52,6 +52,16 @@ It is easy to either modify these or provide your own parsers and formatters if
 needed - `reqres` will take care of the content negotiation and simply call your
 custom parser/formatter if chosen.
 
+## Installation
+Currently `reqres` only lives on GitHub and can thus be installed with:
+
+```{r, eval=FALSE}
+# install.packages('devtools')
+devtools::install_github('thomasp85/reqres')
+```
+
+A CRAN submission is not to far away though...
+
 ## Demo
 Below is a quick demo of some of the features in `reqres`. It uses the 
 `fake_request()` in `fiery` to mock a rook request so it can be used without
