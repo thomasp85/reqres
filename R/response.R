@@ -341,12 +341,7 @@ Response <- R6Class('Response',
         },
         body = function(content) {
             if (missing(content)) return(private$BODY)
-            if (is.raw(content)) {
-                private$BODY <- content
-            } else {
-                assert_that(is.scalar(content))
-                private$BODY <- as.character(content)
-            }
+            private$BODY <- content
         },
         file = function(path) {
             if (missing(path)) {
