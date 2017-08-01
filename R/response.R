@@ -123,6 +123,7 @@
 #' @importFrom assertthat is.scalar is.count is.string
 #' @importFrom tools file_path_as_absolute file_ext
 #' @importFrom urltools url_encode
+#' @importFrom brotli brotli_compress
 #'
 #' @export
 #'
@@ -265,6 +266,53 @@ Response <- R6Class('Response',
             links <- paste(paste0(url, '; ', rel), collapse = ', ')
             self$set_header('Link', links)
             invisible(self)
+        },
+        format = function(..., autofail = TRUE, compress = TRUE) {
+            formatters <- list(...)
+            if (is.list(..1)) {
+                first_formatters <- names(formatters)[-1]
+                formatters <- modifyList(..1, list(...)[-1])
+                first_formatters <- names(formatters %in% first_formatters)
+                formatters <- c(formatters[first_formatters], formatters[!first_formatters])
+            }
+            assert_that(has_attr(formatters, 'names'))
+
+            format <- self$request$accepts(names(formatters))
+            if (is.null(format)) {
+                if (autofail) self$status_with_text(406L)
+                return(FALSE)
+            }
+            content <- try(formatters[[format]](self$body))
+            if (is.error(content)) {
+                if (autofail) self$status_with_text(500L)
+                return(FALSE)
+            }
+            self$body <- content
+            self$type <- format
+            if (compress) self$compress()
+            return(TRUE)
+        },
+        compress = function(priority = c('gzip', 'deflate', 'br', 'identity')) {
+            encoding <- self$request$accepts_encoding(priority)
+            if (is.null(encoding)) return(FALSE)
+            if (!is.string(self$body)) return(FALSE)
+            content <- switch(
+                encoding,
+                identity = self$body,
+                gzip = {
+                    f <- tempfile()
+                    con <- gzcon(file(f, open = 'wb'))
+                    writeBin(charToRaw(self$body), con)
+                    close(con)
+                    content <- readBin(f, raw(), file.info(f)$size)
+                    unlink(f)
+                    content
+                },
+                deflate = memCompress(charToRaw(self$body)),
+                br = brotli_compress(charToRaw(self$body))
+            )
+            self$body <- content
+            self$set_header('Content-Encoding', encoding)
         },
         as_list = function() {
             list(
