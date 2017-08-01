@@ -245,7 +245,7 @@ Request <- R6Class('Request',
             if (is.list(..1)) {
                 first_parsers <- names(parsers)[-1]
                 parsers <- modifyList(..1, list(...)[-1])
-                first_parsers <- names(parsers %in% first_parsers)
+                first_parsers <- names(parsers) %in% first_parsers
                 parsers <- c(parsers[first_parsers], parsers[!first_parsers])
             }
             assert_that(has_attr(parsers, 'names'))

@@ -272,7 +272,7 @@ Response <- R6Class('Response',
             if (is.list(..1)) {
                 first_formatters <- names(formatters)[-1]
                 formatters <- modifyList(..1, list(...)[-1])
-                first_formatters <- names(formatters %in% first_formatters)
+                first_formatters <- names(formatters) %in% first_formatters
                 formatters <- c(formatters[first_formatters], formatters[!first_formatters])
             }
             assert_that(has_attr(formatters, 'names'))
