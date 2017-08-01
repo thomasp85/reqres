@@ -50,8 +50,13 @@ res
 #>   Content type: text/plain
 #> 
 #> In response to: http://www.example.com:80/summary?id=2347&user=Thomas+Lin+Pedersen
+```
 
-# A lot of information is already available, e.g.
+### Request
+
+A lot of information is already available, such as the query and other parts of the url, but the body is not filled in automatically.
+
+``` r
 req$host
 #> [1] "www.example.com:80"
 req$query
@@ -60,12 +65,13 @@ req$query
 #> 
 #> $user
 #> [1] "Thomas Lin Pedersen"
-
-# But the body is not filled in automatically
 req$body
 #> NULL
+```
 
-# This needs to be parsed. The Content-Type header gives the type
+The body can easily be parsed though, as long as a parser exists for the provided content type.
+
+``` r
 req$is('json')
 #> [1] TRUE
 req$parse(json = parse_json())
@@ -79,9 +85,11 @@ req$body
 #> 
 #> $homepage
 #> [1] "www.data-imaginist.com"   "www.github.com/thomasp85"
+```
 
-# You don't need to do this manually though. Just supply multiple
-# and the correct will be chosen
+Instead of inspecting it manually you can simply provide a range of parsers and let the object choose the correct one itself
+
+``` r
 req$set_body(NULL)
 req$parse(
     txt = parse_plain(), 
@@ -98,9 +106,11 @@ req$body
 #> 
 #> $homepage
 #> [1] "www.data-imaginist.com"   "www.github.com/thomasp85"
+```
 
-# If no parser fits the bill the correct error code will be set
-# on the response
+In the case that none of the provided parsers fits the content type, the response will automatically get updated with the correct error code
+
+``` r
 req$set_body(NULL)
 req$parse(txt = parse_plain())
 #> [1] FALSE
@@ -111,8 +121,11 @@ res
 #>   Content type: text/plain
 #> 
 #> In response to: http://www.example.com:80/summary?id=2347&user=Thomas+Lin+Pedersen
+```
 
-# To make it easy, reqres comes with a mapping of common mime types
+To facilitate all this `reqres` comes with a mapping of standard mime types to the provided parsers. This can simply be supplied to the parse method
+
+``` r
 req$set_body(NULL)
 req$parse(default_parsers)
 #> [1] TRUE
@@ -125,32 +138,43 @@ req$body
 #> 
 #> $homepage
 #> [1] "www.data-imaginist.com"   "www.github.com/thomasp85"
+```
 
-# The response allow you to easily set headers, cookies, etc
+### Response
+
+While the request is mainly intended to be read from, the response should be written to. The `Response` class contains a slew of methods to easily set headers, cookies, etc.
+
+``` r
 res$set_header('Date', to_http_date(Sys.time()))
 res$get_header('Date')
-#> [1] "Tue, 01 Aug 2017 11:59:31 GMT"
+#> [1] "Tue, 01 Aug 2017 12:21:19 GMT"
 res$set_cookie('user', req$query$id, max_age = 9000L)
-res$get_header('Set-Cookie')
-#> NULL
+res$has_cookie('user')
+#> [1] TRUE
+```
 
-# It also has a data store where arbitrary data can be passed along
-# between different middleware. This data will never become part of
-# the actual response
+Furthermore, it contains its own data store where arbitrary information can be stored so as to pass it between middleware etc. This data will never be part of the actual response.
+
+``` r
 res$set_data('alphabet', letters)
 res$get_data('alphabet')
 #>  [1] "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q"
 #> [18] "r" "s" "t" "u" "v" "w" "x" "y" "z"
+```
 
-# Files can be attached for download and the relevant headers will be filled
-# out for you
+Files can be attached and marked for download, setting the relevant headers automatically
+
+``` r
 res$attach(system.file('NEWS.md', package = 'reqres'))
 res$get_header('Content-Type')
 #> [1] "text/markdown"
 res$get_header('Content-Disposition')
 #> [1] "attachment; filename=NEWS.md"
+```
 
-# Lastly we can manipulate the body
+Often we need to provide a payload in the form of a body. This can be any type of R object until the response is handed off to the server, where it should be either a string or a raw vector.
+
+``` r
 res$remove_header('Content-Disposition')
 #> Warning in rm(name, envir = private$HEADERS): object 'name' not found
 res$body <- head(mtcars)
@@ -162,10 +186,11 @@ res$body
 #> Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
 #> Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
 #> Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+```
 
-# Based on the Accept header in the request it can be formatted correctly
-# As the request contains an Accept-Encoding header it will be compressed 
-# as well
+Based on the `Accept` header in the request it can be formatted correctly thus making it ready to send back to the client. As this request contains an `Accept-Encoding` header it will be compressed as well.
+
+``` r
 res$format(json = format_json())
 #> [1] TRUE
 res$body
@@ -187,8 +212,11 @@ res$get_header('Content-Type')
 #> [1] "application/json"
 res$get_header('Content-Encoding')
 #> [1] "gzip"
+```
 
-# The content negotiation understands wildcards etc
+The content negotiation understands wildcards as well
+
+``` r
 res$body <- head(mtcars)
 req$get_header('Accept')
 #> [1] "application/json"       "application/xml; q=0.5"
@@ -199,11 +227,24 @@ res$body
 #> [1] "\"mpg\",\"cyl\",\"disp\",\"hp\",\"drat\",\"wt\",\"qsec\",\"vs\",\"am\",\"gear\",\"carb\"\n\"Mazda RX4\",21,6,160,110,3.9,2.62,16.46,0,1,4,4\n\"Mazda RX4 Wag\",21,6,160,110,3.9,2.875,17.02,0,1,4,4\n\"Datsun 710\",22.8,4,108,93,3.85,2.32,18.61,1,1,4,1\n\"Hornet 4 Drive\",21.4,6,258,110,3.08,3.215,19.44,1,0,3,1\n\"Hornet Sportabout\",18.7,8,360,175,3.15,3.44,17.02,0,0,3,2\n\"Valiant\",18.1,6,225,105,2.76,3.46,20.22,1,0,3,1"
 res$get_header('Content-Type')
 #> [1] "text/csv"
+```
 
-# As with request parsing, a default mapping exists for your use.
+A default formatter mapping exists in parallel to `default_parsers` for the `Request$format()` method.
+
+``` r
 res$body <- head(mtcars)
 res$format(default_formatters, compress = FALSE)
 #> [1] TRUE
 res$body
 #> [{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.62,"qsec":16.46,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4"},{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.875,"qsec":17.02,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4 Wag"},{"mpg":22.8,"cyl":4,"disp":108,"hp":93,"drat":3.85,"wt":2.32,"qsec":18.61,"vs":1,"am":1,"gear":4,"carb":1,"_row":"Datsun 710"},{"mpg":21.4,"cyl":6,"disp":258,"hp":110,"drat":3.08,"wt":3.215,"qsec":19.44,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Hornet 4 Drive"},{"mpg":18.7,"cyl":8,"disp":360,"hp":175,"drat":3.15,"wt":3.44,"qsec":17.02,"vs":0,"am":0,"gear":3,"carb":2,"_row":"Hornet Sportabout"},{"mpg":18.1,"cyl":6,"disp":225,"hp":105,"drat":2.76,"wt":3.46,"qsec":20.22,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Valiant"}]
+```
+
+It is easy to define your own formatters and add them along the defaults
+
+``` r
+res$body <- head(mtcars)
+res$format('text/yaml' = yaml::as.yaml, compress = FALSE)
+#> [1] TRUE
+res$body
+#> [1] "mpg:\n- 21.0\n- 21.0\n- 22.8\n- 21.4\n- 18.7\n- 18.1\ncyl:\n- 6.0\n- 6.0\n- 4.0\n- 6.0\n- 8.0\n- 6.0\ndisp:\n- 160.0\n- 160.0\n- 108.0\n- 258.0\n- 360.0\n- 225.0\nhp:\n- 110.0\n- 110.0\n- 93.0\n- 110.0\n- 175.0\n- 105.0\ndrat:\n- 3.9\n- 3.9\n- 3.85\n- 3.08\n- 3.15\n- 2.76\nwt:\n- 2.62\n- 2.875\n- 2.32\n- 3.215\n- 3.44\n- 3.46\nqsec:\n- 16.46\n- 17.02\n- 18.61\n- 19.44\n- 17.02\n- 20.22\nvs:\n- 0.0e+00\n- 0.0e+00\n- 1.0e+00\n- 1.0e+00\n- 0.0e+00\n- 1.0e+00\nam:\n- 1.0\n- 1.0\n- 1.0\n- 0.0e+00\n- 0.0e+00\n- 0.0e+00\ngear:\n- 4.0\n- 4.0\n- 4.0\n- 3.0\n- 3.0\n- 3.0\ncarb:\n- 4.0\n- 4.0\n- 1.0\n- 1.0\n- 2.0\n- 1.0\n"
 ```

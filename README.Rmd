@@ -78,21 +78,31 @@ req
 # ... along with a response
 res <- req$respond()
 res
+```
 
-# A lot of information is already available, e.g.
+### Request
+A lot of information is already available, such as the query and other parts of 
+the url, but the body is not filled in automatically.
+
+```{r}
 req$host
 req$query
-
-# But the body is not filled in automatically
 req$body
+```
 
-# This needs to be parsed. The Content-Type header gives the type
+The body can easily be parsed though, as long as a parser exists for the 
+provided content type.
+
+```{r}
 req$is('json')
 req$parse(json = parse_json())
 req$body
+```
 
-# You don't need to do this manually though. Just supply multiple
-# and the correct will be chosen
+Instead of inspecting it manually you can simply provide a range of parsers and
+let the object choose the correct one itself
+
+```{r}
 req$set_body(NULL)
 req$parse(
     txt = parse_plain(), 
@@ -100,59 +110,101 @@ req$parse(
     json = parse_json()
 )
 req$body
+```
 
-# If no parser fits the bill the correct error code will be set
-# on the response
+In the case that none of the provided parsers fits the content type, the 
+response will automatically get updated with the correct error code
+
+```{r}
 req$set_body(NULL)
 req$parse(txt = parse_plain())
 res
+```
 
-# To make it easy, reqres comes with a mapping of common mime types
+To facilitate all this `reqres` comes with a mapping of standard mime types to
+the provided parsers. This can simply be supplied to the parse method
+
+```{r}
 req$set_body(NULL)
 req$parse(default_parsers)
 req$body
+```
 
-# The response allow you to easily set headers, cookies, etc
+### Response
+While the request is mainly intended to be read from, the response should be
+written to. The `Response` class contains a slew of methods to easily set 
+headers, cookies, etc.
+
+```{r}
 res$set_header('Date', to_http_date(Sys.time()))
 res$get_header('Date')
 res$set_cookie('user', req$query$id, max_age = 9000L)
-res$get_header('Set-Cookie')
+res$has_cookie('user')
+```
 
-# It also has a data store where arbitrary data can be passed along
-# between different middleware. This data will never become part of
-# the actual response
+Furthermore, it contains its own data store where arbitrary information can be 
+stored so as to pass it between middleware etc. This data will never be part of
+the actual response.
+
+```{r}
 res$set_data('alphabet', letters)
 res$get_data('alphabet')
+```
 
-# Files can be attached for download and the relevant headers will be filled
-# out for you
+Files can be attached and marked for download, setting the relevant headers
+automatically
+
+```{r}
 res$attach(system.file('NEWS.md', package = 'reqres'))
 res$get_header('Content-Type')
 res$get_header('Content-Disposition')
+```
 
-# Lastly we can manipulate the body
+Often we need to provide a payload in the form of a body. This can be any type
+of R object until the response is handed off to the server, where it should be
+either a string or a raw vector.
+
+```{r}
 res$remove_header('Content-Disposition')
 res$body <- head(mtcars)
 res$body
+```
 
-# Based on the Accept header in the request it can be formatted correctly
-# As the request contains an Accept-Encoding header it will be compressed 
-# as well
+Based on the `Accept` header in the request it can be formatted correctly thus
+making it ready to send back to the client. As this request contains an 
+`Accept-Encoding` header it will be compressed as well.
+
+```{r}
 res$format(json = format_json())
 res$body
 res$get_header('Content-Type')
 res$get_header('Content-Encoding')
+```
 
-# The content negotiation understands wildcards etc
+The content negotiation understands wildcards as well
+
+```{r}
 res$body <- head(mtcars)
 req$get_header('Accept')
 res$format(csv = format_table(sep = ','), compress = FALSE)
 res$body
 res$get_header('Content-Type')
+```
 
-# As with request parsing, a default mapping exists for your use.
+A default formatter mapping exists in parallel to `default_parsers` for the 
+`Request$format()` method.
+
+```{r}
 res$body <- head(mtcars)
 res$format(default_formatters, compress = FALSE)
+res$body
+```
+
+It is easy to define your own formatters and add them along the defaults
+
+```{r}
+res$body <- head(mtcars)
+res$format('text/yaml' = yaml::as.yaml, compress = FALSE)
 res$body
 ```
 
