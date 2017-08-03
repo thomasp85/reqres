@@ -158,7 +158,7 @@ req <- Request$new(fake_rook)
 req$url
 
 # Get list of query parameters
-req$queries
+req$query
 
 # Test if content is text
 req$is('txt')
