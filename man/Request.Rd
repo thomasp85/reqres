@@ -4,18 +4,21 @@
 \name{Request}
 \alias{Request}
 \alias{as.Request}
+\alias{is.Request}
 \title{HTTP Request Handling}
 \usage{
-as.Request(req, ...)
+as.Request(x, ...)
+
+is.Request(x, ...)
 }
 \arguments{
-\item{req}{An object coercible to a \code{Request}. Currently only rook
-environments}
+\item{x}{An object coercible to a \code{Request}.}
 
 \item{...}{Parameters passed on to \code{Request$new()}}
 }
 \value{
-A \code{Request} object
+A \code{Request} object (for \code{as.Request()}) or a logical indicating whether
+the object is a \code{Request} (for \code{is.Request()})
 }
 \description{
 This class wraps all functionality related to extracting information from a

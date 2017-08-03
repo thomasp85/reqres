@@ -542,22 +542,28 @@ Request <- R6Class('Request',
 )
 #' @rdname Request
 #'
-#' @usage as.Request(req, ...)
-#' @param req An object coercible to a `Request`. Currently only rook
-#' environments
+#' @usage as.Request(x, ...)
+#' @param x An object coercible to a `Request`.
 #' @param ... Parameters passed on to `Request$new()`
-#' @return A `Request` object
+#' @return A `Request` object (for `as.Request()`) or a logical indicating whether
+#' the object is a `Request` (for `is.Request()`)
 #' @export
-as.Request <- function(req, ...) {
+as.Request <- function(x, ...) {
     UseMethod('as.Request')
 }
 #' @export
-as.Request.environment <- function(req, ...) {
-    if (is.null(req[['rook.version']])) {
+as.Request.Request <- function(x, ...) x
+#' @export
+as.Request.environment <- function(x, ...) {
+    if (is.null(x[['rook.version']])) {
         stop('Must be a Rook object', call. = FALSE)
     }
-    Request$new(req, ...)
+    Request$new(x, ...)
 }
+#' @rdname Request
+#' @usage is.Request(x, ...)
+#' @export
+is.Request <- function(x) inherits(x, 'Request')
 #' @importFrom stringi stri_extract_first_regex
 get_quality <- function(q) {
     q <- stri_extract_first_regex(q, 'q=([0-9]*[.])?[0-9]+')
