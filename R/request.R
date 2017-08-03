@@ -561,7 +561,7 @@ as.Request.environment <- function(x, ...) {
     Request$new(x, ...)
 }
 #' @rdname Request
-#' @usage is.Request(x, ...)
+#' @usage is.Request(x)
 #' @export
 is.Request <- function(x) inherits(x, 'Request')
 #' @importFrom stringi stri_extract_first_regex

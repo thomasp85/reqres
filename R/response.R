@@ -419,10 +419,20 @@ Response <- R6Class('Response',
 #' @param x A `Response` object
 #' @param ... Ignored
 #'
+#' @return A rook-compliant list-response (in case of `as.list()`) or a logical
+#' indicating whether the object is a `Response` (in case of `is.Response()`)
+#'
 #' @export
 as.list.Response <- function(x, ...) {
     x$as_list()
 }
+#' @rdname Response
+#'
+#' @usage is.Response(x)
+#'
+#' @export
+is.Response <- function(x) inherits(x, 'Response')
+
 cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
     opts <- paste0('=', value)
     if (!is.null(expires)) {

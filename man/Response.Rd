@@ -4,14 +4,21 @@
 \name{Response}
 \alias{Response}
 \alias{as.list.Response}
+\alias{is.Response}
 \title{HTTP Response handling}
 \usage{
 \method{as.list}{Response}(x, ...)
+
+is.Response(x)
 }
 \arguments{
 \item{x}{A \code{Response} object}
 
 \item{...}{Ignored}
+}
+\value{
+A rook-compliant list-response (in case of \code{as.list()}) or a logical
+indicating whether the object is a \code{Response} (in case of \code{is.Response()})
 }
 \description{
 This class handles all functionality involved in crafting a http response.

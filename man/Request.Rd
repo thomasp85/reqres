@@ -9,7 +9,7 @@
 \usage{
 as.Request(x, ...)
 
-is.Request(x, ...)
+is.Request(x)
 }
 \arguments{
 \item{x}{An object coercible to a \code{Request}.}
