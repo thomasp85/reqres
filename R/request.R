@@ -238,7 +238,11 @@ Request <- R6Class('Request',
             self$headers[[gsub('-', '_', name)]]
         },
         respond = function() {
-            Response$new(self)
+            if (is.null(self$response)) {
+                Response$new(self)
+            } else {
+                self$response
+            }
         },
         parse = function(..., autofail = TRUE) {
             parsers <- list(...)
