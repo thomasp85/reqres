@@ -190,7 +190,7 @@ Response <- R6Class('Response',
             private$HEADERS[[name]]
         },
         remove_header = function(name) {
-            rm(name, envir = private$HEADERS)
+            rm(list = name, envir = private$HEADERS)
             invisible(self)
         },
         has_header = function(name) {
@@ -215,7 +215,7 @@ Response <- R6Class('Response',
         },
         remove_data = function(key) {
             assert_that(is.string(key))
-            rm(key, envir = private$DATA)
+            rm(lis = key, envir = private$DATA)
             invisible(self)
         },
         has_data = function(key) {
@@ -252,7 +252,7 @@ Response <- R6Class('Response',
         },
         remove_cookie = function(name) {
             assert_that(is.string(name))
-            rm(name, envir = private$COOKIES)
+            rm(list = name, envir = private$COOKIES)
             invisible(self)
         },
         has_cookie = function(name) {
