@@ -1,6 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-reqres
-======
+reqres <img src="man/figures/reqres_logo.png" align="right"/>
+=============================================================
 
 [![Travis-CI Build Status](https://travis-ci.org/thomasp85/reqres.svg?branch=master)](https://travis-ci.org/thomasp85/reqres) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/thomasp85/reqres?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/reqres) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version-ago/reqres)](https://cran.r-project.org/package=reqres) [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/reqres)](https://cran.r-project.org/package=reqres) [![Coverage Status](https://img.shields.io/codecov/c/github/thomasp85/reqres/master.svg)](https://codecov.io/github/thomasp85/reqres?branch=master)
 
@@ -159,7 +159,7 @@ While the request is mainly intended to be read from, the response should be wri
 ``` r
 res$set_header('Date', to_http_date(Sys.time()))
 res$get_header('Date')
-#> [1] "Thu, 03 Aug 2017 07:04:49 GMT"
+#> [1] "Thu, 03 Aug 2017 07:30:54 GMT"
 res$set_cookie('user', req$query$id, max_age = 9000L)
 res$has_cookie('user')
 #> [1] TRUE
