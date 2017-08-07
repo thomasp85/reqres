@@ -407,7 +407,8 @@ Response <- R6Class('Response',
         format_body = function() {
             if (is.raw(private$BODY)) {
                 private$BODY
-            } else if (is.scalar(private$BODY) && names(private$BODY) == 'file') {
+            } else if (is.scalar(private$BODY) &&
+                       'file' %in% names(private$BODY)) {
                 private$BODY
             } else {
                 paste(as.character(private$BODY), collapse = '\n')
