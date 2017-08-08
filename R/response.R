@@ -309,15 +309,7 @@ Response <- R6Class('Response',
             content <- switch(
                 encoding,
                 identity = self$body,
-                gzip = {
-                    f <- tempfile()
-                    con <- gzcon(file(f, open = 'wb'))
-                    writeBin(charToRaw(self$body), con)
-                    close(con)
-                    content <- readBin(f, raw(), file.info(f)$size)
-                    unlink(f)
-                    content
-                },
+                gzip = gzip(charToRaw(self$body)),
                 deflate = memCompress(charToRaw(self$body)),
                 br = brotli_compress(charToRaw(self$body))
             )
@@ -477,4 +469,13 @@ cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path
         opts <- c(opts, paste0('SameSite=', same_site))
     }
     paste(opts, collapse = '; ')
+}
+gzip <- function(x) {
+    f <- tempfile()
+    con <- gzcon(file(f, open = 'wb'))
+    writeBin(x, con)
+    close(con)
+    content <- readBin(f, raw(), file.info(f)$size)
+    unlink(f)
+    content
 }
