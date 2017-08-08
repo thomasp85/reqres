@@ -73,9 +73,10 @@
 #'  a JavaScript library such as jQuery. *Immutable*}
 #'  \item{`secure`}{A logical indicating whether the request was performed using
 #'  a secure connection, i.e. `protocol == 'https'`. *Immutable*}
-#'  \item{`rook`}{The original rook object used to create the `Request` object.
-#'  *Immutable*, though the content of the rook object itself might be
-#'  manipulated as it is an environment.}
+#'  \item{`origin`}{The original object used to create the `Request` object. As
+#'  `reqres` currently only works with rook this will always return the original
+#'  rook object. *Immutable*, though the content of the rook object itself might
+#'  be manipulated as it is an environment.}
 #'  \item{`response`}{If a `Response` object has been created for this request
 #'  it is accessible through this field. *Immutable*}
 #' }
@@ -160,7 +161,7 @@ Request <- R6Class('Request',
     public = list(
         initialize = function(rook, trust = FALSE) {
             self$trust <- trust
-            private$ROOK <- rook
+            private$ORIGIN <- rook
             private$METHOD <- tolower(rook$REQUEST_METHOD)
             private$HEADERS <- private$get_headers(rook)
             if (is.null(rook$HTTP_HOST)) {
@@ -268,11 +269,10 @@ Request <- R6Class('Request',
             success <- FALSE
             for (i in names(parsers)) {
                 if (self$is(i)) {
-                    content <- self$rook$rook.input$read()
-                    self$rook$rook.input$rewind()
+                    content <- private$get_body()
                     content <- try(private$unpack(content))
                     if (is.error(content)) {
-                        if (autofail) self$response$status_with_text(415L)
+                        if (autofail) self$response$status_with_text(400L)
                         return(FALSE)
                     }
                     content <- try(parsers[[i]](content, directives))
@@ -284,7 +284,7 @@ Request <- R6Class('Request',
                 }
             }
             if (!success && autofail && !is.null(self$response)) {
-                self$response$status_with_text(400L)
+                self$response$status_with_text(415L)
             }
             success
         }
@@ -332,14 +332,14 @@ Request <- R6Class('Request',
             if (self$trust && !is.null(self$headers$X_Forwarded_Proto)) {
                 self$headers$X_Forwarded_Proto
             } else {
-                self$rook$rook.url_scheme
+                self$origin$rook.url_scheme
             }
         },
         root = function() {
-            self$rook$SCRIPT_NAME
+            self$origin$SCRIPT_NAME
         },
         path = function() {
-            self$rook$PATH_INFO
+            self$origin$PATH_INFO
         },
         url = function() {
             private$URL
@@ -354,8 +354,8 @@ Request <- R6Class('Request',
         secure = function() {
             self$protocol == 'https'
         },
-        rook = function() {
-            private$ROOK
+        origin = function() {
+            private$ORIGIN
         },
         response = function(res) {
             if (missing(res)) return(private$RESPONSE)
@@ -371,7 +371,7 @@ Request <- R6Class('Request',
     ),
     private = list(
         TRUST = FALSE,
-        ROOK = NULL,
+        ORIGIN = NULL,
         METHOD = NULL,
         HOST = NULL,
         IP = NULL,
@@ -541,9 +541,14 @@ Request <- R6Class('Request',
             }, x = compression, init = raw)
         },
         has_body = function() {
-            first <- private$ROOK$rook.input$read(1)
-            private$ROOK$rook.input$rewind()
+            first <- private$ORIGIN$rook.input$read(1)
+            private$ORIGIN$rook.input$rewind()
             length(first) != 0
+        },
+        get_body = function() {
+            body <- private$ORIGIN$rook.input$read()
+            private$ORIGIN$rook.input$rewind()
+            body
         }
     )
 )
