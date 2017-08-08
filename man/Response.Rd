@@ -56,7 +56,15 @@ generator:
 
 \strong{Usage}
 \tabular{l}{
-\code{req <- Response$new(request)}
+\code{res <- Response$new(request)}
+}
+
+But often it will be provided by the request using the \code{respond()} method,
+which will provide the response, creating one if it doesn't exist
+
+\strong{Usage}
+\tabular{l}{
+\code{res <- request$respond()}
 }
 
 \strong{Arguments}
