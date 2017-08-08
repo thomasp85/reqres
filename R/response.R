@@ -268,6 +268,8 @@ Response <- R6Class('Response',
             invisible(self)
         },
         format = function(..., autofail = TRUE, compress = TRUE) {
+            if (!private$has_body()) return(TRUE)
+
             formatters <- list(...)
             if (is.list(..1)) {
                 first_formatters <- names(formatters)[-1]
@@ -413,6 +415,9 @@ Response <- R6Class('Response',
             } else {
                 paste(as.character(private$BODY), collapse = '\n')
             }
+        },
+        has_body = function() {
+            is.null(private$BODY) || private$BODY == '' || length(private$BODY) == 0
         }
     )
 )

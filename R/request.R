@@ -245,6 +245,8 @@ Request <- R6Class('Request',
             }
         },
         parse = function(..., autofail = TRUE) {
+            if (!private$has_body()) return(TRUE)
+
             parsers <- list(...)
             if (is.list(..1)) {
                 first_parsers <- names(parsers)[-1]
@@ -537,6 +539,11 @@ Request <- R6Class('Request',
                     stop('Unsupported compression', call. = FALSE)
                 )
             }, x = compression, init = raw)
+        },
+        has_body = function() {
+            first <- private$ROOK$rook.input$read(1)
+            private$ROOK$rook.input$rewind()
+            length(first) != 0
         }
     )
 )
