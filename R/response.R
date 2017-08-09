@@ -376,6 +376,7 @@ Response <- R6Class('Response',
             assert_that(file.exists(file))
             self$type <- file_ext(file)
             private$BODY <- c(file = file)
+            self$set_header('Last-Modified', to_http_date(file.mtime(file)))
         },
         type = function(type) {
             if (missing(type)) return(self$get_header('Content-Type'))
