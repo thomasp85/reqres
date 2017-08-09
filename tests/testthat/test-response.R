@@ -95,3 +95,77 @@ test_that('special header method works', {
     res$has_header('Link')
     expect_equal(res$get_header('Link'), "</feed>; rel=\" alternate \"")
 })
+
+test_that('files are added correctly', {
+    req <- Request$new(rook)
+    res <- Response$new(req)
+    file <- system.file('DESCRIPTION', package = 'reqres')
+
+    expect_error(res$file <- paste0(file, '_test'))
+    res$file <- file
+    expect_equal(res$body, c(file = file))
+    expect_equal(res$type, 'text/plain')
+    expect_equal(res$get_header('Last-Modified'), to_http_date(file.mtime(file)))
+    res$attach(file)
+    expect_equal(res$get_header('Content-Disposition'), "attachment; filename=DESCRIPTION")
+
+    expect_equal(res$as_list()$body, c(file = file))
+})
+
+test_that('status text are added', {
+    req <- Request$new(rook)
+    res <- Response$new(req)
+
+    res$status_with_text(416L)
+    expect_equal(res$body, 'Range Not Satisfiable')
+})
+
+test_that('print functino works', {
+    req <- Request$new(rook)
+    res <- Response$new(req)
+
+    expect_output(res$print(), 'A HTTP response')
+})
+
+test_that('body formatting works', {
+    req <- Request$new(rook)
+    res <- Response$new(req)
+    body <- list(lower = letters, upper = LETTERS)
+    res$body <- body
+    expect_false(res$format('zip' = function(x) x, autofail = FALSE))
+    expect_true(res$format(default_formatters, compress = FALSE))
+    expect_equal(res$body, jsonlite::toJSON(body))
+
+    rook2 <- fiery::fake_request(
+        url = 'http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen',
+        content = '',
+        headers = modifyList(headers, list(Accept_Encoding = 'gzip'))
+    )
+    req <- Request$new(rook2)
+    res <- Response$new(req)
+    res$body <- body
+    expect_true(res$format(default_formatters))
+    expect_equal(res$body, gzip(charToRaw(jsonlite::toJSON(body))))
+
+    rook2 <- fiery::fake_request(
+        url = 'http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen',
+        content = '',
+        headers = modifyList(headers, list(Accept_Encoding = 'br'))
+    )
+    req <- Request$new(rook2)
+    res <- Response$new(req)
+    res$body <- body
+    expect_true(res$format(default_formatters))
+    expect_equal(res$body, brotli::brotli_compress(charToRaw(jsonlite::toJSON(body))))
+
+    rook2 <- fiery::fake_request(
+        url = 'http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen',
+        content = '',
+        headers = modifyList(headers, list(Accept_Encoding = 'deflate'))
+    )
+    req <- Request$new(rook2)
+    res <- Response$new(req)
+    res$body <- body
+    expect_true(res$format(default_formatters))
+    expect_equal(res$body, memCompress(charToRaw(jsonlite::toJSON(body))))
+})
