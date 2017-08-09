@@ -169,13 +169,11 @@ Request <- R6Class('Request',
             } else {
                 private$HOST <- rook$HTTP_HOST
             }
+            private$PROTOCOL <- rook$rook.url_scheme
+            private$ROOT <- rook$SCRIPT_NAME
+            private$PATH <- rook$PATH_INFO
+            private$QUERYSTRING <- rook$QUERY_STRING
             private$IP <- rook$REMOTE_ADDR
-            private$URL <- paste0(rook$rook.url_scheme, '://',
-                                  private$HOST,
-                                  rook$SCRIPT_NAME,
-                                  rook$PATH_INFO,
-                                  if(rook$QUERY_STRING == '') ''
-                                  else paste0('?', rook$QUERY_STRING))
             private$QUERY <- private$parse_query(rook$QUERY_STRING)
 
             private$COOKIES <- private$parse_cookies()
@@ -332,17 +330,22 @@ Request <- R6Class('Request',
             if (self$trust && !is.null(self$headers$X_Forwarded_Proto)) {
                 self$headers$X_Forwarded_Proto
             } else {
-                self$origin$rook.url_scheme
+                private$PROTOCOL
             }
         },
         root = function() {
-            self$origin$SCRIPT_NAME
+            private$ROOT
         },
         path = function() {
-            self$origin$PATH_INFO
+            private$PATH
         },
         url = function() {
-            private$URL
+            paste0(self$protocol, '://',
+                   self$host,
+                   self$root,
+                   self$path,
+                   if(private$QUERYSTRING == '') ''
+                   else paste0('?', private$QUERYSTRING))
         },
         query = function() {
             private$QUERY
@@ -374,8 +377,11 @@ Request <- R6Class('Request',
         ORIGIN = NULL,
         METHOD = NULL,
         HOST = NULL,
+        PROTOCOL = NULL,
+        ROOT = NULL,
+        PATH = NULL,
+        QUERYSTRING = NULL,
         IP = NULL,
-        URL = NULL,
         QUERY = NULL,
         BODY = NULL,
         HEADERS = NULL,
