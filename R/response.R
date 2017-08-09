@@ -238,6 +238,11 @@ Response <- R6Class('Response',
         has_data = function(key) {
             !is.null(self$get_data(key))
         },
+        timestamp = function() {
+            time <- Sys.time()
+            self$set_header('Date', to_http_date(time))
+            invisible(self)
+        },
         attach = function(file, filename = basename(file), type = NULL) {
             self$file <- file
             assert_that(is.string(filename))
