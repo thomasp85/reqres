@@ -417,7 +417,7 @@ Response <- R6Class('Response',
             }
         },
         has_body = function() {
-            is.null(private$BODY) || private$BODY == '' || length(private$BODY) == 0
+            !is.null(private$BODY) && length(private$BODY) != 0 && !identical(private$BODY, '')
         }
     )
 )
