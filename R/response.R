@@ -198,7 +198,12 @@ Response <- R6Class('Response',
             private$HEADERS[[name]]
         },
         remove_header = function(name) {
-            rm(list = name, envir = private$HEADERS)
+            assert_that(is.string(name))
+            if (!self$has_header(name)) {
+                warning('No header named ', name, call. = FALSE)
+            } else {
+                rm(list = name, envir = private$HEADERS)
+            }
             invisible(self)
         },
         has_header = function(name) {
@@ -223,7 +228,11 @@ Response <- R6Class('Response',
         },
         remove_data = function(key) {
             assert_that(is.string(key))
-            rm(lis = key, envir = private$DATA)
+            if (!self$has_data(key)) {
+                warning('No data named ', key, call. = FALSE)
+            } else {
+                rm(list = key, envir = private$DATA)
+            }
             invisible(self)
         },
         has_data = function(key) {
@@ -260,7 +269,11 @@ Response <- R6Class('Response',
         },
         remove_cookie = function(name) {
             assert_that(is.string(name))
-            rm(list = name, envir = private$COOKIES)
+            if (!self$has_cookie(name)) {
+                warning('No cookie named ', name, call. = FALSE)
+            } else {
+                rm(list = name, envir = private$COOKIES)
+            }
             invisible(self)
         },
         has_cookie = function(name) {
