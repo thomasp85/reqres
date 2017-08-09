@@ -9,7 +9,7 @@
 #' string should be interpreted.
 #'
 #' @return `to_http_date()` returns a properly formatted string, while
-#' `from_http_date()` returns a POSIXCct object
+#' `from_http_date()` returns a POSIXct object
 #'
 #' @importFrom assertthat is.time
 #' @rdname http_date

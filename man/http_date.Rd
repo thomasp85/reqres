@@ -17,7 +17,7 @@ string should be interpreted.}
 }
 \value{
 \code{to_http_date()} returns a properly formatted string, while
-\code{from_http_date()} returns a POSIXCct object
+\code{from_http_date()} returns a POSIXct object
 }
 \description{
 Dates/times in HTTP headers needs a specific format to be valid, and is

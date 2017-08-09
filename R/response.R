@@ -68,7 +68,7 @@
 #'  something else) it will return `NULL`. The `Content-Type` header will
 #'  automatically be inferred from the file extension, if known. If unknown it
 #'  will defaults to `application/octet-stream`. If the file has no extension it
-#'  will be `text/plain`. Existance of the file will be checked.}
+#'  will be `text/plain`. Existence of the file will be checked.}
 #'  \item{`type`}{Get or sets the `Content-Type` header of the response based on
 #'  a file extension or mime-type.}
 #'  \item{`request`}{Get the original `Request` object that the object is
@@ -81,7 +81,7 @@
 #' \describe{
 #'  \item{`set_header(name, value)`}{Sets the header given by `name`. `value`
 #'  will be converted to character. A header will be added for each element in
-#'  `value`. Use `append_header()` for setting headers without overwritting
+#'  `value`. Use `append_header()` for setting headers without overwriting
 #'  existing ones.}
 #'  \item{`get_header(name)`}{Returns the header(s) given by `name`}
 #'  \item{`remove_header(name)`}{Removes all headers given by `name`}

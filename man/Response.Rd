@@ -90,7 +90,7 @@ body of the response. If the body is not referencing a file (but contains
 something else) it will return \code{NULL}. The \code{Content-Type} header will
 automatically be inferred from the file extension, if known. If unknown it
 will defaults to \code{application/octet-stream}. If the file has no extension it
-will be \code{text/plain}. Existance of the file will be checked.}
+will be \code{text/plain}. Existence of the file will be checked.}
 \item{\code{type}}{Get or sets the \code{Content-Type} header of the response based on
 a file extension or mime-type.}
 \item{\code{request}}{Get the original \code{Request} object that the object is
@@ -105,7 +105,7 @@ The following methods are available in a \code{Response} object:
 \describe{
 \item{\code{set_header(name, value)}}{Sets the header given by \code{name}. \code{value}
 will be converted to character. A header will be added for each element in
-\code{value}. Use \code{append_header()} for setting headers without overwritting
+\code{value}. Use \code{append_header()} for setting headers without overwriting
 existing ones.}
 \item{\code{get_header(name)}}{Returns the header(s) given by \code{name}}
 \item{\code{remove_header(name)}}{Removes all headers given by \code{name}}

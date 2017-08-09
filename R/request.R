@@ -28,7 +28,7 @@
 #' \strong{Arguments}
 #' \tabular{lll}{
 #'  \code{rook} \tab  \tab The rook request that the new object should wrap\cr
-#'  \code{trust} \tab  \tab Is this request trusted blindly. If `TRUE` `X-Forwarded-*` headers will be returned when quering host, ip, and protocol
+#'  \code{trust} \tab  \tab Is this request trusted blindly. If `TRUE` `X-Forwarded-*` headers will be returned when querying host, ip, and protocol
 #' }
 #'
 #' @section Fields:
@@ -59,10 +59,10 @@
 #'  \item{`protocol`}{Returns the protocol (e.g. 'http') used for the request.
 #'  If `trust == TRUE` it will use the value of the `X-Forwarded-Proto` header.
 #'  *Immutable*}
-#'  \item{`root`}{The mount point of the application recieving this request. Can
+#'  \item{`root`}{The mount point of the application receiving this request. Can
 #'  be empty if the application is mounted on the server root. *Immutable*}
 #'  \item{`path`}{The part of the url following the root. Defines the local
-#'  target of the request (irrespectible of where it is mounted). *Immutable*}
+#'  target of the request (irrespectable of where it is mounted). *Immutable*}
 #'  \item{`url`}{The full URL of the request. *Immutable*}
 #'  \item{`query`}{The query string of the request (anything following "?" in
 #'  the URL) parsed into a named list. The query has been url decoded and "+"
@@ -108,13 +108,13 @@
 #'  parsing method.}
 #'  \item{`respond()`}{Creates a new `Response` object from the request}
 #'  \item{`parse(..., autofail = TRUE)`}{Based on provided parsers it selects
-#'  the appropriate one by looking at the `Content-Type` header and assings the
+#'  the appropriate one by looking at the `Content-Type` header and assigns the
 #'  result to the request body. A parser is a function accepting a raw vector,
 #'  and a named list of additional directives,
 #'  and returns an R object of any kind (if the parser knows the input to be
 #'  plain text, simply wrap it in [rawToChar()]). If the body is compressed, it
 #'  will be decompressed based on the `Content-Encoding` header prior to passing
-#'  it on to the parser. See [parsers] for a list of presupplied parsers.
+#'  it on to the parser. See [parsers] for a list of pre-supplied parsers.
 #'  Parsers are either supplied in a named list or as named arguments to the
 #'  parse method. The names should correspond to mime types or known file
 #'  extensions. If `autofail = TRUE` the response will be set with the correct
