@@ -93,7 +93,7 @@ test_that('special header method works', {
 
     res$set_links(list(alternate = '/feed'))
     res$has_header('Link')
-    expect_equal(res$get_header('Link'), "</feed>; rel=\" alternate \"")
+    expect_equal(res$get_header('Link'), "</feed>; rel=\"alternate\"")
 })
 
 test_that('files are added correctly', {

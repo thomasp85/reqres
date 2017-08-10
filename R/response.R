@@ -306,7 +306,7 @@ Response <- R6Class('Response',
             }
             assert_that(has_attr(links, 'names'))
             url <- paste0('<', unlist(links), '>')
-            rel <- paste('rel="', names(links), '"')
+            rel <- paste0('rel="', names(links), '"')
             links <- paste(paste0(url, '; ', rel), collapse = ', ')
             self$set_header('Link', links)
             invisible(self)
