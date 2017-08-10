@@ -141,8 +141,21 @@ either \code{"Lax"} or \code{"Strict"}}
 response.}
 \item{\code{has_cookie(name)}}{Queries whether the response contains a cookie
 named \code{name}}
-\item{\code{set_links(links)}}{Sets the \code{Link} header based on the named list
-\code{links}. The names will be used for the \code{rel} directive.}
+\item{\code{set_links(...)}}{Sets the \code{Link} header based on the named arguments
+passed to \code{...}. The names will be used for the \code{rel} directive.}
+\item{\code{format(..., autofail = TRUE, compress = TRUE)}}{Based on the
+formatters passed in through \code{...} content negotiation is performed with
+request and the prefered formatter is chosen. The \code{Content-Type} header is
+set automatically. If \code{compress = TRUE} the
+\code{compress()} method will be called after formatting. If an error is
+encountered and \code{autofail = TRUE} the response will be set to \code{500}. If a
+formatter is not found and \code{autofail = TRUE} the response will be set to
+\code{406}. If formatting is successful it will return \code{TRUE}, if not it will
+return \code{FALSE}}
+\item{\code{compress(priority = c('gzip', 'deflate', 'br', 'identity'))}}{Based
+on the provided priority, an encoding is negotiated with the request and
+applied. The \code{Content-Encoding} header is set to the chosen compression
+algorithm.}
 \item{\code{as_list()}}{Converts the object to a list for further processing by
 a Rook compliant server such as \code{httpuv}. Will set \code{Content-Type} header if
 missing and convert a non-raw body to a single character string.}

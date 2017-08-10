@@ -118,8 +118,21 @@
 #'  response.}
 #'  \item{`has_cookie(name)`}{Queries whether the response contains a cookie
 #'  named `name`}
-#'  \item{`set_links(links)`}{Sets the `Link` header based on the named list
-#'  `links`. The names will be used for the `rel` directive.}
+#'  \item{`set_links(...)`}{Sets the `Link` header based on the named arguments
+#'  passed to `...`. The names will be used for the `rel` directive.}
+#'  \item{`format(..., autofail = TRUE, compress = TRUE)`}{Based on the
+#'  formatters passed in through `...` content negotiation is performed with
+#'  request and the prefered formatter is chosen. The `Content-Type` header is
+#'  set automatically. If `compress = TRUE` the
+#'  `compress()` method will be called after formatting. If an error is
+#'  encountered and `autofail = TRUE` the response will be set to `500`. If a
+#'  formatter is not found and `autofail = TRUE` the response will be set to
+#'  `406`. If formatting is successful it will return `TRUE`, if not it will
+#'  return `FALSE`}
+#'  \item{`compress(priority = c('gzip', 'deflate', 'br', 'identity'))`}{Based
+#'  on the provided priority, an encoding is negotiated with the request and
+#'  applied. The `Content-Encoding` header is set to the chosen compression
+#'  algorithm.}
 #'  \item{`as_list()`}{Converts the object to a list for further processing by
 #'  a Rook compliant server such as `httpuv`. Will set `Content-Type` header if
 #'  missing and convert a non-raw body to a single character string.}
@@ -285,7 +298,12 @@ Response <- R6Class('Response',
             assert_that(is.string(name))
             !is.null(private$COOKIES[[name]])
         },
-        set_links = function(links) {
+        set_links = function(...) {
+            if (is.list(..1)) {
+                links <- modifyList(..1, list(...)[-1])
+            } else {
+                links <- list(...)
+            }
             assert_that(has_attr(links, 'names'))
             url <- paste0('<', unlist(links), '>')
             rel <- paste('rel="', names(links), '"')

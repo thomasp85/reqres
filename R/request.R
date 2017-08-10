@@ -120,6 +120,11 @@
 #'  extensions. If `autofail = TRUE` the response will be set with the correct
 #'  error code if parsing fails. `parse()` returns `TRUE` if parsing was
 #'  successful and `FALSE` if not}
+#'  \item{`parse_raw(autofail = TRUE)`}{This is a simpler version of the
+#'  `parse()` method. It will attempt to decompress the body and set the `body`
+#'  field to the resulting raw vector. It is then up to the server to decide how
+#'  to handle the payload. It returns `TRUE` if successful and `FALSE`
+#'  otherwise.}
 #' }
 #'
 #' @seealso [`Response`] for handling http responses

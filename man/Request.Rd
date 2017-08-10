@@ -143,6 +143,11 @@ parse method. The names should correspond to mime types or known file
 extensions. If \code{autofail = TRUE} the response will be set with the correct
 error code if parsing fails. \code{parse()} returns \code{TRUE} if parsing was
 successful and \code{FALSE} if not}
+\item{\code{parse_raw(autofail = TRUE)}}{This is a simpler version of the
+\code{parse()} method. It will attempt to decompress the body and set the \code{body}
+field to the resulting raw vector. It is then up to the server to decide how
+to handle the payload. It returns \code{TRUE} if successful and \code{FALSE}
+otherwise.}
 }
 }
 
