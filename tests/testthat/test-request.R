@@ -89,6 +89,10 @@ test_that('body can be parsed', {
     res <- req$respond()
     expect_false(req$parse(xml = parse_xml(), autofail = FALSE))
     expect_equal(res$status, 404L)
+    req <- Request$new(rook)
+    res <- req$respond()
+    expect_true(req$parse_raw())
+    expect_equal(req$body, charToRaw(paste0(body, '\n')))
 
     rook2 <- fiery::fake_request(
         url = 'http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen',

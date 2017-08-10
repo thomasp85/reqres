@@ -285,6 +285,16 @@ Request <- R6Class('Request',
                 self$response$status_with_text(415L)
             }
             success
+        },
+        parse_raw = function(autofail = TRUE) {
+            content <- private$get_body()
+            content <- try(private$unpack(content))
+            if (is.error(content)) {
+                if (autofail) self$response$status_with_text(400L)
+                return(FALSE)
+            }
+            private$BODY <- content
+            TRUE
         }
     ),
     active = list(
