@@ -10,7 +10,7 @@
 #'
 #' A `Response` object is always created
 #' as a response to a `Request` object and contains a reference to the
-#' originating `Request` object. A `Response` is always initialised with a
+#' originating `Request` object. A `Response` is always initialized with a
 #' 404 Not Found code, an empty string as body and the `Content-Type` header set
 #' to `text/plain`. As the `Content-Type` header is required for `httpuv` to
 #' function, it will be inferred if missing when converting to a list. If the
@@ -122,7 +122,7 @@
 #'  passed to `...`. The names will be used for the `rel` directive.}
 #'  \item{`format(..., autofail = TRUE, compress = TRUE)`}{Based on the
 #'  formatters passed in through `...` content negotiation is performed with
-#'  request and the prefered formatter is chosen. The `Content-Type` header is
+#'  request and the preferred formatter is chosen. The `Content-Type` header is
 #'  set automatically. If `compress = TRUE` the
 #'  `compress()` method will be called after formatting. If an error is
 #'  encountered and `autofail = TRUE` the response will be set to `500`. If a

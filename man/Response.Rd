@@ -32,7 +32,7 @@ passed on to e.g. the \code{httpuv} handler.
 \details{
 A \code{Response} object is always created
 as a response to a \code{Request} object and contains a reference to the
-originating \code{Request} object. A \code{Response} is always initialised with a
+originating \code{Request} object. A \code{Response} is always initialized with a
 404 Not Found code, an empty string as body and the \code{Content-Type} header set
 to \code{text/plain}. As the \code{Content-Type} header is required for \code{httpuv} to
 function, it will be inferred if missing when converting to a list. If the
@@ -145,7 +145,7 @@ named \code{name}}
 passed to \code{...}. The names will be used for the \code{rel} directive.}
 \item{\code{format(..., autofail = TRUE, compress = TRUE)}}{Based on the
 formatters passed in through \code{...} content negotiation is performed with
-request and the prefered formatter is chosen. The \code{Content-Type} header is
+request and the preferred formatter is chosen. The \code{Content-Type} header is
 set automatically. If \code{compress = TRUE} the
 \code{compress()} method will be called after formatting. If an error is
 encountered and \code{autofail = TRUE} the response will be set to \code{500}. If a

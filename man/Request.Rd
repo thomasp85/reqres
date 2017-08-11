@@ -26,7 +26,7 @@ http request. Much of the functionality is inspired by the Request class in
 Express.js, so \href{https://expressjs.com/en/4x/api.html#req}{the documentation}
 for this will complement this document. As \code{reqres} is build on top of the
 \href{https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md}{Rook specifications}
-the \code{Request} object is initialised from a Rook-compliant object. This will
+the \code{Request} object is initialized from a Rook-compliant object. This will
 often be the request object provided by the \code{httpuv} framework. While it
 shouldn't be needed, the original Rook object is always accessible and can be
 modified, though any modifications will not propagate to derived values in
@@ -83,7 +83,7 @@ If \code{trust == TRUE} it will use the value of the \code{X-Forwarded-Proto} he
 \item{\code{root}}{The mount point of the application receiving this request. Can
 be empty if the application is mounted on the server root. \emph{Immutable}}
 \item{\code{path}}{The part of the url following the root. Defines the local
-target of the request (irrespectable of where it is mounted). \emph{Immutable}}
+target of the request (independent of where it is mounted). \emph{Immutable}}
 \item{\code{url}}{The full URL of the request. \emph{Immutable}}
 \item{\code{query}}{The query string of the request (anything following "?" in
 the URL) parsed into a named list. The query has been url decoded and "+"

@@ -5,7 +5,7 @@
 #' Express.js, so [the documentation](https://expressjs.com/en/4x/api.html#req)
 #' for this will complement this document. As `reqres` is build on top of the
 #' [Rook specifications](https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md)
-#' the `Request` object is initialised from a Rook-compliant object. This will
+#' the `Request` object is initialized from a Rook-compliant object. This will
 #' often be the request object provided by the `httpuv` framework. While it
 #' shouldn't be needed, the original Rook object is always accessible and can be
 #' modified, though any modifications will not propagate to derived values in
@@ -62,7 +62,7 @@
 #'  \item{`root`}{The mount point of the application receiving this request. Can
 #'  be empty if the application is mounted on the server root. *Immutable*}
 #'  \item{`path`}{The part of the url following the root. Defines the local
-#'  target of the request (irrespectable of where it is mounted). *Immutable*}
+#'  target of the request (independent of where it is mounted). *Immutable*}
 #'  \item{`url`}{The full URL of the request. *Immutable*}
 #'  \item{`query`}{The query string of the request (anything following "?" in
 #'  the URL) parsed into a named list. The query has been url decoded and "+"
