@@ -89,6 +89,8 @@ target of the request (independent of where it is mounted). \emph{Immutable}}
 the URL) parsed into a named list. The query has been url decoded and "+"
 has been substituted with space. Multiple queries are expected to be
 separated by either "&" or "|". \emph{Immutable}}
+\item{\code{querystring}}{The unparsed query string of the request, including
+"?". If no query string exists it will be \code{""} rather than \code{"?"}}
 \item{\code{xhr}}{A logical indicating whether the \code{X-Requested-With} header
 equals \code{XMLHttpRequest} thus indicating that the request was performed using
 a JavaScript library such as jQuery. \emph{Immutable}}

@@ -1,3 +1,7 @@
+# reqres 0.2.0.9999
+
+* Added `querystring` field to `Request`.
+
 # reqres 0.2.0
 
 * Moved to a shallow dependency of Rook, making it easier to substitute or 
@@ -8,6 +12,3 @@
 
 * Migrated Request and Response classes from 
   [`routr`](https://github.com/thomasp85/routr)
-
-
-

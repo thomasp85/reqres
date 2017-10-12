@@ -68,6 +68,8 @@
 #'  the URL) parsed into a named list. The query has been url decoded and "+"
 #'  has been substituted with space. Multiple queries are expected to be
 #'  separated by either "&" or "|". *Immutable*}
+#'  \item{`querystring`}{The unparsed query string of the request, including
+#'  "?". If no query string exists it will be `""` rather than `"?"`}
 #'  \item{`xhr`}{A logical indicating whether the `X-Requested-With` header
 #'  equals `XMLHttpRequest` thus indicating that the request was performed using
 #'  a JavaScript library such as jQuery. *Immutable*}
@@ -178,8 +180,11 @@ Request <- R6Class('Request',
             private$ROOT <- rook$SCRIPT_NAME
             private$PATH <- rook$PATH_INFO
             private$QUERYSTRING <- rook$QUERY_STRING
+            if (private$QUERYSTRING != '') {
+                private$QUERYSTRING <- paste0('?', sub('^?', '', private$QUERYSTRING))
+            }
             private$IP <- rook$REMOTE_ADDR
-            private$QUERY <- private$parse_query(rook$QUERY_STRING)
+            private$QUERY <- private$parse_query(private$QUERYSTRING)
 
             private$COOKIES <- private$parse_cookies()
         },
@@ -359,11 +364,13 @@ Request <- R6Class('Request',
                    self$host,
                    self$root,
                    self$path,
-                   if(private$QUERYSTRING == '') ''
-                   else paste0('?', private$QUERYSTRING))
+                   self$querystring)
         },
         query = function() {
             private$QUERY
+        },
+        querystring = function() {
+            private$QUERYSTRING
         },
         xhr = function() {
             xhr <- self$get_header('X-Requested-With')
