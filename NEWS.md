@@ -1,6 +1,7 @@
 # reqres 0.2.0.9999
 
 * Added `querystring` field to `Request`.
+* Added `calculate_length()` method to `Response`.
 
 # reqres 0.2.0
 

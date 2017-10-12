@@ -156,6 +156,10 @@ return \code{FALSE}}
 on the provided priority, an encoding is negotiated with the request and
 applied. The \code{Content-Encoding} header is set to the chosen compression
 algorithm.}
+\item{\code{content_length()}}{Calculates the length (in bytes) of the body.
+This is the number that goes into the \code{Content-Length} header. Note that the
+\code{Content-Length} header is set automatically by \code{httpuv} so this method
+should only be called if the response size is needed for other reasons.}
 \item{\code{as_list()}}{Converts the object to a list for further processing by
 a Rook compliant server such as \code{httpuv}. Will set \code{Content-Type} header if
 missing and convert a non-raw body to a single character string.}

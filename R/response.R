@@ -133,6 +133,10 @@
 #'  on the provided priority, an encoding is negotiated with the request and
 #'  applied. The `Content-Encoding` header is set to the chosen compression
 #'  algorithm.}
+#'  \item{`content_length()`}{Calculates the length (in bytes) of the body.
+#'  This is the number that goes into the `Content-Length` header. Note that the
+#'  `Content-Length` header is set automatically by `httpuv` so this method
+#'  should only be called if the response size is needed for other reasons.}
 #'  \item{`as_list()`}{Converts the object to a list for further processing by
 #'  a Rook compliant server such as `httpuv`. Will set `Content-Type` header if
 #'  missing and convert a non-raw body to a single character string.}
@@ -141,7 +145,7 @@
 #' @seealso [`Request`] for handling http requests
 #'
 #' @importFrom R6 R6Class
-#' @importFrom assertthat is.scalar is.count is.string
+#' @importFrom assertthat is.scalar is.count is.string has_name
 #' @importFrom tools file_path_as_absolute file_ext
 #' @importFrom urltools url_encode
 #' @importFrom brotli brotli_compress
@@ -351,6 +355,16 @@ Response <- R6Class('Response',
             )
             self$body <- content
             self$set_header('Content-Encoding', encoding)
+        },
+        content_length = function() {
+            body <- private$format_body()
+            if (is.scalar(body) && has_name(body, 'file')) {
+                file.size(body)
+            } else if (is.raw(body)) {
+                length(body)
+            } else {
+                nchar(body, type = 'bytes')
+            }
         },
         as_list = function() {
             list(
