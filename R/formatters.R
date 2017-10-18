@@ -40,12 +40,12 @@ format_json <- function(dataframe = 'rows', matrix = 'rowmajor', Date = 'ISO8601
                         POSIXt = 'string', factor = 'string', complex = 'string',
                         raw = 'base64', null = 'list', na = 'null',
                         auto_unbox = FALSE, digits = 4, pretty = FALSE, force = FALSE) {
-    function(x) {
-        toJSON(x,dataframe = dataframe, matrix = matrix, Date = Date,
-               POSIXt = POSIXt, factor = factor, complex = complex,
-               raw = raw, null = null, na = na, auto_unbox = auto_unbox,
-               digits = digits, pretty = pretty, force = force)
-    }
+  function(x) {
+    toJSON(x,dataframe = dataframe, matrix = matrix, Date = Date,
+           POSIXt = POSIXt, factor = factor, complex = complex,
+           raw = raw, null = null, na = na, auto_unbox = auto_unbox,
+           digits = digits, pretty = pretty, force = force)
+  }
 }
 #' @rdname formatters
 #'
@@ -54,9 +54,9 @@ format_json <- function(dataframe = 'rows', matrix = 'rowmajor', Date = 'ISO8601
 #'
 #' @export
 format_plain <- function(sep = '\n') {
-    function(x) {
-        paste(as.character(unlist(x)), collapse = sep)
-    }
+  function(x) {
+    paste(as.character(unlist(x)), collapse = sep)
+  }
 }
 #' @rdname formatters
 #'
@@ -65,20 +65,20 @@ format_plain <- function(sep = '\n') {
 #' @importFrom xml2 as_xml_document
 #' @export
 format_xml <- function(encoding = 'UTF-8', options = 'as_xml') {
-    options <- union('as_xml', options)
-    function(x) {
-        as.character(as_xml_document(list(listify(x))), encoding = encoding, options = options)
-    }
+  options <- union('as_xml', options)
+  function(x) {
+    as.character(as_xml_document(list(listify(x))), encoding = encoding, options = options)
+  }
 }
 #' @rdname formatters
 #'
 #' @importFrom xml2 as_xml_document
 #' @export
 format_html <- function(encoding = 'UTF-8', options = 'as_html') {
-    options <- union('as_html', options)
-    function(x) {
-        as.character(as_xml_document(list(listify(x))), encoding = encoding, options = options)
-    }
+  options <- union('as_html', options)
+  function(x) {
+    as.character(as_xml_document(list(listify(x))), encoding = encoding, options = options)
+  }
 }
 #' @rdname formatters
 #'
@@ -87,9 +87,9 @@ format_html <- function(encoding = 'UTF-8', options = 'as_html') {
 #' @importFrom utils write.table capture.output
 #' @export
 format_table <- function(...) {
-    function(x) {
-        paste(capture.output(write.table(x, file = '', ...)), collapse = '\n')
-    }
+  function(x) {
+    paste(capture.output(write.table(x, file = '', ...)), collapse = '\n')
+  }
 }
 #' A list of default formatter mappings
 #'
@@ -111,20 +111,20 @@ format_table <- function(...) {
 #' }
 #'
 default_formatters <- list(
-    `application/json` = format_json(),
-    `text/plain` = format_plain(),
-    `application/xml` = format_xml(),
-    `text/xml` = format_xml(),
-    `application/html` = format_html(),
-    `text/html` = format_html(),
-    `text/csv` = format_table(sep = ','),
-    `text/tab-separated-values` = format_table(sep = '\t')
+  `application/json` = format_json(),
+  `text/plain` = format_plain(),
+  `application/xml` = format_xml(),
+  `text/xml` = format_xml(),
+  `application/html` = format_html(),
+  `text/html` = format_html(),
+  `text/csv` = format_table(sep = ','),
+  `text/tab-separated-values` = format_table(sep = '\t')
 )
 
 # Format R objects to xml2 compliant lists
 listify <- function(x) {
-    if (is.scalar(x)) return(structure(list(as.character(x))))
-    if (!is.list(x)) x <- as.list(x)
-    if (!has_attr(x, 'names')) names(x) <- vapply(x, function(x) class(x)[1], character(1))
-    lapply(x, listify)
+  if (is.scalar(x)) return(structure(list(as.character(x))))
+  if (!is.list(x)) x <- as.list(x)
+  if (!has_attr(x, 'names')) names(x) <- vapply(x, function(x) class(x)[1], character(1))
+  lapply(x, listify)
 }

@@ -35,15 +35,15 @@ NULL
 #' @export
 parse_json <- function(simplifyVector = TRUE, simplifyDataFrame = simplifyVector,
                        simplifyMatrix = simplifyVector, flatten = FALSE) {
-    function(raw, directives) {
-        fromJSON(
-            rawToChar(raw),
-            simplifyVector = simplifyVector,
-            simplifyDataFrame = simplifyDataFrame,
-            simplifyMatrix = simplifyMatrix,
-            flatten = flatten
-        )
-    }
+  function(raw, directives) {
+    fromJSON(
+      rawToChar(raw),
+      simplifyVector = simplifyVector,
+      simplifyDataFrame = simplifyDataFrame,
+      simplifyMatrix = simplifyMatrix,
+      flatten = flatten
+    )
+  }
 }
 #' @rdname parsers
 #'
@@ -52,9 +52,9 @@ parse_json <- function(simplifyVector = TRUE, simplifyDataFrame = simplifyVector
 #'
 #' @export
 parse_plain <- function(sep = '\n') {
-    function(raw, directives = list()) {
-        strsplit(rawToChar(raw), split = sep)[[1]]
-    }
+  function(raw, directives = list()) {
+    strsplit(rawToChar(raw), split = sep)[[1]]
+  }
 }
 #' @rdname parsers
 #'
@@ -63,36 +63,36 @@ parse_plain <- function(sep = '\n') {
 #' @importFrom xml2 as_list read_xml
 #' @export
 parse_xml <- function(encoding = '', options = 'NOBLANKS', base_url = '') {
-    function(raw, directives = list()) {
-        as_list(read_xml(raw, encoding = encoding, options = options, base_url = base_url))
-    }
+  function(raw, directives = list()) {
+    as_list(read_xml(raw, encoding = encoding, options = options, base_url = base_url))
+  }
 }
 #' @rdname parsers
 #'
 #' @importFrom xml2 as_list read_xml
 #' @export
 parse_html <- function(encoding = '', options = c('RECOVER', 'NOERROR', 'NOBLANKS'), base_url = '') {
-    function(raw, directives = list()) {
-        as_list(read_xml(raw, as_html = TRUE, encoding = encoding, options = options, base_url = base_url))
-    }
+  function(raw, directives = list()) {
+    as_list(read_xml(raw, as_html = TRUE, encoding = encoding, options = options, base_url = base_url))
+  }
 }
 #' @rdname parsers
 #'
 #' @importFrom webutils parse_multipart
 #' @export
 parse_multiform <- function() {
-    function(raw, directives) {
-        parse_multipart(raw, directives$boundary)
-    }
+  function(raw, directives) {
+    parse_multipart(raw, directives$boundary)
+  }
 }
 #' @rdname parsers
 #'
 #' @importFrom webutils parse_query
 #' @export
 parse_queryform <- function() {
-    function(raw, directives) {
-        parse_query(rawToChar(raw))
-    }
+  function(raw, directives) {
+    parse_query(rawToChar(raw))
+  }
 }
 #' @rdname parsers
 #'
@@ -101,9 +101,9 @@ parse_queryform <- function() {
 #' @importFrom utils read.table
 #' @export
 parse_table <- function(...) {
-    function(raw, directives) {
-        read.table(file = , text = rawToChar(raw), ...)
-    }
+  function(raw, directives) {
+    read.table(file = , text = rawToChar(raw), ...)
+  }
 }
 #' A list of default parser mappings
 #'
@@ -125,14 +125,14 @@ parse_table <- function(...) {
 #' }
 #'
 default_parsers <- list(
-    `application/json` = parse_json(),
-    `text/plain` = parse_plain(),
-    `application/xml` = parse_xml(),
-    `text/xml` = parse_xml(),
-    `application/html` = parse_html(),
-    `text/html` = parse_html(),
-    `multipart/form-data` = parse_multiform(),
-    `application/x-www-form-urlencoded` = parse_queryform(),
-    `text/csv` = parse_table(sep = ',', header = TRUE, stringsAsFactors = FALSE),
-    `text/tab-separated-values` = parse_table(sep = '\t', header = TRUE, stringsAsFactors = FALSE)
+  `application/json` = parse_json(),
+  `text/plain` = parse_plain(),
+  `application/xml` = parse_xml(),
+  `text/xml` = parse_xml(),
+  `application/html` = parse_html(),
+  `text/html` = parse_html(),
+  `multipart/form-data` = parse_multiform(),
+  `application/x-www-form-urlencoded` = parse_queryform(),
+  `text/csv` = parse_table(sep = ',', header = TRUE, stringsAsFactors = FALSE),
+  `text/tab-separated-values` = parse_table(sep = '\t', header = TRUE, stringsAsFactors = FALSE)
 )

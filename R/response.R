@@ -181,324 +181,324 @@
 #' res$get_header('Content-Disposition')
 #'
 Response <- R6Class('Response',
-    public = list(
-        # Methods
-        initialize = function(request) {
-            if (!is.null(request$response)) {
-                stop('Response already created for this request. Access it using the `response` field', call. = FALSE)
-            }
-            private$REQUEST = request
-            private$STATUS = 404L
-            private$HEADERS = new.env(parent = emptyenv())
-            private$COOKIES = new.env(parent = emptyenv())
-            private$BODY = ''
-            private$DATA = new.env(parent = emptyenv())
-            self$type <- 'text/plain'
-            request$response <- self
-        },
-        print = function(...) {
-            cat('A HTTP response\n')
-            cat('===============\n')
-            cat('        Status: ', self$status, ' - ', status_phrase(self$status), '\n', sep = '')
-            cat('  Content type: ', self$type, '\n', sep = '')
-            cat('\n')
-            cat('In response to: ', private$REQUEST$url, '\n', sep = '')
-            invisible(self)
-        },
-        set_header = function(name, value) {
-            assert_that(is.string(name))
-            assign(as.character(name), as.character(value), envir = private$HEADERS)
-            invisible(self)
-        },
-        get_header = function(name) {
-            assert_that(is.string(name))
-            private$HEADERS[[name]]
-        },
-        remove_header = function(name) {
-            assert_that(is.string(name))
-            if (!self$has_header(name)) {
-                warning('No header named ', name, call. = FALSE)
-            } else {
-                rm(list = name, envir = private$HEADERS)
-            }
-            invisible(self)
-        },
-        has_header = function(name) {
-            assert_that(is.string(name))
-            !is.null(private$HEADERS[[name]])
-        },
-        append_header = function(name, value) {
-            if (self$has_header(name)) {
-                value <- c(self$get_header(name), as.character(value))
-            }
-            self$set_header(name, value)
-            invisible(self)
-        },
-        set_data = function(key, value) {
-            assert_that(is.string(key))
-            assign(key, value, envir = private$DATA)
-            invisible(self)
-        },
-        get_data = function(key) {
-            assert_that(is.string(key))
-            private$DATA[[key]]
-        },
-        remove_data = function(key) {
-            assert_that(is.string(key))
-            if (!self$has_data(key)) {
-                warning('No data named ', key, call. = FALSE)
-            } else {
-                rm(list = key, envir = private$DATA)
-            }
-            invisible(self)
-        },
-        has_data = function(key) {
-            !is.null(self$get_data(key))
-        },
-        timestamp = function() {
-            time <- Sys.time()
-            self$set_header('Date', to_http_date(time))
-            invisible(self)
-        },
-        attach = function(file, filename = basename(file), type = NULL) {
-            self$file <- file
-            assert_that(is.string(filename))
-            if (!is.null(type)) self$type <- type
-            self$set_header('Content-Disposition', paste0('attachment; filename=', filename))
-            invisible(self)
-        },
-        status_with_text = function(code) {
-            self$status <- code
-            body <- status$Description[match(code, status$Code)]
-            if (is.na(body)) body <- as.character(code)
-            self$body <- body
-            self$type <- 'txt'
-            invisible(self)
-        },
-        set_cookie = function(name, value, encode = TRUE, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
-            assert_that(is.string(name))
-            assert_that(is.scalar(value))
-            ascii <- iconv(c(name, value), to = 'ASCII')
-            if (anyNA(ascii)) {
-                warning('Cookie name and value must only use valid ASCII characters. Cookie "', name, '" not set', call. = FALSE)
-            } else {
-                if (encode) value <- url_encode(value)
-                if (grepl('(^__Secure-)|(^__Host-)', name)) secure <- TRUE
-                cookie <- cookie(value, expires, http_only, max_age, path, secure, same_site)
-                assign(as.character(name), cookie, envir = private$COOKIES)
-            }
-            invisible(self)
-        },
-        remove_cookie = function(name) {
-            assert_that(is.string(name))
-            if (!self$has_cookie(name)) {
-                warning('No cookie named ', name, call. = FALSE)
-            } else {
-                rm(list = name, envir = private$COOKIES)
-            }
-            invisible(self)
-        },
-        has_cookie = function(name) {
-            assert_that(is.string(name))
-            !is.null(private$COOKIES[[name]])
-        },
-        set_links = function(...) {
-            if (is.list(..1)) {
-                links <- modifyList(..1, list(...)[-1])
-            } else {
-                links <- list(...)
-            }
-            assert_that(has_attr(links, 'names'))
-            url <- paste0('<', unlist(links), '>')
-            rel <- paste0('rel="', names(links), '"')
-            links <- paste(paste0(url, '; ', rel), collapse = ', ')
-            self$set_header('Link', links)
-            invisible(self)
-        },
-        format = function(..., autofail = TRUE, compress = TRUE) {
-            if (!private$has_body()) return(TRUE)
+  public = list(
+    # Methods
+    initialize = function(request) {
+      if (!is.null(request$response)) {
+        stop('Response already created for this request. Access it using the `response` field', call. = FALSE)
+      }
+      private$REQUEST = request
+      private$STATUS = 404L
+      private$HEADERS = new.env(parent = emptyenv())
+      private$COOKIES = new.env(parent = emptyenv())
+      private$BODY = ''
+      private$DATA = new.env(parent = emptyenv())
+      self$type <- 'text/plain'
+      request$response <- self
+    },
+    print = function(...) {
+      cat('A HTTP response\n')
+      cat('===============\n')
+      cat('        Status: ', self$status, ' - ', status_phrase(self$status), '\n', sep = '')
+      cat('  Content type: ', self$type, '\n', sep = '')
+      cat('\n')
+      cat('In response to: ', private$REQUEST$url, '\n', sep = '')
+      invisible(self)
+    },
+    set_header = function(name, value) {
+      assert_that(is.string(name))
+      assign(as.character(name), as.character(value), envir = private$HEADERS)
+      invisible(self)
+    },
+    get_header = function(name) {
+      assert_that(is.string(name))
+      private$HEADERS[[name]]
+    },
+    remove_header = function(name) {
+      assert_that(is.string(name))
+      if (!self$has_header(name)) {
+        warning('No header named ', name, call. = FALSE)
+      } else {
+        rm(list = name, envir = private$HEADERS)
+      }
+      invisible(self)
+    },
+    has_header = function(name) {
+      assert_that(is.string(name))
+      !is.null(private$HEADERS[[name]])
+    },
+    append_header = function(name, value) {
+      if (self$has_header(name)) {
+        value <- c(self$get_header(name), as.character(value))
+      }
+      self$set_header(name, value)
+      invisible(self)
+    },
+    set_data = function(key, value) {
+      assert_that(is.string(key))
+      assign(key, value, envir = private$DATA)
+      invisible(self)
+    },
+    get_data = function(key) {
+      assert_that(is.string(key))
+      private$DATA[[key]]
+    },
+    remove_data = function(key) {
+      assert_that(is.string(key))
+      if (!self$has_data(key)) {
+        warning('No data named ', key, call. = FALSE)
+      } else {
+        rm(list = key, envir = private$DATA)
+      }
+      invisible(self)
+    },
+    has_data = function(key) {
+      !is.null(self$get_data(key))
+    },
+    timestamp = function() {
+      time <- Sys.time()
+      self$set_header('Date', to_http_date(time))
+      invisible(self)
+    },
+    attach = function(file, filename = basename(file), type = NULL) {
+      self$file <- file
+      assert_that(is.string(filename))
+      if (!is.null(type)) self$type <- type
+      self$set_header('Content-Disposition', paste0('attachment; filename=', filename))
+      invisible(self)
+    },
+    status_with_text = function(code) {
+      self$status <- code
+      body <- status$Description[match(code, status$Code)]
+      if (is.na(body)) body <- as.character(code)
+      self$body <- body
+      self$type <- 'txt'
+      invisible(self)
+    },
+    set_cookie = function(name, value, encode = TRUE, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
+      assert_that(is.string(name))
+      assert_that(is.scalar(value))
+      ascii <- iconv(c(name, value), to = 'ASCII')
+      if (anyNA(ascii)) {
+        warning('Cookie name and value must only use valid ASCII characters. Cookie "', name, '" not set', call. = FALSE)
+      } else {
+        if (encode) value <- url_encode(value)
+        if (grepl('(^__Secure-)|(^__Host-)', name)) secure <- TRUE
+        cookie <- cookie(value, expires, http_only, max_age, path, secure, same_site)
+        assign(as.character(name), cookie, envir = private$COOKIES)
+      }
+      invisible(self)
+    },
+    remove_cookie = function(name) {
+      assert_that(is.string(name))
+      if (!self$has_cookie(name)) {
+        warning('No cookie named ', name, call. = FALSE)
+      } else {
+        rm(list = name, envir = private$COOKIES)
+      }
+      invisible(self)
+    },
+    has_cookie = function(name) {
+      assert_that(is.string(name))
+      !is.null(private$COOKIES[[name]])
+    },
+    set_links = function(...) {
+      if (is.list(..1)) {
+        links <- modifyList(..1, list(...)[-1])
+      } else {
+        links <- list(...)
+      }
+      assert_that(has_attr(links, 'names'))
+      url <- paste0('<', unlist(links), '>')
+      rel <- paste0('rel="', names(links), '"')
+      links <- paste(paste0(url, '; ', rel), collapse = ', ')
+      self$set_header('Link', links)
+      invisible(self)
+    },
+    format = function(..., autofail = TRUE, compress = TRUE) {
+      if (!private$has_body()) return(TRUE)
 
-            formatters <- list(...)
-            if (is.list(..1)) {
-                first_formatters <- names(formatters)[-1]
-                formatters <- modifyList(..1, list(...)[-1])
-                first_formatters <- names(formatters) %in% first_formatters
-                formatters <- c(formatters[first_formatters], formatters[!first_formatters])
-            }
-            assert_that(has_attr(formatters, 'names'))
+      formatters <- list(...)
+      if (is.list(..1)) {
+        first_formatters <- names(formatters)[-1]
+        formatters <- modifyList(..1, list(...)[-1])
+        first_formatters <- names(formatters) %in% first_formatters
+        formatters <- c(formatters[first_formatters], formatters[!first_formatters])
+      }
+      assert_that(has_attr(formatters, 'names'))
 
-            format <- self$request$accepts(names(formatters))
-            if (is.null(format)) {
-                if (autofail) self$status_with_text(406L)
-                return(FALSE)
-            }
-            content <- try(formatters[[format]](self$body))
-            if (is.error(content)) {
-                if (autofail) self$status_with_text(500L)
-                return(FALSE)
-            }
-            self$body <- content
-            self$type <- format
-            if (compress) self$compress()
-            return(TRUE)
-        },
-        compress = function(priority = c('gzip', 'deflate', 'br', 'identity')) {
-            encoding <- self$request$accepts_encoding(priority)
-            if (is.null(encoding)) return(FALSE)
-            if (!is.string(self$body)) return(FALSE)
-            content <- switch(
-                encoding,
-                identity = self$body,
-                gzip = gzip(charToRaw(self$body)),
-                deflate = memCompress(charToRaw(self$body)),
-                br = brotli_compress(charToRaw(self$body))
-            )
-            self$body <- content
-            self$set_header('Content-Encoding', encoding)
-        },
-        content_length = function() {
-            body <- private$format_body()
-            if (is.scalar(body) && has_name(body, 'file')) {
-                file.size(body)
-            } else if (is.raw(body)) {
-                length(body)
-            } else {
-                nchar(body, type = 'bytes')
-            }
-        },
-        as_list = function() {
-            list(
-                status = private$STATUS,
-                headers = private$format_headers(),
-                body = private$format_body()
-            )
-        },
-        as_message = function() {
-            response <- self$as_list()
-            cat(toupper(self$request$protocol), '/1.1 ', response$status, ' ', status_phrase(response$status), '\n', sep = '')
-            headers <- split_headers(response$headers)
-            cat_headers(headers$response)
-            cat('Content-Length: ', self$content_length(), '\n', sep = '')
-            cat_headers(headers$entity)
+      format <- self$request$accepts(names(formatters))
+      if (is.null(format)) {
+        if (autofail) self$status_with_text(406L)
+        return(FALSE)
+      }
+      content <- try(formatters[[format]](self$body))
+      if (is.error(content)) {
+        if (autofail) self$status_with_text(500L)
+        return(FALSE)
+      }
+      self$body <- content
+      self$type <- format
+      if (compress) self$compress()
+      return(TRUE)
+    },
+    compress = function(priority = c('gzip', 'deflate', 'br', 'identity')) {
+      encoding <- self$request$accepts_encoding(priority)
+      if (is.null(encoding)) return(FALSE)
+      if (!is.string(self$body)) return(FALSE)
+      content <- switch(
+        encoding,
+        identity = self$body,
+        gzip = gzip(charToRaw(self$body)),
+        deflate = memCompress(charToRaw(self$body)),
+        br = brotli_compress(charToRaw(self$body))
+      )
+      self$body <- content
+      self$set_header('Content-Encoding', encoding)
+    },
+    content_length = function() {
+      body <- private$format_body()
+      if (is.scalar(body) && has_name(body, 'file')) {
+        file.size(body)
+      } else if (is.raw(body)) {
+        length(body)
+      } else {
+        nchar(body, type = 'bytes')
+      }
+    },
+    as_list = function() {
+      list(
+        status = private$STATUS,
+        headers = private$format_headers(),
+        body = private$format_body()
+      )
+    },
+    as_message = function() {
+      response <- self$as_list()
+      cat(toupper(self$request$protocol), '/1.1 ', response$status, ' ', status_phrase(response$status), '\n', sep = '')
+      headers <- split_headers(response$headers)
+      cat_headers(headers$response)
+      cat('Content-Length: ', self$content_length(), '\n', sep = '')
+      cat_headers(headers$entity)
 
-            if (is.raw(response$body)) {
-                body <- rawToChar(response$body, multiple = TRUE)
-                body <- paste0(paste(head(body, 77), collapse = ''), if (length(body) > 77) '...' else '')
-            } else if (has_name(response$body, 'file')) {
-                f <- file(response$body, 'rb')
-                body <- rawToChar(readBin(f, raw(), n = 180, endian = 'little'), multiple = TRUE)
-                body <- paste0(paste(head(body, 77), collapse = ''), if (length(body) > 77) '...' else '')
-            } else {
-                body <- response$body
-                body <- paste0(substr(body, 1, 77), if (nchar(body) > 77) '...' else '')
-            }
-            cat('\n')
-            if (body == '') {
-                cat('<No Body>\n')
-            } else {
-                body <- gsub('\n', '\\\\n', body)
-                body <- gsub('\t', '\\\\t', body)
-                cat(body, '\n', sep = '')
-            }
+      if (is.raw(response$body)) {
+        body <- rawToChar(response$body, multiple = TRUE)
+        body <- paste0(paste(head(body, 77), collapse = ''), if (length(body) > 77) '...' else '')
+      } else if (has_name(response$body, 'file')) {
+        f <- file(response$body, 'rb')
+        body <- rawToChar(readBin(f, raw(), n = 180, endian = 'little'), multiple = TRUE)
+        body <- paste0(paste(head(body, 77), collapse = ''), if (length(body) > 77) '...' else '')
+      } else {
+        body <- response$body
+        body <- paste0(substr(body, 1, 77), if (nchar(body) > 77) '...' else '')
+      }
+      cat('\n')
+      if (body == '') {
+        cat('<No Body>\n')
+      } else {
+        body <- gsub('\n', '\\\\n', body)
+        body <- gsub('\t', '\\\\t', body)
+        cat(body, '\n', sep = '')
+      }
+    }
+  ),
+  active = list(
+    status = function(code) {
+      if (missing(code)) return(private$STATUS)
+      if (is.count(code)) {
+        if (code < 100L || code > 599L) {
+          stop('Response code out of range', call. = FALSE)
         }
-    ),
-    active = list(
-        status = function(code) {
-            if (missing(code)) return(private$STATUS)
-            if (is.count(code)) {
-                if (code < 100L || code > 599L) {
-                    stop('Response code out of range', call. = FALSE)
-                }
-            }
-            if (is.string(code)) {
-                ind <- match(tolower(code), tolower(status$Description))
-                if (is.na(ind)) {
-                    stop('Unknown status', call. = FALSE)
-                }
-                code <- status$Code[ind]
-            }
-            private$STATUS <- code
-        },
-        body = function(content) {
-            if (missing(content)) return(private$BODY)
-            private$BODY <- content
-        },
-        file = function(path) {
-            if (missing(path)) {
-                if (length(private$BODY) != 1 || names(private$BODY) != 'file') {
-                    return(NULL)
-                } else {
-                    return(private$BODY[['file']])
-                }
-            }
-            assert_that(is.string(path))
-            file <- file_path_as_absolute(path)
-            assert_that(file.exists(file))
-            self$type <- file_ext(file)
-            private$BODY <- c(file = file)
-            self$set_header('Last-Modified', to_http_date(file.mtime(file)))
-        },
-        type = function(type) {
-            if (missing(type)) return(self$get_header('Content-Type'))
-            if (!grepl('/', type)) {
-                content_index <- mimes_ext$index[match(tolower(type), mimes_ext$ext)]
-                type <- if (!is.na(content_index)) {
-                    mimes$name[content_index]
-                } else if (type == '') {
-                    'text/plain'
-                } else {
-                    'application/octet-stream'
-                }
-            }
-            self$set_header('Content-Type', type)
-        },
-        request = function() {
-            private$REQUEST
+      }
+      if (is.string(code)) {
+        ind <- match(tolower(code), tolower(status$Description))
+        if (is.na(ind)) {
+          stop('Unknown status', call. = FALSE)
         }
-    ),
-    private = list(
-        # Data
-        REQUEST = NULL,
-        STATUS = NULL,
-        HEADERS = NULL,
-        COOKIES = NULL,
-        BODY = NULL,
-        DATA = NULL,
+        code <- status$Code[ind]
+      }
+      private$STATUS <- code
+    },
+    body = function(content) {
+      if (missing(content)) return(private$BODY)
+      private$BODY <- content
+    },
+    file = function(path) {
+      if (missing(path)) {
+        if (length(private$BODY) != 1 || names(private$BODY) != 'file') {
+          return(NULL)
+        } else {
+          return(private$BODY[['file']])
+        }
+      }
+      assert_that(is.string(path))
+      file <- file_path_as_absolute(path)
+      assert_that(file.exists(file))
+      self$type <- file_ext(file)
+      private$BODY <- c(file = file)
+      self$set_header('Last-Modified', to_http_date(file.mtime(file)))
+    },
+    type = function(type) {
+      if (missing(type)) return(self$get_header('Content-Type'))
+      if (!grepl('/', type)) {
+        content_index <- mimes_ext$index[match(tolower(type), mimes_ext$ext)]
+        type <- if (!is.na(content_index)) {
+          mimes$name[content_index]
+        } else if (type == '') {
+          'text/plain'
+        } else {
+          'application/octet-stream'
+        }
+      }
+      self$set_header('Content-Type', type)
+    },
+    request = function() {
+      private$REQUEST
+    }
+  ),
+  private = list(
+    # Data
+    REQUEST = NULL,
+    STATUS = NULL,
+    HEADERS = NULL,
+    COOKIES = NULL,
+    BODY = NULL,
+    DATA = NULL,
 
-        format_headers = function() {
-            headers <- as.list(private$HEADERS)
-            if (is.null(headers[['Content-Type']])) {
-                headers[['Content-Type']] <- if (is.raw(private$BODY)) {
-                    'application/octet-stream'
-                } else {
-                    'text/plain'
-                }
-            }
-            headers <- structure(
-                as.list(unlist(headers)),
-                names = rep(names(headers), lengths(headers))
-            )
-            cookies <- as.list(private$COOKIES)
-            cookies <- paste0(names(cookies), unlist(cookies))
-            c(headers, structure(
-                as.list(cookies),
-                names = rep('Set-Cookie', length(cookies))
-            ))
-        },
-        format_body = function() {
-            if (is.raw(private$BODY)) {
-                private$BODY
-            } else if (is.scalar(private$BODY) &&
-                       'file' %in% names(private$BODY)) {
-                private$BODY
-            } else {
-                paste(as.character(private$BODY), collapse = '\n')
-            }
-        },
-        has_body = function() {
-            !is.null(private$BODY) && length(private$BODY) != 0 && !identical(private$BODY, '')
+    format_headers = function() {
+      headers <- as.list(private$HEADERS)
+      if (is.null(headers[['Content-Type']])) {
+        headers[['Content-Type']] <- if (is.raw(private$BODY)) {
+          'application/octet-stream'
+        } else {
+          'text/plain'
         }
-    )
+      }
+      headers <- structure(
+        as.list(unlist(headers)),
+        names = rep(names(headers), lengths(headers))
+      )
+      cookies <- as.list(private$COOKIES)
+      cookies <- paste0(names(cookies), unlist(cookies))
+      c(headers, structure(
+        as.list(cookies),
+        names = rep('Set-Cookie', length(cookies))
+      ))
+    },
+    format_body = function() {
+      if (is.raw(private$BODY)) {
+        private$BODY
+      } else if (is.scalar(private$BODY) &&
+                 'file' %in% names(private$BODY)) {
+        private$BODY
+      } else {
+        paste(as.character(private$BODY), collapse = '\n')
+      }
+    },
+    has_body = function() {
+      !is.null(private$BODY) && length(private$BODY) != 0 && !identical(private$BODY, '')
+    }
+  )
 )
 #' @rdname Response
 #'
@@ -511,7 +511,7 @@ Response <- R6Class('Response',
 #'
 #' @export
 as.list.Response <- function(x, ...) {
-    x$as_list()
+  x$as_list()
 }
 #' @rdname Response
 #'
@@ -521,44 +521,44 @@ as.list.Response <- function(x, ...) {
 is.Response <- function(x) inherits(x, 'Response')
 
 cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
-    opts <- paste0('=', value)
-    if (!is.null(expires)) {
-        assert_that(is.scalar(expires))
-        opts <- c(opts, paste0('Expires=', to_http_date(expires)))
-    }
-    if (!is.null(http_only)) {
-        assert_that(is.flag(http_only))
-        if (http_only) opts <- c(opts, 'HttpOnly')
-    }
-    if (!is.null(max_age)) {
-        assert_that(is.count(max_age))
-        opts <- c(opts, paste0('Max-Age=', max_age))
-    }
-    if (!is.null(path)) {
-        assert_that(is.string(path))
-        opts <- c(opts, paste0('Path=', path))
-    }
-    if (!is.null(secure)) {
-        assert_that(is.flag(secure))
-        if (secure) opts <- c(opts, 'Secure')
-    }
-    if (!is.null(same_site)) {
-        assert_that(is.string(same_site))
-        stopifnot(same_site %in% c('Lax', 'Strict'))
-        opts <- c(opts, paste0('SameSite=', same_site))
-    }
-    paste(opts, collapse = '; ')
+  opts <- paste0('=', value)
+  if (!is.null(expires)) {
+    assert_that(is.scalar(expires))
+    opts <- c(opts, paste0('Expires=', to_http_date(expires)))
+  }
+  if (!is.null(http_only)) {
+    assert_that(is.flag(http_only))
+    if (http_only) opts <- c(opts, 'HttpOnly')
+  }
+  if (!is.null(max_age)) {
+    assert_that(is.count(max_age))
+    opts <- c(opts, paste0('Max-Age=', max_age))
+  }
+  if (!is.null(path)) {
+    assert_that(is.string(path))
+    opts <- c(opts, paste0('Path=', path))
+  }
+  if (!is.null(secure)) {
+    assert_that(is.flag(secure))
+    if (secure) opts <- c(opts, 'Secure')
+  }
+  if (!is.null(same_site)) {
+    assert_that(is.string(same_site))
+    stopifnot(same_site %in% c('Lax', 'Strict'))
+    opts <- c(opts, paste0('SameSite=', same_site))
+  }
+  paste(opts, collapse = '; ')
 }
 gzip <- function(x) {
-    f <- tempfile()
-    con <- gzcon(file(f, open = 'wb'))
-    writeBin(x, con)
-    close(con)
-    content <- readBin(f, raw(), file.info(f)$size)
-    unlink(f)
-    content
+  f <- tempfile()
+  con <- gzcon(file(f, open = 'wb'))
+  writeBin(x, con)
+  close(con)
+  content <- readBin(f, raw(), file.info(f)$size)
+  unlink(f)
+  content
 }
 
 status_phrase <- function(code) {
-    status$Description[match(code, status$Code)]
+  status$Description[match(code, status$Code)]
 }
