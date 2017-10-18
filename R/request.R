@@ -127,6 +127,8 @@
 #'  field to the resulting raw vector. It is then up to the server to decide how
 #'  to handle the payload. It returns `TRUE` if successful and `FALSE`
 #'  otherwise.}
+#'  \item{`as_message()`}{Prints a HTTP representation of the request to the
+#'  output stream.}
 #' }
 #'
 #' @seealso [`Response`] for handling http responses
@@ -305,6 +307,22 @@ Request <- R6Class('Request',
             }
             private$BODY <- content
             TRUE
+        },
+        as_message = function() {
+            cat(toupper(self$method), ' ', self$root, self$path, self$querystring, ' ', toupper(self$protocol), '/1.1\n', sep = '')
+            cat('Host: ', self$host, '\n', sep = '')
+            headers <- split_headers(self$headers)
+            cat_headers(headers$request)
+            cat_headers(headers$entity)
+            body <- rawToChar(private$get_body())
+            cat('\n')
+            if (body == '') {
+                cat('<No Body>\n')
+            } else {
+                body <- gsub('\n', '\\\\n', body)
+                body <- gsub('\t', '\\\\t', body)
+                cat(substr(body, 1, 77), if (nchar(body) > 77) '...\n' else '\n', sep = '')
+            }
         }
     ),
     active = list(

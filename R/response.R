@@ -199,7 +199,7 @@ Response <- R6Class('Response',
         print = function(...) {
             cat('A HTTP response\n')
             cat('===============\n')
-            cat('        Status: ', self$status, ' - ', status$Description[match(self$status, status$Code)], '\n', sep = '')
+            cat('        Status: ', self$status, ' - ', status_phrase(self$status), '\n', sep = '')
             cat('  Content type: ', self$type, '\n', sep = '')
             cat('\n')
             cat('In response to: ', private$REQUEST$url, '\n', sep = '')
@@ -372,6 +372,31 @@ Response <- R6Class('Response',
                 headers = private$format_headers(),
                 body = private$format_body()
             )
+        },
+        as_message = function() {
+            response <- self$as_list()
+            cat(toupper(self$request$protocol), '/1.1 ', response$status, ' ', status_phrase(response$status), '\n', sep = '')
+            headers <- split_headers(response$headers)
+            cat_headers(headers$response)
+            cat('Content-Length: ', self$content_length(), '\n', sep = '')
+            cat_headers(headers$entity)
+
+            if (is.raw(response$body)) {
+                body <- rawToChar(response$body)
+            } else if (has_name(response$body, 'file')) {
+                f <- file(response$body, 'rb')
+                body <- rawToChar(readBin(f, raw(), n = 180, endian = 'little'))
+            } else {
+                body <- response$body
+            }
+            cat('\n')
+            if (body == '') {
+                cat('<No Body>\n')
+            } else {
+                body <- gsub('\n', '\\\\n', body)
+                body <- gsub('\t', '\\\\t', body)
+                cat(substr(body, 1, 77), if (nchar(body) > 77) '...\n' else '\n', sep = '')
+            }
         }
     ),
     active = list(
@@ -529,4 +554,8 @@ gzip <- function(x) {
     content <- readBin(f, raw(), file.info(f)$size)
     unlink(f)
     content
+}
+
+status_phrase <- function(code) {
+    status$Description[match(code, status$Code)]
 }

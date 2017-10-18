@@ -2,6 +2,7 @@
 
 * Added `querystring` field to `Request`.
 * Added `calculate_length()` method to `Response`.
+* Added `as_message()` method to `Request` and `Response`.
 
 # reqres 0.2.0
 
