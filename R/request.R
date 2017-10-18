@@ -310,7 +310,9 @@ Request <- R6Class('Request',
         },
         as_message = function() {
             cat(toupper(self$method), ' ', self$root, self$path, self$querystring, ' ', toupper(self$protocol), '/1.1\n', sep = '')
-            cat('Host: ', self$host, '\n', sep = '')
+            if (is.null(self$get_header('Host'))) {
+                cat('Host: ', self$host, '\n', sep = '')
+            }
             headers <- split_headers(self$headers)
             cat_headers(headers$request)
             cat_headers(headers$entity)

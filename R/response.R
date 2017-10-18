@@ -382,12 +382,15 @@ Response <- R6Class('Response',
             cat_headers(headers$entity)
 
             if (is.raw(response$body)) {
-                body <- rawToChar(response$body)
+                body <- rawToChar(response$body, multiple = TRUE)
+                body <- paste0(paste(head(body, 77), collapse = ''), if (length(body) > 77) '...' else '')
             } else if (has_name(response$body, 'file')) {
                 f <- file(response$body, 'rb')
-                body <- rawToChar(readBin(f, raw(), n = 180, endian = 'little'))
+                body <- rawToChar(readBin(f, raw(), n = 180, endian = 'little'), multiple = TRUE)
+                body <- paste0(paste(head(body, 77), collapse = ''), if (length(body) > 77) '...' else '')
             } else {
                 body <- response$body
+                body <- paste0(substr(body, 1, 77), if (nchar(body) > 77) '...' else '')
             }
             cat('\n')
             if (body == '') {
@@ -395,7 +398,7 @@ Response <- R6Class('Response',
             } else {
                 body <- gsub('\n', '\\\\n', body)
                 body <- gsub('\t', '\\\\t', body)
-                cat(substr(body, 1, 77), if (nchar(body) > 77) '...\n' else '\n', sep = '')
+                cat(body, '\n', sep = '')
             }
         }
     ),
