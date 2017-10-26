@@ -150,6 +150,8 @@ successful and \code{FALSE} if not}
 field to the resulting raw vector. It is then up to the server to decide how
 to handle the payload. It returns \code{TRUE} if successful and \code{FALSE}
 otherwise.}
+\item{\code{as_message()}}{Prints a HTTP representation of the request to the
+output stream.}
 }
 }
 
