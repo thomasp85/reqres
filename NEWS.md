@@ -1,3 +1,7 @@
+# reqres 0.2.1.9999
+
+* Fixed bug in querystring parsing where the first key would retain the `?`
+
 # reqres 0.2.1
 
 * Added `querystring` field to `Request`.

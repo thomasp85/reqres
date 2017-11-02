@@ -183,7 +183,7 @@ Request <- R6Class('Request',
       private$PATH <- rook$PATH_INFO
       private$QUERYSTRING <- rook$QUERY_STRING
       if (private$QUERYSTRING != '') {
-        private$QUERYSTRING <- paste0('?', sub('^?', '', private$QUERYSTRING))
+        private$QUERYSTRING <- paste0('?', sub('^\\?', '', private$QUERYSTRING))
       }
       private$IP <- rook$REMOTE_ADDR
       private$QUERY <- private$parse_query(private$QUERYSTRING)

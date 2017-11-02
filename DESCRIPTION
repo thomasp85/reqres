@@ -1,7 +1,7 @@
 Package: reqres
 Type: Package
 Title: Powerful Classes for HTTP Requests and Responses
-Version: 0.2.1
+Version: 0.2.1.9999
 Date: 2017-10-25
 Authors@R:
     person(given = "Thomas Lin",
