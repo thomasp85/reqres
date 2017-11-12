@@ -47,9 +47,24 @@
 #'  \code{res <- request$respond()}
 #' }
 #'
+#' By default, the Response has a status of 404 ("Not Found"), a content type of text/plain,
+#' and an empty body. These defaults can be overridden.
+#'
+#' \tabular{l}{
+#'  \code{res <- Response$new(request, status=200L, type="text/html",
+#'                            body="<b>All cool.</b>")}
+#' }
+#'
+#' \tabular{l}{
+#'  \code{res <- request$respond(status=503L, body="Down for maintenance")}
+#' }
+#'
 #' \strong{Arguments}
 #' \tabular{lll}{
 #'  \code{request} \tab  \tab The `Request` object that the `Response` is responding to\cr
+#'  \code{status} \tab  \tab The status code of the `Response` header, defaults to 404\cr
+#'  \code{type} \tab  \tab The Content-Type of the `Request` header, defaults to text/plain\cr
+#'  \code{body} \tab  \tab The body of the `Response`, defaults to ''\cr
 #' }
 #'
 #' @section Fields:
@@ -183,22 +198,22 @@
 Response <- R6Class('Response',
   public = list(
     # Methods
-    initialize = function(request) {
+    initialize = function(request, status=404L, type='text/plain', body='') {
       if (!is.null(request$response)) {
         stop('Response already created for this request. Access it using the `response` field', call. = FALSE)
       }
       private$REQUEST = request
-      private$STATUS = 404L
+      private$STATUS = status
       private$HEADERS = new.env(parent = emptyenv())
       private$COOKIES = new.env(parent = emptyenv())
-      private$BODY = ''
+      private$BODY = body
       private$DATA = new.env(parent = emptyenv())
-      self$type <- 'text/plain'
+      self$type <- type
       request$response <- self
     },
     print = function(...) {
-      cat('A HTTP response\n')
-      cat('===============\n')
+      cat('An HTTP response\n')
+      cat('================\n')
       cat('        Status: ', self$status, ' - ', status_phrase(self$status), '\n', sep = '')
       cat('  Content type: ', self$type, '\n', sep = '')
       cat('\n')
@@ -500,6 +515,7 @@ Response <- R6Class('Response',
     }
   )
 )
+
 #' @rdname Response
 #'
 #' @usage \method{as.list}{Response}(x, ...)
@@ -513,12 +529,101 @@ Response <- R6Class('Response',
 as.list.Response <- function(x, ...) {
   x$as_list()
 }
+
 #' @rdname Response
 #'
 #' @usage is.Response(x)
 #'
 #' @export
 is.Response <- function(x) inherits(x, 'Response')
+
+#'
+#'  Create a Response from another object
+#'
+#'  Create a \link{Response} from another object,
+#'  such as a connection, condition, or Request.
+#'
+#'  Applications can define S3 methods for \code{as.Reponse}
+#'  to map their objects into HTTP responses.
+#'  This package provides the base method
+#'  and a few useful methods.
+#'
+#'  \code{as.Reponse} can create a Response object
+#'  from several types of \code{x}.
+#'
+#'  \itemize{
+#'    \item condition - Creates an error response
+#'    \item connection - Reads the response body from connection
+#'    \item Request - Same as \code{Response$new(x, ...)}
+#'    \item Response - Returns \code{x}
+#'  }
+#'
+#' If \code{x} is a \link{condition} object,
+#' the response body is taken from the condition's message.
+#' The default status depends upon the kind of condition.
+#'
+#' \itemize{
+#'   \item 400 (Bad Request) for `message` conditions
+#'   \item 500 (Internal Server Error) for `error` conditions.
+#' }
+#'
+#' This lets the application signal user errors by calling
+#' the \link{message} function
+#' or signal server errors by calling the \link{stop} function.
+#' It can trap the condition (e.g., using \link{tryCatch});
+#' and coerce it into a Response.
+#'
+#' If \code{x} is a \link{connection},
+#' the body of the message is read from the connection.
+#' The status defaults to 200 (OK),
+#' and the content type defaults to \code{text/plain}.
+#'
+#' @param x A condition, connection, Request,
+#'   or Response
+#' @param req A \link{Request} object
+#' @return A new Response object
+#'
+#' @export
+#'
+as.Response = function(x, ...) UseMethod("as.Response", x)
+
+#' @rdname as.Response
+#' @export
+as.Response.Response = function(x, ...) x
+
+#' @rdname as.Response
+#' @export
+as.Response.Request = function(x, ...) {
+  res <- x$response
+  if (is.null(res)) {
+    Response$new(x, ...)
+  } else {
+    res
+  }
+}
+
+#' @rdname as.Response
+#' @export
+as.Response.condition = function(x, req, status=NULL, ...) {
+  if (is.null(status)) {
+    status = ifelse(is(x, "message"), 400L, 500L)
+  }
+  Response$new(req, status = status, type = 'text/plain',
+               body = paste("Error:", conditionMessage(x)) )
+}
+
+#' @rdname as.Response
+#' @param collapse A character string specifying how to collapse the lines read
+#'   from connection \code{x}.
+#' @param ... Additional arguments for the Response constructor (e.g., `status`)
+#' @export
+as.Response.connection <- function(x, req, status=200L,
+                                   type = 'text/plain',
+                                   collapse = '\n', ...) {
+  contents <- paste(readLines(con=x, warn = FALSE), collapse = collapse)
+  Response$new(req, status = status, type = type,
+               body = contents, ...)
+}
 
 cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
   opts <- paste0('=', value)
@@ -549,6 +654,7 @@ cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path
   }
   paste(opts, collapse = '; ')
 }
+
 gzip <- function(x) {
   f <- tempfile()
   con <- gzcon(file(f, open = 'wb'))

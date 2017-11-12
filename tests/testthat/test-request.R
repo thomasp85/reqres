@@ -38,7 +38,7 @@ test_that('request gets created correctly', {
   expect_false(req$secure)
   expect_identical(req$origin, rook)
   expect_null(req$response)
-  expect_output(print(req), 'A HTTP request')
+  expect_output(print(req), 'An HTTP request')
 })
 
 test_that('trust works', {

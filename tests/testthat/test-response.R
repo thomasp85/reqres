@@ -29,6 +29,15 @@ test_that('response are created correctly', {
   expect_identical(res$type, 'text/plain')
 })
 
+test_that('caller can override default response constuctor', {
+  req <- Request$new(rook)
+  res <- Response$new(req, status=200L, type='text/html', body='hello, world')
+
+  expect_equal(res$status, 200L)
+  expect_identical(res$body, 'hello, world')
+  expect_identical(res$type, 'text/html')
+})
+
 test_that('headers can be get, set, appended, and removed', {
   req <- Request$new(rook)
   res <- Response$new(req)
@@ -124,7 +133,7 @@ test_that('print functino works', {
   req <- Request$new(rook)
   res <- Response$new(req)
 
-  expect_output(res$print(), 'A HTTP response')
+  expect_output(res$print(), 'An HTTP response')
 })
 
 test_that('body formatting works', {
