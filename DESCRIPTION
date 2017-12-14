@@ -27,7 +27,7 @@ Imports: R6,
     xml2,
     webutils,
     utils
-RoxygenNote: 6.0.1
+RoxygenNote: 6.0.1.9000
 Roxygen: list(markdown = TRUE)
 Suggests: fiery,
     testthat,
