@@ -153,7 +153,7 @@
 #' @export
 #'
 #' @examples
-#' fake_rook <- test <- fiery::fake_request(
+#' fake_rook <- fiery::fake_request(
 #'   'http://example.com/test?id=34632&question=who+is+hadley',
 #'   content = 'This is elaborate ruse',
 #'   headers = list(
@@ -179,6 +179,10 @@
 #' res$type
 #' res$body
 #' res$get_header('Content-Disposition')
+#'
+#' # Cleaning up connections
+#' rm(fake_rook, req, res)
+#' gc()
 #'
 Response <- R6Class('Response',
   public = list(

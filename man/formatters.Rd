@@ -9,10 +9,10 @@
 \alias{format_table}
 \title{Pre-supplied formatting generators}
 \usage{
-format_json(dataframe = "rows", matrix = "rowmajor", Date = "ISO8601",
-  POSIXt = "string", factor = "string", complex = "string",
-  raw = "base64", null = "list", na = "null", auto_unbox = FALSE,
-  digits = 4, pretty = FALSE, force = FALSE)
+format_json(dataframe = "rows", matrix = "rowmajor",
+  Date = "ISO8601", POSIXt = "string", factor = "string",
+  complex = "string", raw = "base64", null = "list", na = "null",
+  auto_unbox = FALSE, digits = 4, pretty = FALSE, force = FALSE)
 
 format_plain(sep = "\\n")
 
@@ -79,7 +79,7 @@ This set of functions can be used to construct formatting functions adhering
 to the Response$format() requirements.
 }
 \examples{
-fake_rook <- test <- fiery::fake_request(
+fake_rook <- fiery::fake_request(
   'http://example.com/test',
   content = '',
   headers = list(
@@ -93,6 +93,10 @@ res <- req$respond()
 res$body <- mtcars
 res$format(json = format_json(), csv = format_table(sep=','))
 res$body
+
+# Cleaning up connections
+rm(fake_rook, req, res)
+gc()
 
 }
 \seealso{

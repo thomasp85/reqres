@@ -156,7 +156,7 @@ output stream.}
 }
 
 \examples{
-fake_rook <- test <- fiery::fake_request(
+fake_rook <- fiery::fake_request(
   'http://example.com/test?id=34632&question=who+is+hadley',
   content = 'This is an elaborate ruse',
   headers = list(
@@ -178,6 +178,10 @@ req$is('txt')
 
 # Perform content negotiation for the response
 req$accepts(c('html', 'json', 'txt'))
+
+# Cleaning up connections
+rm(fake_rook, req)
+gc()
 
 }
 \seealso{

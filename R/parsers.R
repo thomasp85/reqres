@@ -13,7 +13,7 @@
 #' to their respective parsers
 #'
 #' @examples
-#' fake_rook <- test <- fiery::fake_request(
+#' fake_rook <- fiery::fake_request(
 #'   'http://example.com/test',
 #'   content = '[1, 2, 3, 4]',
 #'   headers = list(
@@ -24,6 +24,10 @@
 #' req <- Request$new(fake_rook)
 #' req$parse(json = parse_json())
 #' req$body
+#'
+#' # Cleaning up connections
+#' rm(fake_rook, req)
+#' gc()
 #'
 NULL
 

@@ -124,7 +124,7 @@ internal data store.}
 \code{key}}
 \item{\code{attach(file, filename=basename(file), type=NULL)}}{Sets the body to
 the file given by \code{file} and marks the response as a download by setting the
-\code{Content-Disposition} to \code{attachment; filename=&lt;filename&gt;}. Use the \code{type}
+\code{Content-Disposition} to \code{attachment; filename=<filename>}. Use the \code{type}
 argument to overwrite the automatic type inference from the file extension.}
 \item{\code{status_with_text(code)}}{Sets the status to \code{code} and sets the body
 to the associated status code description (e.g. \code{Bad Gateway} for \code{502L})}
@@ -167,7 +167,7 @@ missing and convert a non-raw body to a single character string.}
 }
 
 \examples{
-fake_rook <- test <- fiery::fake_request(
+fake_rook <- fiery::fake_request(
   'http://example.com/test?id=34632&question=who+is+hadley',
   content = 'This is elaborate ruse',
   headers = list(
@@ -193,6 +193,10 @@ res$attach(system.file('DESCRIPTION', package = 'reqres'))
 res$type
 res$body
 res$get_header('Content-Disposition')
+
+# Cleaning up connections
+rm(fake_rook, req, res)
+gc()
 
 }
 \seealso{

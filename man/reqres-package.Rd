@@ -8,11 +8,11 @@
 \description{
 \if{html}{\figure{logo.png}{options: align='right'}}
 
-In order to facilitate parsing of http requests and creating
-appropriate responses this package provides two classes to handle a lot of
-the housekeeping involved in working with http exchanges. The infrastructure
-builds upon the 'rook' specification and is thus well suited to be combined
-with 'httpuv' based web servers.
+In order to facilitate parsing of http requests and creating 
+    appropriate responses this package provides two classes to handle a lot of
+    the housekeeping involved in working with http exchanges. The infrastructure
+    builds upon the 'rook' specification and is thus well suited to be combined
+    with 'httpuv' based web servers.
 }
 \seealso{
 Useful links:

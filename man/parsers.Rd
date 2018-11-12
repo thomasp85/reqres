@@ -18,8 +18,8 @@ parse_plain(sep = "\\n")
 
 parse_xml(encoding = "", options = "NOBLANKS", base_url = "")
 
-parse_html(encoding = "", options = c("RECOVER", "NOERROR", "NOBLANKS"),
-  base_url = "")
+parse_html(encoding = "", options = c("RECOVER", "NOERROR",
+  "NOBLANKS"), base_url = "")
 
 parse_multiform()
 
@@ -85,7 +85,7 @@ This set of functions can be used to construct parsing functions adhering to
 the Request$parse() requirements.
 }
 \examples{
-fake_rook <- test <- fiery::fake_request(
+fake_rook <- fiery::fake_request(
   'http://example.com/test',
   content = '[1, 2, 3, 4]',
   headers = list(
@@ -96,6 +96,10 @@ fake_rook <- test <- fiery::fake_request(
 req <- Request$new(fake_rook)
 req$parse(json = parse_json())
 req$body
+
+# Cleaning up connections
+rm(fake_rook, req)
+gc()
 
 }
 \seealso{

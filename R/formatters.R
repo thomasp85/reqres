@@ -13,7 +13,7 @@
 #' to their respective formatters
 #'
 #' @examples
-#' fake_rook <- test <- fiery::fake_request(
+#' fake_rook <- fiery::fake_request(
 #'   'http://example.com/test',
 #'   content = '',
 #'   headers = list(
@@ -27,6 +27,10 @@
 #' res$body <- mtcars
 #' res$format(json = format_json(), csv = format_table(sep=','))
 #' res$body
+#'
+#' # Cleaning up connections
+#' rm(fake_rook, req, res)
+#' gc()
 #'
 NULL
 
