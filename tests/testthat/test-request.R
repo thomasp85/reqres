@@ -30,7 +30,7 @@ test_that('request gets created correctly', {
   expect_equal(req$ip, '230.45.12.45')
   expect_equal(req$ips, character(0))
   expect_equal(req$protocol, 'http')
-  expect_null(req$root)
+  expect_equal(req$root, '')
   expect_equal(req$path, '/summary')
   expect_equal(req$url, 'http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen')
   expect_equal(req$query, list(id = 2347, user = 'Thomas Lin Pedersen'))
