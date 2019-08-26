@@ -437,7 +437,7 @@ Request <- R6Class('Request',
     parse_cookies = function() {
       if (is.null(self$headers$Cookie)) return(list())
       cookies <- trimws(strsplit(self$headers$Cookie, ';')[[1]])
-      cookies <- unlist(strsplit(cookies, '='))
+      cookies <- unlist(strsplit(sub("=", ";", cookies), ";"))
       structure(
         as.list(url_decode(cookies[c(FALSE, TRUE)])),
         names = cookies[c(TRUE, FALSE)]
