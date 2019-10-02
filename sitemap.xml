@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://reqres.data-imaginist.com/index.html</loc>
+  </url>
+  <url>
+    <loc>https://reqres.data-imaginist.com/reference/Request.html</loc>
+  </url>
+  <url>
+    <loc>https://reqres.data-imaginist.com/reference/Response.html</loc>
+  </url>
+  <url>
+    <loc>https://reqres.data-imaginist.com/reference/default_formatters.html</loc>
+  </url>
+  <url>
+    <loc>https://reqres.data-imaginist.com/reference/default_parsers.html</loc>
+  </url>
+  <url>
+    <loc>https://reqres.data-imaginist.com/reference/formatters.html</loc>
+  </url>
+  <url>
+    <loc>https://reqres.data-imaginist.com/reference/http_date.html</loc>
+  </url>
+  <url>
+    <loc>https://reqres.data-imaginist.com/reference/parsers.html</loc>
+  </url>
+  <url>
+    <loc>https://reqres.data-imaginist.com/reference/reqres-package.html</loc>
+  </url>
+</urlset>
