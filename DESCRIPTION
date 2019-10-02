@@ -33,5 +33,5 @@ Roxygen: list(markdown = TRUE)
 Suggests: fiery,
     testthat,
     covr
-URL: https://github.com/thomasp85/reqres#reqres
+URL: https://reqres.data-imaginist.com, https://github.com/thomasp85/reqres#reqres
 BugReports: https://github.com/thomasp85/reqres/issues
