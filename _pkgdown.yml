@@ -26,6 +26,8 @@ navbar:
   right:
     - text: fiery
       href: https://fiery.data-imaginist.com
+    - text: routr
+      href: https://routr.data-imaginist.com
     - icon: fa-github fa-lg
       href: https://github.com/thomasp85/reqres
 
