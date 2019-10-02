@@ -17,6 +17,7 @@ In order to facilitate parsing of http requests and creating
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://reqres.data-imaginist.com}
   \item \url{https://github.com/thomasp85/reqres#reqres}
   \item Report bugs at \url{https://github.com/thomasp85/reqres/issues}
 }

@@ -57,4 +57,4 @@ reference:
       reqres includes a small selection of utilities beyond the ones mentioned
       above, which are listed here.
     contents:
-      - http_date
+      - to_http_date
