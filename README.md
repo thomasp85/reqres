@@ -1,34 +1,71 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-reqres <img src="man/figures/logo.png" align="right"/>
-=============================================================
 
-[![Travis-CI Build Status](https://travis-ci.org/thomasp85/reqres.svg?branch=master)](https://travis-ci.org/thomasp85/reqres) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/thomasp85/reqres?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/reqres) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version-ago/reqres)](https://cran.r-project.org/package=reqres) [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/reqres)](https://cran.r-project.org/package=reqres) [![Coverage Status](https://img.shields.io/codecov/c/github/thomasp85/reqres/master.svg)](https://codecov.io/github/thomasp85/reqres?branch=master)
+# reqres <img src="man/figures/logo.png" align="right"/>
 
-While the http protocol is rather basic in essence, it can be a pain to work with. `reqres` is here to soothe the pain somewhat by providing two powerful classes for handling all parts of request and response handling during a http exchange. *This is not a web server*, instead it focuses on making life easier for developers of web servers by extracting the complexity of cookies, headers, content negotiation, and the likes into neat little classes. `reqres` builds upon the [`rook`](https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md) specifications and is thus well suited for [`httpuv`-based](https://github.com/rstudio/httpuv) webservers.
+<!-- badges: start -->
 
-Features
---------
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
+[![Travis-CI Build
+Status](https://travis-ci.org/thomasp85/reqres.svg?branch=master)](https://travis-ci.org/thomasp85/reqres)
+[![AppVeyor Build
+Status](https://ci.appveyor.com/api/projects/status/github/thomasp85/reqres?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/reqres)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version-ago/reqres)](https://cran.r-project.org/package=reqres)
+[![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/reqres)](https://cran.r-project.org/package=reqres)
+[![Coverage
+Status](https://img.shields.io/codecov/c/github/thomasp85/reqres/master.svg)](https://codecov.io/github/thomasp85/reqres?branch=master)
+<!-- badges: end -->
 
-`reqres` draws a lot of inspiration from [express.js](https://expressjs.com) and the `Request` and `Response` classes is aiming for feature parity with those from express. The `Request` class provides automatic parsing of the query string along with parsing of the body based on the `Content-Type` header (with decompression if `Content-Encoding` is provided). Further, it provides content negotiation based on the `Accept(-*)` headers. The `Response` class allows you to set headers and cookies easily, assign arbitrary data for later use, and automatically format the body based on content negotiation with the `Request` object that it is responding to (again, it will compress automatically if the `Accept-Encoding` header allows it). If any part of the content negotiation fails the correct response status code will be set, making the response ready to send.
+While the http protocol is rather basic in essence, it can be a pain to
+work with. `reqres` is here to soothe the pain somewhat by providing two
+powerful classes for handling all parts of request and response handling
+during a http exchange. *This is not a web server*, instead it focuses
+on making life easier for developers of web servers by extracting the
+complexity of cookies, headers, content negotiation, and the likes into
+neat little classes. `reqres` builds upon the
+[`rook`](https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md)
+specifications and is thus well suited for
+[`httpuv`-based](https://github.com/rstudio/httpuv) webservers.
 
-`reqres` comes with a range of parsers and formatters making it work out of the box with json, xml, html, csv, tab, multipart, and www-form-urlencoded payloads. It is easy to either modify these or provide your own parsers and formatters if needed - `reqres` will take care of the content negotiation and simply call your custom parser/formatter if chosen.
+## Features
 
-Installation
-------------
+`reqres` draws a lot of inspiration from
+[express.js](https://expressjs.com) and the `Request` and `Response`
+classes is aiming for feature parity with those from express. The
+`Request` class provides automatic parsing of the query string along
+with parsing of the body based on the `Content-Type` header (with
+decompression if `Content-Encoding` is provided). Further, it provides
+content negotiation based on the `Accept(-*)` headers. The `Response`
+class allows you to set headers and cookies easily, assign arbitrary
+data for later use, and automatically format the body based on content
+negotiation with the `Request` object that it is responding to (again,
+it will compress automatically if the `Accept-Encoding` header allows
+it). If any part of the content negotiation fails the correct response
+status code will be set, making the response ready to send.
 
-Currently `reqres` only lives on GitHub and can thus be installed with:
+`reqres` comes with a range of parsers and formatters making it work out
+of the box with json, xml, html, csv, tab, multipart, and
+www-form-urlencoded payloads. It is easy to either modify these or
+provide your own parsers and formatters if needed - `reqres` will take
+care of the content negotiation and simply call your custom
+parser/formatter if chosen.
+
+## Installation
+
+reqrescan be installed from CRAN with `install.packages('reqres')` or
+the development version can be installed from github:
 
 ``` r
 # install.packages('devtools')
 devtools::install_github('thomasp85/reqres')
 ```
 
-A CRAN submission is not to far away though...
+## Demo
 
-Demo
-----
-
-Below is a quick demo of some of the features in `reqres`. It uses the `fake_request()` in `fiery` to mock a rook request so it can be used without setting up a webserver:
+Below is a quick demo of some of the features in `reqres`. It uses the
+`fake_request()` in `fiery` to mock a rook request so it can be used
+without setting up a webserver:
 
 ``` r
 library(reqres)
@@ -66,7 +103,8 @@ res
 
 ### Request
 
-A lot of information is already available, such as the query and other parts of the url, but the body is not filled in automatically.
+A lot of information is already available, such as the query and other
+parts of the url, but the body is not filled in automatically.
 
 ``` r
 req$host
@@ -81,7 +119,8 @@ req$body
 #> NULL
 ```
 
-The body can easily be parsed though, as long as a parser exists for the provided content type.
+The body can easily be parsed though, as long as a parser exists for the
+provided content type.
 
 ``` r
 req$is('json')
@@ -99,7 +138,8 @@ req$body
 #> [1] "www.data-imaginist.com"   "www.github.com/thomasp85"
 ```
 
-Instead of inspecting it manually you can simply provide a range of parsers and let the object choose the correct one itself
+Instead of inspecting it manually you can simply provide a range of
+parsers and let the object choose the correct one itself
 
 ``` r
 req$set_body(NULL)
@@ -120,7 +160,8 @@ req$body
 #> [1] "www.data-imaginist.com"   "www.github.com/thomasp85"
 ```
 
-In the case that none of the provided parsers fits the content type, the response will automatically get updated with the correct error code
+In the case that none of the provided parsers fits the content type, the
+response will automatically get updated with the correct error code
 
 ``` r
 req$set_body(NULL)
@@ -129,13 +170,15 @@ req$parse(txt = parse_plain())
 res
 #> A HTTP response
 #> ===============
-#>         Status: 400 - Bad Request
+#>         Status: 415 - Unsupported Media Type
 #>   Content type: text/plain
 #> 
 #> In response to: http://www.example.com:80/summary?id=2347&user=Thomas+Lin+Pedersen
 ```
 
-To facilitate all this `reqres` comes with a mapping of standard mime types to the provided parsers. This can simply be supplied to the parse method
+To facilitate all this `reqres` comes with a mapping of standard mime
+types to the provided parsers. This can simply be supplied to the parse
+method
 
 ``` r
 req$set_body(NULL)
@@ -154,18 +197,22 @@ req$body
 
 ### Response
 
-While the request is mainly intended to be read from, the response should be written to. The `Response` class contains a slew of methods to easily set headers, cookies, etc.
+While the request is mainly intended to be read from, the response
+should be written to. The `Response` class contains a slew of methods to
+easily set headers, cookies, etc.
 
 ``` r
 res$set_header('Date', to_http_date(Sys.time()))
 res$get_header('Date')
-#> [1] "Thu, 03 Aug 2017 07:30:54 GMT"
+#> [1] "Wed, 02 Oct 2019 18:38:37 GMT"
 res$set_cookie('user', req$query$id, max_age = 9000L)
 res$has_cookie('user')
 #> [1] TRUE
 ```
 
-Furthermore, it contains its own data store where arbitrary information can be stored so as to pass it between middleware etc. This data will never be part of the actual response.
+Furthermore, it contains its own data store where arbitrary information
+can be stored so as to pass it between middleware etc. This data will
+never be part of the actual response.
 
 ``` r
 res$set_data('alphabet', letters)
@@ -174,7 +221,8 @@ res$get_data('alphabet')
 #> [18] "r" "s" "t" "u" "v" "w" "x" "y" "z"
 ```
 
-Files can be attached and marked for download, setting the relevant headers automatically
+Files can be attached and marked for download, setting the relevant
+headers automatically
 
 ``` r
 res$attach(system.file('NEWS.md', package = 'reqres'))
@@ -184,7 +232,9 @@ res$get_header('Content-Disposition')
 #> [1] "attachment; filename=NEWS.md"
 ```
 
-Often we need to provide a payload in the form of a body. This can be any type of R object until the response is handed off to the server, where it should be either a string or a raw vector.
+Often we need to provide a payload in the form of a body. This can be
+any type of R object until the response is handed off to the server,
+where it should be either a string or a raw vector.
 
 ``` r
 res$remove_header('Content-Disposition')
@@ -199,7 +249,10 @@ res$body
 #> Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
 ```
 
-Based on the `Accept` header in the request it can be formatted correctly thus making it ready to send back to the client. As this request contains an `Accept-Encoding` header it will be compressed as well.
+Based on the `Accept` header in the request it can be formatted
+correctly thus making it ready to send back to the client. As this
+request contains an `Accept-Encoding` header it will be compressed as
+well.
 
 ``` r
 res$format(json = format_json())
@@ -240,7 +293,8 @@ res$get_header('Content-Type')
 #> [1] "text/csv"
 ```
 
-A default formatter mapping exists in parallel to `default_parsers` for the `Request$format()` method.
+A default formatter mapping exists in parallel to `default_parsers` for
+the `Request$format()` method.
 
 ``` r
 res$body <- head(mtcars)
@@ -257,5 +311,11 @@ res$body <- head(mtcars)
 res$format('text/yaml' = yaml::as.yaml, compress = FALSE)
 #> [1] TRUE
 res$body
-#> [1] "mpg:\n- 21.0\n- 21.0\n- 22.8\n- 21.4\n- 18.7\n- 18.1\ncyl:\n- 6.0\n- 6.0\n- 4.0\n- 6.0\n- 8.0\n- 6.0\ndisp:\n- 160.0\n- 160.0\n- 108.0\n- 258.0\n- 360.0\n- 225.0\nhp:\n- 110.0\n- 110.0\n- 93.0\n- 110.0\n- 175.0\n- 105.0\ndrat:\n- 3.9\n- 3.9\n- 3.85\n- 3.08\n- 3.15\n- 2.76\nwt:\n- 2.62\n- 2.875\n- 2.32\n- 3.215\n- 3.44\n- 3.46\nqsec:\n- 16.46\n- 17.02\n- 18.61\n- 19.44\n- 17.02\n- 20.22\nvs:\n- 0.0e+00\n- 0.0e+00\n- 1.0e+00\n- 1.0e+00\n- 0.0e+00\n- 1.0e+00\nam:\n- 1.0\n- 1.0\n- 1.0\n- 0.0e+00\n- 0.0e+00\n- 0.0e+00\ngear:\n- 4.0\n- 4.0\n- 4.0\n- 3.0\n- 3.0\n- 3.0\ncarb:\n- 4.0\n- 4.0\n- 1.0\n- 1.0\n- 2.0\n- 1.0\n"
+#> [1] "mpg:\n- 21.0\n- 21.0\n- 22.8\n- 21.4\n- 18.7\n- 18.1\ncyl:\n- 6.0\n- 6.0\n- 4.0\n- 6.0\n- 8.0\n- 6.0\ndisp:\n- 160.0\n- 160.0\n- 108.0\n- 258.0\n- 360.0\n- 225.0\nhp:\n- 110.0\n- 110.0\n- 93.0\n- 110.0\n- 175.0\n- 105.0\ndrat:\n- 3.9\n- 3.9\n- 3.85\n- 3.08\n- 3.15\n- 2.76\nwt:\n- 2.62\n- 2.875\n- 2.32\n- 3.215\n- 3.44\n- 3.46\nqsec:\n- 16.46\n- 17.02\n- 18.61\n- 19.44\n- 17.02\n- 20.22\nvs:\n- 0.0\n- 0.0\n- 1.0\n- 1.0\n- 0.0\n- 1.0\nam:\n- 1.0\n- 1.0\n- 1.0\n- 0.0\n- 0.0\n- 0.0\ngear:\n- 4.0\n- 4.0\n- 4.0\n- 3.0\n- 3.0\n- 3.0\ncarb:\n- 4.0\n- 4.0\n- 1.0\n- 1.0\n- 2.0\n- 1.0\n"
 ```
+
+## Code of Conduct
+
+Please note that the ‘reqres’ project is released with a [Contributor
+Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this project,
+you agree to abide by its terms.

@@ -1,7 +1,5 @@
 ---
-output:
-  md_document:
-    variant: markdown_github
+output: github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -16,11 +14,14 @@ knitr::opts_chunk$set(
 
 # reqres <img src="man/figures/logo.png" align="right"/>
 
+<!-- badges: start -->
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 [![Travis-CI Build Status](https://travis-ci.org/thomasp85/reqres.svg?branch=master)](https://travis-ci.org/thomasp85/reqres)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/thomasp85/reqres?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/reqres)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version-ago/reqres)](https://cran.r-project.org/package=reqres)
 [![CRAN_Download_Badge](http://cranlogs.r-pkg.org/badges/reqres)](https://cran.r-project.org/package=reqres)
 [![Coverage Status](https://img.shields.io/codecov/c/github/thomasp85/reqres/master.svg)](https://codecov.io/github/thomasp85/reqres?branch=master)
+<!-- badges: end -->
 
 While the http protocol is rather basic in essence, it can be a pain to work 
 with. `reqres` is here to soothe the pain somewhat by providing two powerful
@@ -53,14 +54,13 @@ needed - `reqres` will take care of the content negotiation and simply call your
 custom parser/formatter if chosen.
 
 ## Installation
-Currently `reqres` only lives on GitHub and can thus be installed with:
+reqrescan be installed from CRAN with `install.packages('reqres')` or the 
+development version can be installed from github:
 
 ```{r, eval=FALSE}
 # install.packages('devtools')
 devtools::install_github('thomasp85/reqres')
 ```
-
-A CRAN submission is not to far away though...
 
 ## Demo
 Below is a quick demo of some of the features in `reqres`. It uses the 
@@ -218,3 +218,7 @@ res$format('text/yaml' = yaml::as.yaml, compress = FALSE)
 res$body
 ```
 
+## Code of Conduct
+Please note that the 'reqres' project is released with a
+[Contributor Code of Conduct](CODE_OF_CONDUCT.md).
+By contributing to this project, you agree to abide by its terms.
