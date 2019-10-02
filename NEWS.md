@@ -1,3 +1,5 @@
+# reqres 0.2.3
+
 # reqres (development version)
 
 * Fixed bug in Cookie parsing when cookie strings would include `=`
