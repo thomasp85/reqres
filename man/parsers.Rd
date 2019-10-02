@@ -44,7 +44,7 @@ otherwise specified XML documents are assumed to be in UTF-8 or
 UTF-16. If the document is not UTF-8/16, and lacks an explicit
 encoding directive, this allows you to supply a default.}
 
-\item{options}{Set parsing options for the libxml2 parser. Zero of more of
+\item{options}{Set parsing options for the libxml2 parser. Zero or more of
 \describe{
   \item{RECOVER}{recover on errors}
   \item{NOENT}{substitute entities}
