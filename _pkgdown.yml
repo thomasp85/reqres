@@ -28,3 +28,33 @@ navbar:
       href: https://fiery.data-imaginist.com
     - icon: fa-github fa-lg
       href: https://github.com/thomasp85/reqres
+
+reference:
+  - title: "Request and response classes"
+    desc: >
+      The main raison d'être for reqres is to provide classes handling http
+      requests and responses. As both are coded as R6 classes with reference
+      semantics all functionality of the object are documented together with the
+      class.
+    contents:
+      - Request
+      - Response
+  - title: "Content parsing and formatting"
+    desc: >
+      A main part of working with http requests and responses is related to
+      getting the content of a request and setting the content of a response.
+      While the Request and Response classes handle content negotiation it is
+      up to the developer to tell how data of a certain type should be parsed or
+      formattet. reqres provides a range of parsers and formatters for common
+      exchange formats in order to ease the pain of this part.
+    content:
+      - parsers
+      - default_parsers
+      - formatters
+      - default_formatters
+  - title: "Utilities"
+    desc: >
+      reqres includes a small selection of utilities beyond the ones mentioned
+      above, which are listed here.
+    content:
+      - http_date

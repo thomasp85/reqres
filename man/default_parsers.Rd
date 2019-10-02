@@ -22,6 +22,6 @@ req$parse(default_parsers, 'application/json' = parse_json(flatten = TRUE))
 
 }
 \seealso{
-\link{formatters} for an overview of the build in parsers in \code{reqres}
+\link{parsers} for an overview of the build in parsers in \code{reqres}
 }
 \keyword{datasets}

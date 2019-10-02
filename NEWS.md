@@ -1,5 +1,8 @@
 # reqres (development version)
 
+* Fixed bug in Cookie parsing when cookie strings would include `=`
+* Added pkgdown site at https://reqres.data-imaginist.com
+
 # reqres 0.2.2
 
 * Fixed bug in querystring parsing where the first key would retain the `?`

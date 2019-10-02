@@ -121,7 +121,7 @@ parse_table <- function(...) {
 #' @format NULL
 #' @export
 #'
-#' @seealso [formatters] for an overview of the build in parsers in `reqres`
+#' @seealso [parsers] for an overview of the build in parsers in `reqres`
 #'
 #' @examples
 #' \dontrun{
