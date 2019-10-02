@@ -47,7 +47,7 @@ reference:
       up to the developer to tell how data of a certain type should be parsed or
       formattet. reqres provides a range of parsers and formatters for common
       exchange formats in order to ease the pain of this part.
-    content:
+    contents:
       - parsers
       - default_parsers
       - formatters
@@ -56,5 +56,5 @@ reference:
     desc: >
       reqres includes a small selection of utilities beyond the ones mentioned
       above, which are listed here.
-    content:
+    contents:
       - http_date

@@ -204,7 +204,7 @@ easily set headers, cookies, etc.
 ``` r
 res$set_header('Date', to_http_date(Sys.time()))
 res$get_header('Date')
-#> [1] "Wed, 02 Oct 2019 18:38:37 GMT"
+#> [1] "Wed, 02 Oct 2019 19:19:07 GMT"
 res$set_cookie('user', req$query$id, max_age = 9000L)
 res$has_cookie('user')
 #> [1] TRUE
@@ -317,5 +317,6 @@ res$body
 ## Code of Conduct
 
 Please note that the ‘reqres’ project is released with a [Contributor
-Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this project,
-you agree to abide by its terms.
+Code of
+Conduct](https://reqres.data-imaginist.com/CODE_OF_CONDUCT.html). By
+contributing to this project, you agree to abide by its terms.
