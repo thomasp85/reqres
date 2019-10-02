@@ -163,6 +163,88 @@
         </td>
         <td><p>HTTP Response handling</p></td>
       </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-content-parsing-and-formatting" class="hasAnchor"><a href="#section-content-parsing-and-formatting" class="anchor"></a>Content parsing and formatting</h2>
+          <p class="section-desc"><p>A main part of working with http requests and responses is related to getting the content of a request and setting the content of a response. While the Request and Response classes handle content negotiation it is up to the developer to tell how data of a certain type should be parsed or formattet. reqres provides a range of parsers and formatters for common exchange formats in order to ease the pain of this part.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="parsers.html">parse_json()</a></code> <code><a href="parsers.html">parse_plain()</a></code> <code><a href="parsers.html">parse_xml()</a></code> <code><a href="parsers.html">parse_html()</a></code> <code><a href="parsers.html">parse_multiform()</a></code> <code><a href="parsers.html">parse_queryform()</a></code> <code><a href="parsers.html">parse_table()</a></code> </p>
+        </td>
+        <td><p>Pre-supplied parsing generators</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="default_parsers.html">default_parsers</a></code> </p>
+        </td>
+        <td><p>A list of default parser mappings</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="formatters.html">format_json()</a></code> <code><a href="formatters.html">format_plain()</a></code> <code><a href="formatters.html">format_xml()</a></code> <code><a href="formatters.html">format_html()</a></code> <code><a href="formatters.html">format_table()</a></code> </p>
+        </td>
+        <td><p>Pre-supplied formatting generators</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="default_formatters.html">default_formatters</a></code> </p>
+        </td>
+        <td><p>A list of default formatter mappings</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-utilities" class="hasAnchor"><a href="#section-utilities" class="anchor"></a>Utilities</h2>
+          <p class="section-desc"><p>reqres includes a small selection of utilities beyond the ones mentioned above, which are listed here.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="Request.html">as.Request()</a></code> <code><a href="Request.html">is.Request()</a></code> </p>
+        </td>
+        <td><p>HTTP Request Handling</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="Response.html">as.list(<i>&lt;Response&gt;</i>)</a></code> <code><a href="Response.html">is.Response()</a></code> </p>
+        </td>
+        <td><p>HTTP Response handling</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="default_formatters.html">default_formatters</a></code> </p>
+        </td>
+        <td><p>A list of default formatter mappings</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="default_parsers.html">default_parsers</a></code> </p>
+        </td>
+        <td><p>A list of default parser mappings</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="formatters.html">format_json()</a></code> <code><a href="formatters.html">format_plain()</a></code> <code><a href="formatters.html">format_xml()</a></code> <code><a href="formatters.html">format_html()</a></code> <code><a href="formatters.html">format_table()</a></code> </p>
+        </td>
+        <td><p>Pre-supplied formatting generators</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="http_date.html">to_http_date()</a></code> <code><a href="http_date.html">from_http_date()</a></code> </p>
+        </td>
+        <td><p>Format timestamps to match the HTTP specs</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="parsers.html">parse_json()</a></code> <code><a href="parsers.html">parse_plain()</a></code> <code><a href="parsers.html">parse_xml()</a></code> <code><a href="parsers.html">parse_html()</a></code> <code><a href="parsers.html">parse_multiform()</a></code> <code><a href="parsers.html">parse_queryform()</a></code> <code><a href="parsers.html">parse_table()</a></code> </p>
+        </td>
+        <td><p>Pre-supplied parsing generators</p></td>
+      </tr>
     </tbody>
     </table>
   </div>
@@ -171,6 +253,8 @@
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#section-request-and-response-classes">Request and response classes</a></li>
+      <li><a href="#section-content-parsing-and-formatting">Content parsing and formatting</a></li>
+      <li><a href="#section-utilities">Utilities</a></li>
     </ul>
   </div>
 </div>
