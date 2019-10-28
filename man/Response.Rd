@@ -67,9 +67,24 @@ which will provide the response, creating one if it doesn't exist
 \code{res <- request$respond()}
 }
 
+By default, the Response has a status of 404 ("Not Found"), a content type of text/plain,
+and an empty body. These defaults can be overridden.
+
+\tabular{l}{
+\code{res <- Response$new(request, status=200L, type="text/html",
+                           body="<b>All cool.</b>")}
+}
+
+\tabular{l}{
+\code{res <- request$respond(status=503L, body="Down for maintenance")}
+}
+
 \strong{Arguments}
 \tabular{lll}{
 \code{request} \tab  \tab The \code{Request} object that the \code{Response} is responding to\cr
+\code{status} \tab  \tab The status code of the \code{Response} header, defaults to 404\cr
+\code{type} \tab  \tab The Content-Type of the \code{Request} header, defaults to text/plain\cr
+\code{body} \tab  \tab The body of the \code{Response}, defaults to ''\cr
 }
 }
 

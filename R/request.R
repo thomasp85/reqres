@@ -195,8 +195,8 @@ Request <- R6Class('Request',
       private$COOKIES <- private$parse_cookies()
     },
     print = function(...) {
-      cat('A HTTP request\n')
-      cat('==============\n')
+      cat('An HTTP request\n')
+      cat('===============\n')
       cat('Trusted: ', if (self$trust) 'Yes' else 'No', '\n', sep = '')
       cat(' Method: ', self$method, '\n', sep = '')
       cat('    URL: ', self$url, '\n', sep = '')
@@ -252,9 +252,9 @@ Request <- R6Class('Request',
     get_header = function(name) {
       self$headers[[gsub('-', '_', name)]]
     },
-    respond = function() {
+    respond = function(...) {
       if (is.null(self$response)) {
-        Response$new(self)
+        Response$new(self, ...)
       } else {
         self$response
       }
