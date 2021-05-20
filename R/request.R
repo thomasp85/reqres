@@ -135,7 +135,7 @@
 #'
 #' @importFrom R6 R6Class
 #' @importFrom assertthat assert_that is.flag has_attr is.error
-#' @importFrom stringi stri_match_first_regex stri_trim_both stri_split_fixed
+#' @importFrom stringi stri_match_first_regex stri_trim_both stri_split_fixed stri_split_regex
 #' @importFrom urltools url_decode
 #' @importFrom brotli brotli_decompress
 #' @importFrom utils modifyList
@@ -436,7 +436,7 @@ Request <- R6Class('Request',
 
     parse_cookies = function() {
       if (is.null(self$headers$Cookie)) return(list())
-      cookies <- stri_trim_both(stri_split_fixed(self$headers$Cookie, ';')[[1]])
+      cookies <- stri_trim_both(stri_split_regex(self$headers$Cookie, ";(?=\\s*[a-zA-Z0-9!#$%&'()*+-.\\/:<>?@\\[\\]^_`{|}~]{1,})")[[1]])
       cookies <- unlist(stri_split_fixed(cookies, '=', n = 2))
       structure(
         as.list(url_decode(cookies[c(FALSE, TRUE)])),
