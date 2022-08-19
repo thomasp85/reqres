@@ -7,14 +7,11 @@
 
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
-[![Travis-CI Build
-Status](https://travis-ci.org/thomasp85/reqres.svg?branch=master)](https://travis-ci.org/thomasp85/reqres)
-[![AppVeyor Build
-Status](https://ci.appveyor.com/api/projects/status/github/thomasp85/reqres?branch=master&svg=true)](https://ci.appveyor.com/project/thomasp85/reqres)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version-ago/reqres)](https://cran.r-project.org/package=reqres)
-[![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/reqres)](https://cran.r-project.org/package=reqres)
-[![Coverage
-Status](https://img.shields.io/codecov/c/github/thomasp85/reqres/master.svg)](https://codecov.io/github/thomasp85/reqres?branch=master)
+[![R-CMD-check](https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version-ago/reqres)](https://cran.r-project.org/package=reqres)
+[![CRAN_Download_Badge](http://cranlogs.r-pkg.org/badges/reqres)](https://cran.r-project.org/package=reqres)
+[![Codecov test
+coverage](https://codecov.io/gh/thomasp85/reqres/branch/main/graph/badge.svg)](https://app.codecov.io/gh/thomasp85/reqres?branch=main)
 <!-- badges: end -->
 
 While the http protocol is rather basic in essence, it can be a pain to
@@ -204,7 +201,7 @@ easily set headers, cookies, etc.
 ``` r
 res$set_header('Date', to_http_date(Sys.time()))
 res$get_header('Date')
-#> [1] "Wed, 02 Oct 2019 19:19:07 GMT"
+#> [1] "Fri, 19 Aug 2022 12:03:02 GMT"
 res$set_cookie('user', req$query$id, max_age = 9000L)
 res$has_cookie('user')
 #> [1] TRUE
@@ -217,8 +214,8 @@ never be part of the actual response.
 ``` r
 res$set_data('alphabet', letters)
 res$get_data('alphabet')
-#>  [1] "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q"
-#> [18] "r" "s" "t" "u" "v" "w" "x" "y" "z"
+#>  [1] "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s"
+#> [20] "t" "u" "v" "w" "x" "y" "z"
 ```
 
 Files can be attached and marked for download, setting the relevant
@@ -258,20 +255,18 @@ well.
 res$format(json = format_json())
 #> [1] TRUE
 res$body
-#>   [1] 1f 8b 08 00 00 00 00 00 00 03 9d d2 41 4f 83 30 14 07 f0 af 42 de b9
-#>  [24] 69 da 47 29 a5 e7 1d bc 78 d1 44 4d 8c 31 dd 20 48 b2 01 16 36 a2 c6
-#>  [47] ef 6e d9 a0 6c 63 4b d4 db 4b d3 f6 fd de bf 7d fe 82 4d 9d 83 46 4e
-#>  [70] 60 f5 b1 06 2d 09 a4 45 53 83 e6 92 11 78 eb 0b ee 8a d4 9a 16 74 48
-#>  [93] 13 02 9d 2b 90 4a 24 f0 de 64 ab 7e 23 15 ee d4 ae 01 ed 36 9a 8d 5b
-#> [116] 21 90 67 c6 82 16 ee 52 63 97 fb e2 d5 56 1d 68 b8 35 9f a9 09 ee 9e
-#> [139] 04 7c 93 ff f6 56 71 e4 9b c7 94 e1 df 9b 07 8f 26 3f 02 b8 2b 07 82
-#> [162] f0 04 a6 0e 84 24 9c 04 2a 1a 09 e1 34 be a2 92 1f 04 fc 9a 80 7b c1
-#> [185] c2 b4 cd b6 0c 62 ce 8e e7 a7 e2 3c 01 8c d4 85 04 7a 53 b7 af 90 4f
-#> [208] 11 24 54 88 13 00 1b 01 e1 1c 70 53 d9 32 6b 03 11 2c 6c b1 cb 26 84
-#> [231] 1b 23 1e 10 6a 44 84 fe 19 fa c0 47 04 8f 46 44 df f6 da 33 cc 0d 78
-#> [254] 6e b8 af 2b db 9a 65 b5 6d 4f 18 b3 df 80 18 0d 0c e6 19 48 63 e9 19
-#> [277] 72 64 20 a3 88 bf 8e e2 c1 ac 0b 53 ba e6 2f 3f 40 6a d7 44 06 03 00
-#> [300] 00
+#>   [1] 1f 8b 08 00 00 00 00 00 00 03 9d d2 41 4f 83 30 14 07 f0 af 42 de b9 69 da
+#>  [26] 47 29 a5 e7 1d bc 78 d1 44 4d 8c 31 dd 20 48 b2 01 16 36 a2 c6 ef 6e d9 a0
+#>  [51] 6c 63 4b d4 db 4b d3 f6 fd de bf 7d fe 82 4d 9d 83 46 4e 60 f5 b1 06 2d 09
+#>  [76] a4 45 53 83 e6 92 11 78 eb 0b ee 8a d4 9a 16 74 48 13 02 9d 2b 90 4a 24 f0
+#> [101] de 64 ab 7e 23 15 ee d4 ae 01 ed 36 9a 8d 5b 21 90 67 c6 82 16 ee 52 63 97
+#> [126] fb e2 d5 56 1d 68 b8 35 9f a9 09 ee 9e 04 7c 93 ff f6 56 71 e4 9b c7 94 e1
+#> [151] df 9b 07 8f 26 3f 02 b8 2b 07 82 f0 04 a6 0e 84 24 9c 04 2a 1a 09 e1 34 be
+#> [176] a2 92 1f 04 fc 9a 80 7b c1 c2 b4 cd b6 0c 62 ce 8e e7 a7 e2 3c 01 8c d4 85
+#> [201] 04 7a 53 b7 af 90 4f 11 24 54 88 13 00 1b 01 e1 1c 70 53 d9 32 6b 03 11 2c
+#> [226] 6c b1 cb 26 84 1b 23 1e 10 6a 44 84 fe 19 fa c0 47 04 8f 46 44 df f6 da 33
+#> [251] cc 0d 78 6e b8 af 2b db 9a 65 b5 6d 4f 18 b3 df 80 18 0d 0c e6 19 48 63 e9
+#> [276] 19 72 64 20 a3 88 bf 8e e2 c1 ac 0b 53 ba e6 2f 3f 40 6a d7 44 06 03 00 00
 res$get_header('Content-Type')
 #> [1] "application/json"
 res$get_header('Content-Encoding')
@@ -283,8 +278,7 @@ The content negotiation understands wildcards as well
 ``` r
 res$body <- head(mtcars)
 req$get_header('Accept')
-#> [1] "application/json"       "application/xml; q=0.5"
-#> [3] "text/*; q=0.3"
+#> [1] "application/json"       "application/xml; q=0.5" "text/*; q=0.3"
 res$format(csv = format_table(sep = ','), compress = FALSE)
 #> [1] TRUE
 res$body
