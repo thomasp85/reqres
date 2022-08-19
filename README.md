@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![Lifecycle:
-stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check](https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version-ago/reqres)](https://cran.r-project.org/package=reqres)
 [![CRAN_Download_Badge](http://cranlogs.r-pkg.org/badges/reqres)](https://cran.r-project.org/package=reqres)
@@ -201,7 +201,7 @@ easily set headers, cookies, etc.
 ``` r
 res$set_header('Date', to_http_date(Sys.time()))
 res$get_header('Date')
-#> [1] "Fri, 19 Aug 2022 12:03:02 GMT"
+#> [1] "Fri, 19 Aug 2022 12:12:12 GMT"
 res$set_cookie('user', req$query$id, max_age = 9000L)
 res$has_cookie('user')
 #> [1] TRUE
