@@ -16,7 +16,6 @@ Description: In order to facilitate parsing of http requests and creating
     with 'httpuv' based web servers.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: TRUE
 Depends: R (>= 2.10)
 Imports: R6,
     assertthat,
