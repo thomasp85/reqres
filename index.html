@@ -12,10 +12,11 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
+<script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Powerful Classes for HTTP Requests and Responses">
 <meta property="og:description" content="In order to facilitate parsing of http requests and creating 
     appropriate responses this package provides two classes to handle a lot of
@@ -23,13 +24,14 @@
     builds upon the rook specification and is thus well suited to be combined
     with httpuv based web servers.">
 <meta property="og:image" content="https://reqres.data-imaginist.com/logo.png">
-<meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -42,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">reqres</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.3.9000</span>
       </span>
     </div>
 
@@ -58,7 +60,7 @@
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     News
      
     <span class="caret"></span>
@@ -66,10 +68,11 @@
   <ul class="dropdown-menu" role="menu">
 <li class="dropdown-header">Release notes</li>
     <li>
-      <a href="https://www.data-imaginist.com/2017/introducing-reqres/">Version 0.2.0</a>
+      <a href="https://www.data-imaginist.com/2017/introducing-reqres/" class="external-link">Version 0.2.0</a>
     </li>
     <li class="divider">
-    <li>
+    </li>
+<li>
       <a href="news/index.html">Change log</a>
     </li>
   </ul>
@@ -77,13 +80,13 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://fiery.data-imaginist.com">fiery</a>
+  <a href="https://fiery.data-imaginist.com" class="external-link">fiery</a>
 </li>
 <li>
-  <a href="https://routr.data-imaginist.com">routr</a>
+  <a href="https://routr.data-imaginist.com" class="external-link">routr</a>
 </li>
 <li>
-  <a href="https://github.com/thomasp85/reqres">
+  <a href="https://github.com/thomasp85/reqres" class="external-link">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -100,273 +103,292 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="reqres" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#reqres" class="anchor"></a>reqres <img src="reference/figures/logo.png" align="right">
+<div class="section level1">
+<div class="page-header"><h1 id="reqres-">reqres <img src="reference/figures/logo.png" align="right"><a class="anchor" aria-label="anchor" href="#reqres-"></a>
 </h1></div>
 <!-- badges: start -->
-
-<p>While the http protocol is rather basic in essence, it can be a pain to work with. <code>reqres</code> is here to soothe the pain somewhat by providing two powerful classes for handling all parts of request and response handling during a http exchange. <em>This is not a web server</em>, instead it focuses on making life easier for developers of web servers by extracting the complexity of cookies, headers, content negotiation, and the likes into neat little classes. <code>reqres</code> builds upon the <a href="https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md"><code>rook</code></a> specifications and is thus well suited for <a href="https://github.com/rstudio/httpuv"><code>httpuv</code>-based</a> webservers.</p>
-<div id="features" class="section level2">
-<h2 class="hasAnchor">
-<a href="#features" class="anchor"></a>Features</h2>
-<p><code>reqres</code> draws a lot of inspiration from <a href="https://expressjs.com">express.js</a> and the <code>Request</code> and <code>Response</code> classes is aiming for feature parity with those from express. The <code>Request</code> class provides automatic parsing of the query string along with parsing of the body based on the <code>Content-Type</code> header (with decompression if <code>Content-Encoding</code> is provided). Further, it provides content negotiation based on the <code>Accept(-*)</code> headers. The <code>Response</code> class allows you to set headers and cookies easily, assign arbitrary data for later use, and automatically format the body based on content negotiation with the <code>Request</code> object that it is responding to (again, it will compress automatically if the <code>Accept-Encoding</code> header allows it). If any part of the content negotiation fails the correct response status code will be set, making the response ready to send.</p>
+<p>While the http protocol is rather basic in essence, it can be a pain to work with. <code>reqres</code> is here to soothe the pain somewhat by providing two powerful classes for handling all parts of request and response handling during a http exchange. <em>This is not a web server</em>, instead it focuses on making life easier for developers of web servers by extracting the complexity of cookies, headers, content negotiation, and the likes into neat little classes. <code>reqres</code> builds upon the <a href="https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md" class="external-link"><code>rook</code></a> specifications and is thus well suited for <a href="https://github.com/rstudio/httpuv" class="external-link"><code>httpuv</code>-based</a> webservers.</p>
+<div class="section level2">
+<h2 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
+</h2>
+<p><code>reqres</code> draws a lot of inspiration from <a href="https://expressjs.com" class="external-link">express.js</a> and the <code>Request</code> and <code>Response</code> classes is aiming for feature parity with those from express. The <code>Request</code> class provides automatic parsing of the query string along with parsing of the body based on the <code>Content-Type</code> header (with decompression if <code>Content-Encoding</code> is provided). Further, it provides content negotiation based on the <code>Accept(-*)</code> headers. The <code>Response</code> class allows you to set headers and cookies easily, assign arbitrary data for later use, and automatically format the body based on content negotiation with the <code>Request</code> object that it is responding to (again, it will compress automatically if the <code>Accept-Encoding</code> header allows it). If any part of the content negotiation fails the correct response status code will be set, making the response ready to send.</p>
 <p><code>reqres</code> comes with a range of parsers and formatters making it work out of the box with json, xml, html, csv, tab, multipart, and www-form-urlencoded payloads. It is easy to either modify these or provide your own parsers and formatters if needed - <code>reqres</code> will take care of the content negotiation and simply call your custom parser/formatter if chosen.</p>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<p>reqrescan be installed from CRAN with <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages('reqres')</a></code> or the development version can be installed from github:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages('devtools')</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">'thomasp85/reqres'</span>)</a></code></pre></div>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>reqrescan be installed from CRAN with <code>install.packages('reqres')</code> or the development version can be installed from github:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages('devtools')</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">'thomasp85/reqres'</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="demo" class="section level2">
-<h2 class="hasAnchor">
-<a href="#demo" class="anchor"></a>Demo</h2>
+<div class="section level2">
+<h2 id="demo">Demo<a class="anchor" aria-label="anchor" href="#demo"></a>
+</h2>
 <p>Below is a quick demo of some of the features in <code>reqres</code>. It uses the <code>fake_request()</code> in <code>fiery</code> to mock a rook request so it can be used without setting up a webserver:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(reqres)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co"># We start by mocking our request</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">rook &lt;-<span class="st"> </span>fiery<span class="op">::</span><span class="kw"><a href="https://fiery.data-imaginist.com/reference/fake_request.html">fake_request</a></span>(</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">    <span class="dt">url =</span> <span class="st">'http://www.example.com/summary?id=2347&amp;user=Thomas+Lin+Pedersen'</span>,</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6">    <span class="dt">content =</span> <span class="st">'{"name":["Thomas Lin Pedersen"],"age":[31],"homepage":["www.data-imaginist.com","www.github.com/thomasp85"]}'</span>,</a>
-<a class="sourceLine" id="cb2-7" data-line-number="7">    <span class="dt">headers =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(</a>
-<a class="sourceLine" id="cb2-8" data-line-number="8">        <span class="dt">Content_Type =</span> <span class="st">'application/json'</span>,</a>
-<a class="sourceLine" id="cb2-9" data-line-number="9">        <span class="dt">Accept =</span> <span class="st">'application/json, application/xml; q=0.5, text/*; q=0.3'</span>,</a>
-<a class="sourceLine" id="cb2-10" data-line-number="10">        <span class="dt">Accept_Encoding =</span> <span class="st">'gzip, br'</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11">    )</a>
-<a class="sourceLine" id="cb2-12" data-line-number="12">)</a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co"># A Request object can now be created</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15">req &lt;-<span class="st"> </span>Request<span class="op">$</span><span class="kw">new</span>(rook)</a>
-<a class="sourceLine" id="cb2-16" data-line-number="16">req</a>
-<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">#&gt; A HTTP request</span></a>
-<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="co">#&gt; ==============</span></a>
-<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="co">#&gt; Trusted: No</span></a>
-<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="co">#&gt;  Method: get</span></a>
-<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co">#&gt;     URL: http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></a>
-<a class="sourceLine" id="cb2-22" data-line-number="22"></a>
-<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="co"># ... along with a response</span></a>
-<a class="sourceLine" id="cb2-24" data-line-number="24">res &lt;-<span class="st"> </span>req<span class="op">$</span><span class="kw">respond</span>()</a>
-<a class="sourceLine" id="cb2-25" data-line-number="25">res</a>
-<a class="sourceLine" id="cb2-26" data-line-number="26"><span class="co">#&gt; A HTTP response</span></a>
-<a class="sourceLine" id="cb2-27" data-line-number="27"><span class="co">#&gt; ===============</span></a>
-<a class="sourceLine" id="cb2-28" data-line-number="28"><span class="co">#&gt;         Status: 404 - Not Found</span></a>
-<a class="sourceLine" id="cb2-29" data-line-number="29"><span class="co">#&gt;   Content type: text/plain</span></a>
-<a class="sourceLine" id="cb2-30" data-line-number="30"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb2-31" data-line-number="31"><span class="co">#&gt; In response to: http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></a></code></pre></div>
-<div id="request" class="section level3">
-<h3 class="hasAnchor">
-<a href="#request" class="anchor"></a>Request</h3>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://reqres.data-imaginist.com">reqres</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># We start by mocking our request</span></span>
+<span><span class="va">rook</span> <span class="op">&lt;-</span> <span class="fu">fiery</span><span class="fu">::</span><span class="fu"><a href="https://fiery.data-imaginist.com/reference/fake_request.html" class="external-link">fake_request</a></span><span class="op">(</span></span>
+<span>    url <span class="op">=</span> <span class="st">'http://www.example.com/summary?id=2347&amp;user=Thomas+Lin+Pedersen'</span>,</span>
+<span>    content <span class="op">=</span> <span class="st">'{"name":["Thomas Lin Pedersen"],"age":[31],"homepage":["www.data-imaginist.com","www.github.com/thomasp85"]}'</span>,</span>
+<span>    headers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        Content_Type <span class="op">=</span> <span class="st">'application/json'</span>,</span>
+<span>        Accept <span class="op">=</span> <span class="st">'application/json, application/xml; q=0.5, text/*; q=0.3'</span>,</span>
+<span>        Accept_Encoding <span class="op">=</span> <span class="st">'gzip, br'</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># A Request object can now be created</span></span>
+<span><span class="va">req</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Request.html">Request</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rook</span><span class="op">)</span></span>
+<span><span class="va">req</span></span>
+<span><span class="co">#&gt; A HTTP request</span></span>
+<span><span class="co">#&gt; ==============</span></span>
+<span><span class="co">#&gt; Trusted: No</span></span>
+<span><span class="co">#&gt;  Method: get</span></span>
+<span><span class="co">#&gt;     URL: http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></span>
+<span></span>
+<span><span class="co"># ... along with a response</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">req</span><span class="op">$</span><span class="fu">respond</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">res</span></span>
+<span><span class="co">#&gt; A HTTP response</span></span>
+<span><span class="co">#&gt; ===============</span></span>
+<span><span class="co">#&gt;         Status: 404 - Not Found</span></span>
+<span><span class="co">#&gt;   Content type: text/plain</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; In response to: http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="request">Request<a class="anchor" aria-label="anchor" href="#request"></a>
+</h3>
 <p>A lot of information is already available, such as the query and other parts of the url, but the body is not filled in automatically.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">req<span class="op">$</span>host</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; [1] "www.example.com:80"</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">req<span class="op">$</span>query</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; $id</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; [1] 2347</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; $user</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; [1] "Thomas Lin Pedersen"</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9">req<span class="op">$</span>body</a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; NULL</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">req</span><span class="op">$</span><span class="va">host</span></span>
+<span><span class="co">#&gt; [1] "www.example.com:80"</span></span>
+<span><span class="va">req</span><span class="op">$</span><span class="va">query</span></span>
+<span><span class="co">#&gt; $id</span></span>
+<span><span class="co">#&gt; [1] 2347</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $user</span></span>
+<span><span class="co">#&gt; [1] "Thomas Lin Pedersen"</span></span>
+<span><span class="va">req</span><span class="op">$</span><span class="va">body</span></span>
+<span><span class="co">#&gt; NULL</span></span></code></pre></div>
 <p>The body can easily be parsed though, as long as a parser exists for the provided content type.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">req<span class="op">$</span><span class="kw">is</span>(<span class="st">'json'</span>)</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">req<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/parse.html">parse</a></span>(<span class="dt">json =</span> <span class="kw"><a href="reference/parsers.html">parse_json</a></span>())</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5">req<span class="op">$</span>body</a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; $name</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; [1] "Thomas Lin Pedersen"</span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co">#&gt; $age</span></a>
-<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt; [1] 31</span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; $homepage</span></a>
-<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; [1] "www.data-imaginist.com"   "www.github.com/thomasp85"</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">req</span><span class="op">$</span><span class="fu">is</span><span class="op">(</span><span class="st">'json'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="va">req</span><span class="op">$</span><span class="fu">parse</span><span class="op">(</span>json <span class="op">=</span> <span class="fu"><a href="reference/parsers.html">parse_json</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="va">req</span><span class="op">$</span><span class="va">body</span></span>
+<span><span class="co">#&gt; $name</span></span>
+<span><span class="co">#&gt; [1] "Thomas Lin Pedersen"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $age</span></span>
+<span><span class="co">#&gt; [1] 31</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $homepage</span></span>
+<span><span class="co">#&gt; [1] "www.data-imaginist.com"   "www.github.com/thomasp85"</span></span></code></pre></div>
 <p>Instead of inspecting it manually you can simply provide a range of parsers and let the object choose the correct one itself</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">req<span class="op">$</span><span class="kw">set_body</span>(<span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">req<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/parse.html">parse</a></span>(</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">    <span class="dt">txt =</span> <span class="kw"><a href="reference/parsers.html">parse_plain</a></span>(), </a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">    <span class="dt">html =</span> <span class="kw"><a href="reference/parsers.html">parse_html</a></span>(), </a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">    <span class="dt">json =</span> <span class="kw"><a href="reference/parsers.html">parse_json</a></span>()</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6">)</a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8">req<span class="op">$</span>body</a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; $name</span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt; [1] "Thomas Lin Pedersen"</span></a>
-<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt; $age</span></a>
-<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="co">#&gt; [1] 31</span></a>
-<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt; $homepage</span></a>
-<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt; [1] "www.data-imaginist.com"   "www.github.com/thomasp85"</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">req</span><span class="op">$</span><span class="fu">set_body</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">req</span><span class="op">$</span><span class="fu">parse</span><span class="op">(</span></span>
+<span>    txt <span class="op">=</span> <span class="fu"><a href="reference/parsers.html">parse_plain</a></span><span class="op">(</span><span class="op">)</span>, </span>
+<span>    html <span class="op">=</span> <span class="fu"><a href="reference/parsers.html">parse_html</a></span><span class="op">(</span><span class="op">)</span>, </span>
+<span>    json <span class="op">=</span> <span class="fu"><a href="reference/parsers.html">parse_json</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="va">req</span><span class="op">$</span><span class="va">body</span></span>
+<span><span class="co">#&gt; $name</span></span>
+<span><span class="co">#&gt; [1] "Thomas Lin Pedersen"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $age</span></span>
+<span><span class="co">#&gt; [1] 31</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $homepage</span></span>
+<span><span class="co">#&gt; [1] "www.data-imaginist.com"   "www.github.com/thomasp85"</span></span></code></pre></div>
 <p>In the case that none of the provided parsers fits the content type, the response will automatically get updated with the correct error code</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">req<span class="op">$</span><span class="kw">set_body</span>(<span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">req<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/parse.html">parse</a></span>(<span class="dt">txt =</span> <span class="kw"><a href="reference/parsers.html">parse_plain</a></span>())</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; [1] FALSE</span></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4">res</a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#&gt; A HTTP response</span></a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#&gt; ===============</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt;         Status: 415 - Unsupported Media Type</span></a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt;   Content type: text/plain</span></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; In response to: http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">req</span><span class="op">$</span><span class="fu">set_body</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">req</span><span class="op">$</span><span class="fu">parse</span><span class="op">(</span>txt <span class="op">=</span> <span class="fu"><a href="reference/parsers.html">parse_plain</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="va">res</span></span>
+<span><span class="co">#&gt; A HTTP response</span></span>
+<span><span class="co">#&gt; ===============</span></span>
+<span><span class="co">#&gt;         Status: 415 - Unsupported Media Type</span></span>
+<span><span class="co">#&gt;   Content type: text/plain</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; In response to: http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></span></code></pre></div>
 <p>To facilitate all this <code>reqres</code> comes with a mapping of standard mime types to the provided parsers. This can simply be supplied to the parse method</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">req<span class="op">$</span><span class="kw">set_body</span>(<span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">req<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/parse.html">parse</a></span>(default_parsers)</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">req<span class="op">$</span>body</a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt; $name</span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt; [1] "Thomas Lin Pedersen"</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; $age</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; [1] 31</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; $homepage</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; [1] "www.data-imaginist.com"   "www.github.com/thomasp85"</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">req</span><span class="op">$</span><span class="fu">set_body</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">req</span><span class="op">$</span><span class="fu">parse</span><span class="op">(</span><span class="va">default_parsers</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="va">req</span><span class="op">$</span><span class="va">body</span></span>
+<span><span class="co">#&gt; $name</span></span>
+<span><span class="co">#&gt; [1] "Thomas Lin Pedersen"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $age</span></span>
+<span><span class="co">#&gt; [1] 31</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $homepage</span></span>
+<span><span class="co">#&gt; [1] "www.data-imaginist.com"   "www.github.com/thomasp85"</span></span></code></pre></div>
 </div>
-<div id="response" class="section level3">
-<h3 class="hasAnchor">
-<a href="#response" class="anchor"></a>Response</h3>
+<div class="section level3">
+<h3 id="response">Response<a class="anchor" aria-label="anchor" href="#response"></a>
+</h3>
 <p>While the request is mainly intended to be read from, the response should be written to. The <code>Response</code> class contains a slew of methods to easily set headers, cookies, etc.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">res<span class="op">$</span><span class="kw">set_header</span>(<span class="st">'Date'</span>, <span class="kw"><a href="reference/http_date.html">to_http_date</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.time</a></span>()))</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">res<span class="op">$</span><span class="kw">get_header</span>(<span class="st">'Date'</span>)</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; [1] "Wed, 02 Oct 2019 19:19:07 GMT"</span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">res<span class="op">$</span><span class="kw">set_cookie</span>(<span class="st">'user'</span>, req<span class="op">$</span>query<span class="op">$</span>id, <span class="dt">max_age =</span> 9000L)</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5">res<span class="op">$</span><span class="kw">has_cookie</span>(<span class="st">'user'</span>)</a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co">#&gt; [1] TRUE</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="fu">set_header</span><span class="op">(</span><span class="st">'Date'</span>, <span class="fu"><a href="reference/http_date.html">to_http_date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">get_header</span><span class="op">(</span><span class="st">'Date'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Fri, 19 Aug 2022 12:03:02 GMT"</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">set_cookie</span><span class="op">(</span><span class="st">'user'</span>, <span class="va">req</span><span class="op">$</span><span class="va">query</span><span class="op">$</span><span class="va">id</span>, max_age <span class="op">=</span> <span class="fl">9000L</span><span class="op">)</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">has_cookie</span><span class="op">(</span><span class="st">'user'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>Furthermore, it contains its own data store where arbitrary information can be stored so as to pass it between middleware etc. This data will never be part of the actual response.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">res<span class="op">$</span><span class="kw">set_data</span>(<span class="st">'alphabet'</span>, letters)</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">res<span class="op">$</span><span class="kw">get_data</span>(<span class="st">'alphabet'</span>)</a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt;  [1] "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q"</span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt; [18] "r" "s" "t" "u" "v" "w" "x" "y" "z"</span></a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="fu">set_data</span><span class="op">(</span><span class="st">'alphabet'</span>, <span class="va">letters</span><span class="op">)</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">get_data</span><span class="op">(</span><span class="st">'alphabet'</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s"</span></span>
+<span><span class="co">#&gt; [20] "t" "u" "v" "w" "x" "y" "z"</span></span></code></pre></div>
 <p>Files can be attached and marked for download, setting the relevant headers automatically</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">res<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/attach.html">attach</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'NEWS.md'</span>, <span class="dt">package =</span> <span class="st">'reqres'</span>))</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">res<span class="op">$</span><span class="kw">get_header</span>(<span class="st">'Content-Type'</span>)</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="co">#&gt; [1] "text/markdown"</span></a>
-<a class="sourceLine" id="cb10-4" data-line-number="4">res<span class="op">$</span><span class="kw">get_header</span>(<span class="st">'Content-Disposition'</span>)</a>
-<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; [1] "attachment; filename=NEWS.md"</span></a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="kw">attach</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'NEWS.md'</span>, package <span class="op">=</span> <span class="st">'reqres'</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">get_header</span><span class="op">(</span><span class="st">'Content-Type'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "text/markdown"</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">get_header</span><span class="op">(</span><span class="st">'Content-Disposition'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "attachment; filename=NEWS.md"</span></span></code></pre></div>
 <p>Often we need to provide a payload in the form of a body. This can be any type of R object until the response is handed off to the server, where it should be either a string or a raw vector.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">res<span class="op">$</span><span class="kw">remove_header</span>(<span class="st">'Content-Disposition'</span>)</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">res<span class="op">$</span>body &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(mtcars)</a>
-<a class="sourceLine" id="cb11-3" data-line-number="3">res<span class="op">$</span>body</a>
-<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="co">#&gt;                    mpg cyl disp  hp drat    wt  qsec vs am gear carb</span></a>
-<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="co">#&gt; Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4</span></a>
-<a class="sourceLine" id="cb11-6" data-line-number="6"><span class="co">#&gt; Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4</span></a>
-<a class="sourceLine" id="cb11-7" data-line-number="7"><span class="co">#&gt; Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1</span></a>
-<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="co">#&gt; Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1</span></a>
-<a class="sourceLine" id="cb11-9" data-line-number="9"><span class="co">#&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2</span></a>
-<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="co">#&gt; Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1</span></a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="fu">remove_header</span><span class="op">(</span><span class="st">'Content-Disposition'</span><span class="op">)</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="va">body</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="va">body</span></span>
+<span><span class="co">#&gt;                    mpg cyl disp  hp drat    wt  qsec vs am gear carb</span></span>
+<span><span class="co">#&gt; Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4</span></span>
+<span><span class="co">#&gt; Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4</span></span>
+<span><span class="co">#&gt; Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1</span></span>
+<span><span class="co">#&gt; Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1</span></span>
+<span><span class="co">#&gt; Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2</span></span>
+<span><span class="co">#&gt; Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1</span></span></code></pre></div>
 <p>Based on the <code>Accept</code> header in the request it can be formatted correctly thus making it ready to send back to the client. As this request contains an <code>Accept-Encoding</code> header it will be compressed as well.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">res<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="dt">json =</span> <span class="kw"><a href="reference/formatters.html">format_json</a></span>())</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb12-3" data-line-number="3">res<span class="op">$</span>body</a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co">#&gt;   [1] 1f 8b 08 00 00 00 00 00 00 03 9d d2 41 4f 83 30 14 07 f0 af 42 de b9</span></a>
-<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt;  [24] 69 da 47 29 a5 e7 1d bc 78 d1 44 4d 8c 31 dd 20 48 b2 01 16 36 a2 c6</span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt;  [47] ef 6e d9 a0 6c 63 4b d4 db 4b d3 f6 fd de bf 7d fe 82 4d 9d 83 46 4e</span></a>
-<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt;  [70] 60 f5 b1 06 2d 09 a4 45 53 83 e6 92 11 78 eb 0b ee 8a d4 9a 16 74 48</span></a>
-<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co">#&gt;  [93] 13 02 9d 2b 90 4a 24 f0 de 64 ab 7e 23 15 ee d4 ae 01 ed 36 9a 8d 5b</span></a>
-<a class="sourceLine" id="cb12-9" data-line-number="9"><span class="co">#&gt; [116] 21 90 67 c6 82 16 ee 52 63 97 fb e2 d5 56 1d 68 b8 35 9f a9 09 ee 9e</span></a>
-<a class="sourceLine" id="cb12-10" data-line-number="10"><span class="co">#&gt; [139] 04 7c 93 ff f6 56 71 e4 9b c7 94 e1 df 9b 07 8f 26 3f 02 b8 2b 07 82</span></a>
-<a class="sourceLine" id="cb12-11" data-line-number="11"><span class="co">#&gt; [162] f0 04 a6 0e 84 24 9c 04 2a 1a 09 e1 34 be a2 92 1f 04 fc 9a 80 7b c1</span></a>
-<a class="sourceLine" id="cb12-12" data-line-number="12"><span class="co">#&gt; [185] c2 b4 cd b6 0c 62 ce 8e e7 a7 e2 3c 01 8c d4 85 04 7a 53 b7 af 90 4f</span></a>
-<a class="sourceLine" id="cb12-13" data-line-number="13"><span class="co">#&gt; [208] 11 24 54 88 13 00 1b 01 e1 1c 70 53 d9 32 6b 03 11 2c 6c b1 cb 26 84</span></a>
-<a class="sourceLine" id="cb12-14" data-line-number="14"><span class="co">#&gt; [231] 1b 23 1e 10 6a 44 84 fe 19 fa c0 47 04 8f 46 44 df f6 da 33 cc 0d 78</span></a>
-<a class="sourceLine" id="cb12-15" data-line-number="15"><span class="co">#&gt; [254] 6e b8 af 2b db 9a 65 b5 6d 4f 18 b3 df 80 18 0d 0c e6 19 48 63 e9 19</span></a>
-<a class="sourceLine" id="cb12-16" data-line-number="16"><span class="co">#&gt; [277] 72 64 20 a3 88 bf 8e e2 c1 ac 0b 53 ba e6 2f 3f 40 6a d7 44 06 03 00</span></a>
-<a class="sourceLine" id="cb12-17" data-line-number="17"><span class="co">#&gt; [300] 00</span></a>
-<a class="sourceLine" id="cb12-18" data-line-number="18">res<span class="op">$</span><span class="kw">get_header</span>(<span class="st">'Content-Type'</span>)</a>
-<a class="sourceLine" id="cb12-19" data-line-number="19"><span class="co">#&gt; [1] "application/json"</span></a>
-<a class="sourceLine" id="cb12-20" data-line-number="20">res<span class="op">$</span><span class="kw">get_header</span>(<span class="st">'Content-Encoding'</span>)</a>
-<a class="sourceLine" id="cb12-21" data-line-number="21"><span class="co">#&gt; [1] "gzip"</span></a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="fu">format</span><span class="op">(</span>json <span class="op">=</span> <span class="fu"><a href="reference/formatters.html">format_json</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="va">body</span></span>
+<span><span class="co">#&gt;   [1] 1f 8b 08 00 00 00 00 00 00 03 9d d2 41 4f 83 30 14 07 f0 af 42 de b9 69 da</span></span>
+<span><span class="co">#&gt;  [26] 47 29 a5 e7 1d bc 78 d1 44 4d 8c 31 dd 20 48 b2 01 16 36 a2 c6 ef 6e d9 a0</span></span>
+<span><span class="co">#&gt;  [51] 6c 63 4b d4 db 4b d3 f6 fd de bf 7d fe 82 4d 9d 83 46 4e 60 f5 b1 06 2d 09</span></span>
+<span><span class="co">#&gt;  [76] a4 45 53 83 e6 92 11 78 eb 0b ee 8a d4 9a 16 74 48 13 02 9d 2b 90 4a 24 f0</span></span>
+<span><span class="co">#&gt; [101] de 64 ab 7e 23 15 ee d4 ae 01 ed 36 9a 8d 5b 21 90 67 c6 82 16 ee 52 63 97</span></span>
+<span><span class="co">#&gt; [126] fb e2 d5 56 1d 68 b8 35 9f a9 09 ee 9e 04 7c 93 ff f6 56 71 e4 9b c7 94 e1</span></span>
+<span><span class="co">#&gt; [151] df 9b 07 8f 26 3f 02 b8 2b 07 82 f0 04 a6 0e 84 24 9c 04 2a 1a 09 e1 34 be</span></span>
+<span><span class="co">#&gt; [176] a2 92 1f 04 fc 9a 80 7b c1 c2 b4 cd b6 0c 62 ce 8e e7 a7 e2 3c 01 8c d4 85</span></span>
+<span><span class="co">#&gt; [201] 04 7a 53 b7 af 90 4f 11 24 54 88 13 00 1b 01 e1 1c 70 53 d9 32 6b 03 11 2c</span></span>
+<span><span class="co">#&gt; [226] 6c b1 cb 26 84 1b 23 1e 10 6a 44 84 fe 19 fa c0 47 04 8f 46 44 df f6 da 33</span></span>
+<span><span class="co">#&gt; [251] cc 0d 78 6e b8 af 2b db 9a 65 b5 6d 4f 18 b3 df 80 18 0d 0c e6 19 48 63 e9</span></span>
+<span><span class="co">#&gt; [276] 19 72 64 20 a3 88 bf 8e e2 c1 ac 0b 53 ba e6 2f 3f 40 6a d7 44 06 03 00 00</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">get_header</span><span class="op">(</span><span class="st">'Content-Type'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "application/json"</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">get_header</span><span class="op">(</span><span class="st">'Content-Encoding'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "gzip"</span></span></code></pre></div>
 <p>The content negotiation understands wildcards as well</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">res<span class="op">$</span>body &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(mtcars)</a>
-<a class="sourceLine" id="cb13-2" data-line-number="2">req<span class="op">$</span><span class="kw">get_header</span>(<span class="st">'Accept'</span>)</a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="co">#&gt; [1] "application/json"       "application/xml; q=0.5"</span></a>
-<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="co">#&gt; [3] "text/*; q=0.3"</span></a>
-<a class="sourceLine" id="cb13-5" data-line-number="5">res<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="dt">csv =</span> <span class="kw"><a href="reference/formatters.html">format_table</a></span>(<span class="dt">sep =</span> <span class="st">','</span>), <span class="dt">compress =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb13-7" data-line-number="7">res<span class="op">$</span>body</a>
-<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; [1] "\"mpg\",\"cyl\",\"disp\",\"hp\",\"drat\",\"wt\",\"qsec\",\"vs\",\"am\",\"gear\",\"carb\"\n\"Mazda RX4\",21,6,160,110,3.9,2.62,16.46,0,1,4,4\n\"Mazda RX4 Wag\",21,6,160,110,3.9,2.875,17.02,0,1,4,4\n\"Datsun 710\",22.8,4,108,93,3.85,2.32,18.61,1,1,4,1\n\"Hornet 4 Drive\",21.4,6,258,110,3.08,3.215,19.44,1,0,3,1\n\"Hornet Sportabout\",18.7,8,360,175,3.15,3.44,17.02,0,0,3,2\n\"Valiant\",18.1,6,225,105,2.76,3.46,20.22,1,0,3,1"</span></a>
-<a class="sourceLine" id="cb13-9" data-line-number="9">res<span class="op">$</span><span class="kw">get_header</span>(<span class="st">'Content-Type'</span>)</a>
-<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt; [1] "text/csv"</span></a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">body</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="va">req</span><span class="op">$</span><span class="fu">get_header</span><span class="op">(</span><span class="st">'Accept'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "application/json"       "application/xml; q=0.5" "text/*; q=0.3"</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">format</span><span class="op">(</span>csv <span class="op">=</span> <span class="fu"><a href="reference/formatters.html">format_table</a></span><span class="op">(</span>sep <span class="op">=</span> <span class="st">','</span><span class="op">)</span>, compress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="va">body</span></span>
+<span><span class="co">#&gt; [1] "\"mpg\",\"cyl\",\"disp\",\"hp\",\"drat\",\"wt\",\"qsec\",\"vs\",\"am\",\"gear\",\"carb\"\n\"Mazda RX4\",21,6,160,110,3.9,2.62,16.46,0,1,4,4\n\"Mazda RX4 Wag\",21,6,160,110,3.9,2.875,17.02,0,1,4,4\n\"Datsun 710\",22.8,4,108,93,3.85,2.32,18.61,1,1,4,1\n\"Hornet 4 Drive\",21.4,6,258,110,3.08,3.215,19.44,1,0,3,1\n\"Hornet Sportabout\",18.7,8,360,175,3.15,3.44,17.02,0,0,3,2\n\"Valiant\",18.1,6,225,105,2.76,3.46,20.22,1,0,3,1"</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">get_header</span><span class="op">(</span><span class="st">'Content-Type'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "text/csv"</span></span></code></pre></div>
 <p>A default formatter mapping exists in parallel to <code>default_parsers</code> for the <code>Request$format()</code> method.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">res<span class="op">$</span>body &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(mtcars)</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">res<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/format.html">format</a></span>(default_formatters, <span class="dt">compress =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb14-4" data-line-number="4">res<span class="op">$</span>body</a>
-<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#&gt; [{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.62,"qsec":16.46,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4"},{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.875,"qsec":17.02,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4 Wag"},{"mpg":22.8,"cyl":4,"disp":108,"hp":93,"drat":3.85,"wt":2.32,"qsec":18.61,"vs":1,"am":1,"gear":4,"carb":1,"_row":"Datsun 710"},{"mpg":21.4,"cyl":6,"disp":258,"hp":110,"drat":3.08,"wt":3.215,"qsec":19.44,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Hornet 4 Drive"},{"mpg":18.7,"cyl":8,"disp":360,"hp":175,"drat":3.15,"wt":3.44,"qsec":17.02,"vs":0,"am":0,"gear":3,"carb":2,"_row":"Hornet Sportabout"},{"mpg":18.1,"cyl":6,"disp":225,"hp":105,"drat":2.76,"wt":3.46,"qsec":20.22,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Valiant"}]</span></a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">body</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">format</span><span class="op">(</span><span class="va">default_formatters</span>, compress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="va">body</span></span>
+<span><span class="co">#&gt; [{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.62,"qsec":16.46,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4"},{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.875,"qsec":17.02,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4 Wag"},{"mpg":22.8,"cyl":4,"disp":108,"hp":93,"drat":3.85,"wt":2.32,"qsec":18.61,"vs":1,"am":1,"gear":4,"carb":1,"_row":"Datsun 710"},{"mpg":21.4,"cyl":6,"disp":258,"hp":110,"drat":3.08,"wt":3.215,"qsec":19.44,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Hornet 4 Drive"},{"mpg":18.7,"cyl":8,"disp":360,"hp":175,"drat":3.15,"wt":3.44,"qsec":17.02,"vs":0,"am":0,"gear":3,"carb":2,"_row":"Hornet Sportabout"},{"mpg":18.1,"cyl":6,"disp":225,"hp":105,"drat":2.76,"wt":3.46,"qsec":20.22,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Valiant"}]</span></span></code></pre></div>
 <p>It is easy to define your own formatters and add them along the defaults</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">res<span class="op">$</span>body &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(mtcars)</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2">res<span class="op">$</span><span class="kw"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="st">'text/yaml'</span> =<span class="st"> </span>yaml<span class="op">::</span>as.yaml, <span class="dt">compress =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="co">#&gt; [1] TRUE</span></a>
-<a class="sourceLine" id="cb15-4" data-line-number="4">res<span class="op">$</span>body</a>
-<a class="sourceLine" id="cb15-5" data-line-number="5"><span class="co">#&gt; [1] "mpg:\n- 21.0\n- 21.0\n- 22.8\n- 21.4\n- 18.7\n- 18.1\ncyl:\n- 6.0\n- 6.0\n- 4.0\n- 6.0\n- 8.0\n- 6.0\ndisp:\n- 160.0\n- 160.0\n- 108.0\n- 258.0\n- 360.0\n- 225.0\nhp:\n- 110.0\n- 110.0\n- 93.0\n- 110.0\n- 175.0\n- 105.0\ndrat:\n- 3.9\n- 3.9\n- 3.85\n- 3.08\n- 3.15\n- 2.76\nwt:\n- 2.62\n- 2.875\n- 2.32\n- 3.215\n- 3.44\n- 3.46\nqsec:\n- 16.46\n- 17.02\n- 18.61\n- 19.44\n- 17.02\n- 20.22\nvs:\n- 0.0\n- 0.0\n- 1.0\n- 1.0\n- 0.0\n- 1.0\nam:\n- 1.0\n- 1.0\n- 1.0\n- 0.0\n- 0.0\n- 0.0\ngear:\n- 4.0\n- 4.0\n- 4.0\n- 3.0\n- 3.0\n- 3.0\ncarb:\n- 4.0\n- 4.0\n- 1.0\n- 1.0\n- 2.0\n- 1.0\n"</span></a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">body</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">format</span><span class="op">(</span><span class="st">'text/yaml'</span> <span class="op">=</span> <span class="fu">yaml</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/yaml/man/as.yaml.html" class="external-link">as.yaml</a></span>, compress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="va">body</span></span>
+<span><span class="co">#&gt; [1] "mpg:\n- 21.0\n- 21.0\n- 22.8\n- 21.4\n- 18.7\n- 18.1\ncyl:\n- 6.0\n- 6.0\n- 4.0\n- 6.0\n- 8.0\n- 6.0\ndisp:\n- 160.0\n- 160.0\n- 108.0\n- 258.0\n- 360.0\n- 225.0\nhp:\n- 110.0\n- 110.0\n- 93.0\n- 110.0\n- 175.0\n- 105.0\ndrat:\n- 3.9\n- 3.9\n- 3.85\n- 3.08\n- 3.15\n- 2.76\nwt:\n- 2.62\n- 2.875\n- 2.32\n- 3.215\n- 3.44\n- 3.46\nqsec:\n- 16.46\n- 17.02\n- 18.61\n- 19.44\n- 17.02\n- 20.22\nvs:\n- 0.0\n- 0.0\n- 1.0\n- 1.0\n- 0.0\n- 1.0\nam:\n- 1.0\n- 1.0\n- 1.0\n- 0.0\n- 0.0\n- 0.0\ngear:\n- 4.0\n- 4.0\n- 4.0\n- 3.0\n- 3.0\n- 3.0\ncarb:\n- 4.0\n- 4.0\n- 1.0\n- 1.0\n- 2.0\n- 1.0\n"</span></span></code></pre></div>
 </div>
 </div>
-<div id="code-of-conduct" class="section level2">
-<h2 class="hasAnchor">
-<a href="#code-of-conduct" class="anchor"></a>Code of Conduct</h2>
+<div class="section level2">
+<h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+</h2>
 <p>Please note that the ‘reqres’ project is released with a <a href="https://reqres.data-imaginist.com/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=reqres">https://​cloud.r-project.org/​package=reqres</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/thomasp85/reqres">https://​github.com/​thomasp85/​reqres</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/thomasp85/reqres/issues">https://​github.com/​thomasp85/​reqres/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=reqres" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/thomasp85/reqres/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/thomasp85/reqres/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
+<a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
 </li>
 </ul>
 </div>
+
 <div class="community">
-<h2>Community</h2>
+<h2 data-toc-skip>Community</h2>
 <ul class="list-unstyled">
 <li><a href="CODE_OF_CONDUCT.html">Code of conduct</a></li>
 </ul>
 </div>
-<div class="developers">
-<h2>Developers</h2>
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li>
-<a href="https://data-imaginist.com">Thomas Lin Pedersen</a> <br><small class="roles"> Maintainer, author </small> <a href="https://orcid.org/0000-0002-5147-4711" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID"></a> </li>
+<li><a href="authors.html#citation">Citing reqres</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.tidyverse.org/lifecycle/#stable"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
-<li><a href="https://travis-ci.org/thomasp85/reqres"><img src="https://travis-ci.org/thomasp85/reqres.svg?branch=master" alt="Travis-CI Build Status"></a></li>
-<li><a href="https://ci.appveyor.com/project/thomasp85/reqres"><img src="https://ci.appveyor.com/api/projects/status/github/thomasp85/reqres?branch=master&amp;svg=true" alt="AppVeyor Build Status"></a></li>
-<li><a href="https://cran.r-project.org/package=reqres"><img src="http://www.r-pkg.org/badges/version-ago/reqres" alt="CRAN_Status_Badge"></a></li>
-<li><a href="https://cran.r-project.org/package=reqres"><img src="http://cranlogs.r-pkg.org/badges/reqres" alt="CRAN_Download_Badge"></a></li>
-<li><a href="https://codecov.io/github/thomasp85/reqres?branch=master"><img src="https://img.shields.io/codecov/c/github/thomasp85/reqres/master.svg" alt="Coverage Status"></a></li>
+<li>
+<a href="https://data-imaginist.com" class="external-link">Thomas Lin Pedersen</a> <br><small class="roles"> Maintainer, author </small> <a href="https://orcid.org/0000-0002-5147-4711" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://www.tidyverse.org/lifecycle/#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
+<li><a href="https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://cran.r-project.org/package=reqres" class="external-link"><img src="http://www.r-pkg.org/badges/version-ago/reqres" alt="CRAN_Status_Badge"></a></li>
+<li><a href="https://cran.r-project.org/package=reqres" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/reqres" alt="CRAN_Download_Badge"></a></li>
+<li><a href="https://app.codecov.io/gh/thomasp85/reqres?branch=main" class="external-link"><img src="https://codecov.io/gh/thomasp85/reqres/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
+</ul>
 </div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://data-imaginist.com">Thomas Lin Pedersen</a>.</p>
+  <p></p>
+<p>Developed by <a href="https://data-imaginist.com" class="external-link">Thomas Lin Pedersen</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -374,6 +396,8 @@
 
   
 
+
+  
 
   </body>
 </html>
