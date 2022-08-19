@@ -6,13 +6,9 @@
 \alias{reqres-package}
 \title{reqres: Powerful Classes for HTTP Requests and Responses}
 \description{
-\if{html}{\figure{logo.png}{options: align='right'}}
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-In order to facilitate parsing of http requests and creating 
-    appropriate responses this package provides two classes to handle a lot of
-    the housekeeping involved in working with http exchanges. The infrastructure
-    builds upon the 'rook' specification and is thus well suited to be combined
-    with 'httpuv' based web servers.
+In order to facilitate parsing of http requests and creating appropriate responses this package provides two classes to handle a lot of the housekeeping involved in working with http exchanges. The infrastructure builds upon the 'rook' specification and is thus well suited to be combined with 'httpuv' based web servers.
 }
 \seealso{
 Useful links:
@@ -24,7 +20,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Thomas Lin Pedersen \email{thomasp85@gmail.com} (0000-0002-5147-4711)
+\strong{Maintainer}: Thomas Lin Pedersen \email{thomasp85@gmail.com} (\href{https://orcid.org/0000-0002-5147-4711}{ORCID})
 
 }
 \keyword{internal}

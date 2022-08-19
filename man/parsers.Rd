@@ -11,15 +11,22 @@
 \alias{parse_table}
 \title{Pre-supplied parsing generators}
 \usage{
-parse_json(simplifyVector = TRUE, simplifyDataFrame = simplifyVector,
-  simplifyMatrix = simplifyVector, flatten = FALSE)
+parse_json(
+  simplifyVector = TRUE,
+  simplifyDataFrame = simplifyVector,
+  simplifyMatrix = simplifyVector,
+  flatten = FALSE
+)
 
 parse_plain(sep = "\\n")
 
 parse_xml(encoding = "", options = "NOBLANKS", base_url = "")
 
-parse_html(encoding = "", options = c("RECOVER", "NOERROR",
-  "NOBLANKS"), base_url = "")
+parse_html(
+  encoding = "",
+  options = c("RECOVER", "NOERROR", "NOBLANKS"),
+  base_url = ""
+)
 
 parse_multiform()
 
@@ -34,7 +41,7 @@ parse_table(...)
 
 \item{simplifyMatrix}{coerce JSON arrays containing vectors of equal mode and dimension into matrix or array}
 
-\item{flatten}{automatically \code{\link{flatten}} nested data frames into a single non-nested data frame}
+\item{flatten}{automatically \code{\link[jsonlite:flatten]{flatten()}} nested data frames into a single non-nested data frame}
 
 \item{sep}{The line separator. Plain text will be split into multiple strings
 based on this.}
