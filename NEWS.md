@@ -1,4 +1,4 @@
-# reqres (development version)
+# reqres 0.2.5
 
 * General upkeep
 * Fix bug whith unnamed cookies (#12)
