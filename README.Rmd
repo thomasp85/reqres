@@ -19,41 +19,41 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version-ago/reqres)](https://cran.r-project.org/package=reqres)
 [![CRAN_Download_Badge](http://cranlogs.r-pkg.org/badges/reqres)](https://cran.r-project.org/package=reqres)
-[![Codecov test coverage](https://codecov.io/gh/thomasp85/reqres/branch/main/graph/badge.svg)](https://app.codecov.io/gh/thomasp85/reqres?branch=main)
+[![Codecov test coverage](https://codecov.io/gh/thomasp85/reqres/graph/badge.svg)](https://app.codecov.io/gh/thomasp85/reqres)
 <!-- badges: end -->
 
-While the http protocol is rather basic in essence, it can be a pain to work 
+While the http protocol is rather basic in essence, it can be a pain to work
 with. `reqres` is here to soothe the pain somewhat by providing two powerful
 classes for handling all parts of request and response handling during a http
 exchange. *This is not a web server*, instead it focuses on making life easier
 for developers of web servers by extracting the complexity of cookies, headers,
 content negotiation, and the likes into neat little classes. `reqres` builds
 upon the [`rook`](https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md)
-specifications and is thus well suited for 
+specifications and is thus well suited for
 [`httpuv`-based](https://github.com/rstudio/httpuv) webservers.
 
 ## Features
 `reqres` draws a lot of inspiration from [express.js](https://expressjs.com) and
-the `Request` and `Response` classes is aiming for feature parity with those 
+the `Request` and `Response` classes is aiming for feature parity with those
 from express. The `Request` class provides automatic parsing of the query string
-along with parsing of the body based on the `Content-Type` header (with 
+along with parsing of the body based on the `Content-Type` header (with
 decompression if `Content-Encoding` is provided). Further, it provides content
 negotiation based on the `Accept(-*)` headers. The `Response` class allows you
 to set headers and cookies easily, assign arbitrary data for later use, and
 automatically format the body based on content negotiation with the `Request`
-object that it is responding to (again, it will compress automatically if the 
-`Accept-Encoding` header allows it). If any part of the content negotiation 
+object that it is responding to (again, it will compress automatically if the
+`Accept-Encoding` header allows it). If any part of the content negotiation
 fails the correct response status code will be set, making the response ready to
 send.
 
-`reqres` comes with a range of parsers and formatters making it work out of the 
+`reqres` comes with a range of parsers and formatters making it work out of the
 box with json, xml, html, csv, tab, multipart, and www-form-urlencoded payloads.
 It is easy to either modify these or provide your own parsers and formatters if
 needed - `reqres` will take care of the content negotiation and simply call your
 custom parser/formatter if chosen.
 
 ## Installation
-reqrescan be installed from CRAN with `install.packages('reqres')` or the 
+reqrescan be installed from CRAN with `install.packages('reqres')` or the
 development version can be installed from github:
 
 ```{r, eval=FALSE}
@@ -62,7 +62,7 @@ devtools::install_github('thomasp85/reqres')
 ```
 
 ## Demo
-Below is a quick demo of some of the features in `reqres`. It uses the 
+Below is a quick demo of some of the features in `reqres`. It uses the
 `fake_request()` in `fiery` to mock a rook request so it can be used without
 setting up a webserver:
 
@@ -90,7 +90,7 @@ res
 ```
 
 ### Request
-A lot of information is already available, such as the query and other parts of 
+A lot of information is already available, such as the query and other parts of
 the url, but the body is not filled in automatically.
 
 ```{r}
@@ -99,7 +99,7 @@ req$query
 req$body
 ```
 
-The body can easily be parsed though, as long as a parser exists for the 
+The body can easily be parsed though, as long as a parser exists for the
 provided content type.
 
 ```{r}
@@ -114,14 +114,14 @@ let the object choose the correct one itself
 ```{r}
 req$set_body(NULL)
 req$parse(
-    txt = parse_plain(), 
-    html = parse_html(), 
+    txt = parse_plain(),
+    html = parse_html(),
     json = parse_json()
 )
 req$body
 ```
 
-In the case that none of the provided parsers fits the content type, the 
+In the case that none of the provided parsers fits the content type, the
 response will automatically get updated with the correct error code
 
 ```{r}
@@ -141,7 +141,7 @@ req$body
 
 ### Response
 While the request is mainly intended to be read from, the response should be
-written to. The `Response` class contains a slew of methods to easily set 
+written to. The `Response` class contains a slew of methods to easily set
 headers, cookies, etc.
 
 ```{r}
@@ -151,7 +151,7 @@ res$set_cookie('user', req$query$id, max_age = 9000L)
 res$has_cookie('user')
 ```
 
-Furthermore, it contains its own data store where arbitrary information can be 
+Furthermore, it contains its own data store where arbitrary information can be
 stored so as to pass it between middleware etc. This data will never be part of
 the actual response.
 
@@ -180,7 +180,7 @@ res$body
 ```
 
 Based on the `Accept` header in the request it can be formatted correctly thus
-making it ready to send back to the client. As this request contains an 
+making it ready to send back to the client. As this request contains an
 `Accept-Encoding` header it will be compressed as well.
 
 ```{r}
@@ -200,7 +200,7 @@ res$body
 res$get_header('Content-Type')
 ```
 
-A default formatter mapping exists in parallel to `default_parsers` for the 
+A default formatter mapping exists in parallel to `default_parsers` for the
 `Request$format()` method.
 
 ```{r}
