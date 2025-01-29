@@ -11,7 +11,6 @@
 #' @return `to_http_date()` returns a properly formatted string, while
 #' `from_http_date()` returns a POSIXct object
 #'
-#' @importFrom assertthat is.time
 #' @rdname http_date
 #' @export
 #'
@@ -20,7 +19,7 @@
 #' time
 #' from_http_date(time)
 to_http_date <- function(time, format = NULL) {
-  if (!is.time(time)) {
+  if (!inherits(time, "POSIXt")) {
     time <- as.POSIXct(time, format = format)
   }
   format(
@@ -104,3 +103,5 @@ cat_headers <- function(headers) {
     cat(i, ': ', headers[[i]], '\n', sep = '')
   }
 }
+
+tri <- function(expr) try_fetch(expr, error = function(e, ...) e)

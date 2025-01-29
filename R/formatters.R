@@ -127,8 +127,8 @@ default_formatters <- list(
 
 # Format R objects to xml2 compliant lists
 listify <- function(x) {
-  if (is.scalar(x)) return(structure(list(as.character(x))))
+  if (length(x) == 1L) return(structure(list(as.character(x))))
   if (!is.list(x)) x <- as.list(x)
-  if (!has_attr(x, 'names')) names(x) <- vapply(x, function(x) class(x)[1], character(1))
+  if (is.null(attr(x, 'names', exact = TRUE))) names(x) <- vapply(x, function(x) class(x)[1], character(1))
   lapply(x, listify)
 }

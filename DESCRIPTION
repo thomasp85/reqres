@@ -9,7 +9,7 @@ Authors@R:
              email = "thomasp85@gmail.com",
              comment = c(ORCID = "0000-0002-5147-4711")))
 Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>
-Description: In order to facilitate parsing of http requests and creating 
+Description: In order to facilitate parsing of http requests and creating
     appropriate responses this package provides two classes to handle a lot of
     the housekeeping involved in working with http exchanges. The infrastructure
     builds upon the 'rook' specification and is thus well suited to be combined
@@ -17,9 +17,8 @@ Description: In order to facilitate parsing of http requests and creating
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 2.10)
-Imports: 
+Imports:
     R6,
-    assertthat,
     stringi,
     urltools,
     tools,
@@ -28,10 +27,11 @@ Imports:
     xml2,
     webutils,
     utils,
-    cli
+    cli,
+    rlang
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
-Suggests: 
+Suggests:
     fiery,
     testthat (>= 3.0.0),
     covr

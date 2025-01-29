@@ -78,7 +78,6 @@
 #' @seealso [`Request`] for handling http requests
 #'
 #' @importFrom R6 R6Class
-#' @importFrom assertthat is.scalar is.count is.string has_name
 #' @importFrom tools file_path_as_absolute file_ext
 #' @importFrom urltools url_encode
 #' @importFrom brotli brotli_compress
@@ -155,7 +154,7 @@ Response <- R6Class('Response',
     #' @param value The value to assign to the header
     #'
     set_header = function(name, value) {
-      assert_that(is.string(name))
+      check_string(name)
       assign(as.character(name), as.character(value), envir = private$HEADERS)
       invisible(self)
     },
@@ -163,14 +162,14 @@ Response <- R6Class('Response',
     #' @param name The name of the header to retrieve the value for
     #'
     get_header = function(name) {
-      assert_that(is.string(name))
+      check_string(name)
       private$HEADERS[[name]]
     },
     #' @description Removes all headers given by `name`
     #' @param name The name of the header to remove
     #'
     remove_header = function(name) {
-      assert_that(is.string(name))
+      check_string(name)
       if (!self$has_header(name)) {
         cli::cli_warn('No header named {.val {name}}')
       } else {
@@ -182,7 +181,7 @@ Response <- R6Class('Response',
     #' @param name The name of the header to look for
     #'
     has_header = function(name) {
-      assert_that(is.string(name))
+      check_string(name)
       !is.null(private$HEADERS[[name]])
     },
     #' @description Adds an additional header given by `name` with the value
@@ -203,7 +202,7 @@ Response <- R6Class('Response',
     #' @param value An R object
     #'
     set_data = function(key, value) {
-      assert_that(is.string(key))
+      check_string(key)
       assign(key, value, envir = private$DATA)
       invisible(self)
     },
@@ -212,7 +211,7 @@ Response <- R6Class('Response',
     #' @param key The identifier of the data you wish to retrieve
     #'
     get_data = function(key) {
-      assert_that(is.string(key))
+      check_string(key)
       private$DATA[[key]]
     },
     #' @description Removes the data stored under `key` in the internal data
@@ -220,7 +219,7 @@ Response <- R6Class('Response',
     #' @param key The identifier of the data you wish to remove
     #'
     remove_data = function(key) {
-      assert_that(is.string(key))
+      check_string(key)
       if (!self$has_data(key)) {
         cli::cli_warn('No data named {.val {key}}')
       } else {
@@ -251,7 +250,7 @@ Response <- R6Class('Response',
     #'
     attach = function(file, filename = basename(file), type = NULL) {
       self$file <- file
-      assert_that(is.string(filename))
+      check_string(filename)
       if (!is.null(type)) self$type <- type
       self$set_header('Content-Disposition', paste0('attachment; filename=', filename))
       invisible(self)
@@ -282,8 +281,10 @@ Response <- R6Class('Response',
     #' @param same_site Either `"Lax"` or `"Strict"` indicating whether the
     #' cookie can be send during cross-site requests
     set_cookie = function(name, value, encode = TRUE, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
-      assert_that(is.string(name))
-      assert_that(is.scalar(value))
+      check_string(name)
+      if (length(value) != 1) {
+        cli::cli_abort("{.arg value} must be scalar")
+      }
       ascii <- iconv(c(name, value), to = 'ASCII')
       if (anyNA(ascii)) {
         cli::cli_warn('Cookie name and value must only use valid ASCII characters. Cookie {.field {name}} not set')
@@ -299,7 +300,7 @@ Response <- R6Class('Response',
     #' @param name The name of the cookie to remove
     #'
     remove_cookie = function(name) {
-      assert_that(is.string(name))
+      check_string(name)
       if (!self$has_cookie(name)) {
         cli::cli_warn('No cookie named {.val {name}}')
       } else {
@@ -311,7 +312,7 @@ Response <- R6Class('Response',
     #' @param name The name of the cookie to look for
     #'
     has_cookie = function(name) {
-      assert_that(is.string(name))
+      check_string(name)
       !is.null(private$COOKIES[[name]])
     },
     #' @description Sets the `Link` header based on the named arguments passed
@@ -324,7 +325,9 @@ Response <- R6Class('Response',
       } else {
         links <- list(...)
       }
-      assert_that(has_attr(links, 'names'))
+      if (!is_named2(links)) {
+        stop_input_type(links, "a named list")
+      }
       url <- paste0('<', unlist(links), '>')
       rel <- paste0('rel="', names(links), '"')
       links <- paste(paste0(url, '; ', rel), collapse = ', ')
@@ -353,15 +356,17 @@ Response <- R6Class('Response',
         first_formatters <- names(formatters) %in% first_formatters
         formatters <- c(formatters[first_formatters], formatters[!first_formatters])
       }
-      assert_that(has_attr(formatters, 'names'))
+      if (!is_named2(formatters)) {
+        stop_input_type(formatters, "a named list")
+      }
 
       format <- self$request$accepts(names(formatters))
       if (is.null(format)) {
         if (autofail) self$status_with_text(406L)
         return(FALSE)
       }
-      content <- try(formatters[[format]](self$body))
-      if (is.error(content)) {
+      content <- tri(formatters[[format]](self$body))
+      if (is_condition(content)) {
         if (autofail) self$status_with_text(500L)
         return(FALSE)
       }
@@ -379,7 +384,7 @@ Response <- R6Class('Response',
     compress = function(priority = c('gzip', 'deflate', 'br', 'identity')) {
       encoding <- self$request$accepts_encoding(priority)
       if (is.null(encoding)) return(FALSE)
-      if (!is.string(self$body)) return(FALSE)
+      if (!is_string(self$body)) return(FALSE)
       content <- switch(
         encoding,
         identity = self$body,
@@ -397,7 +402,7 @@ Response <- R6Class('Response',
     #'
     content_length = function() {
       body <- private$format_body()
-      if (is.scalar(body) && has_name(body, 'file')) {
+      if (length(body) == 1L && has_name(body, 'file')) {
         file.size(body)
       } else if (is.raw(body)) {
         length(body)
@@ -454,12 +459,12 @@ Response <- R6Class('Response',
     #'
     status = function(code) {
       if (missing(code)) return(private$STATUS)
-      if (is.count(code)) {
+      if (is_integerish(code, 1L, TRUE)) {
         if (code < 100L || code > 599L) {
           cli::cli_abort('Response code ({.val {code}}) out of range')
         }
       }
-      if (is.string(code)) {
+      if (is_string(code)) {
         ind <- match(tolower(code), tolower(status$Description))
         if (is.na(ind)) {
           cli::cli_abort('Unknown status: {.val {code}}')
@@ -493,9 +498,11 @@ Response <- R6Class('Response',
           return(private$BODY[['file']])
         }
       }
-      assert_that(is.string(path))
+      check_string(path)
       file <- file_path_as_absolute(path)
-      assert_that(file.exists(file))
+      if (!file.exists(file)) {
+        cli::cli_abort("{.arg file} doesn't exist")
+      }
       self$type <- file_ext(file)
       private$BODY <- c(file = file)
       self$set_header('Last-Modified', to_http_date(file.mtime(file)))
@@ -555,7 +562,7 @@ Response <- R6Class('Response',
     format_body = function() {
       if (is.raw(private$BODY)) {
         private$BODY
-      } else if (is.scalar(private$BODY) &&
+      } else if (length(private$BODY) == 1L &&
                  'file' %in% names(private$BODY)) {
         private$BODY
       } else {
@@ -590,27 +597,29 @@ is.Response <- function(x) inherits(x, 'Response')
 cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
   opts <- paste0('=', value)
   if (!is.null(expires)) {
-    assert_that(is.scalar(expires))
+    if (length(expires) != 1) {
+      stop_input_type(expires, "an object coercible to a single timepoint")
+    }
     opts <- c(opts, paste0('Expires=', to_http_date(expires)))
   }
   if (!is.null(http_only)) {
-    assert_that(is.flag(http_only))
-    if (http_only) opts <- c(opts, 'HttpOnly')
+    check_bool(http_only)
+    if (isTRUE(http_only)) opts <- c(opts, 'HttpOnly')
   }
   if (!is.null(max_age)) {
-    assert_that(is.count(max_age))
+    check_number_whole(max_age, min = 0)
     opts <- c(opts, paste0('Max-Age=', max_age))
   }
   if (!is.null(path)) {
-    assert_that(is.string(path))
+    check_string(path)
     opts <- c(opts, paste0('Path=', path))
   }
   if (!is.null(secure)) {
-    assert_that(is.flag(secure))
+    check_bool(secure)
     if (secure) opts <- c(opts, 'Secure')
   }
   if (!is.null(same_site)) {
-    assert_that(is.string(same_site))
+    check_string(same_site)
     if (!same_site %in% c('Lax', 'Strict')) {
       cli::cli_abort("{.arg same_site} must be {.or {.val {c('Lax', 'Strict')}}}")
     }

@@ -15,7 +15,7 @@
       req$trust <- "test"
     Condition
       Error:
-      ! value is not a flag (a length one logical vector).
+      ! `value` must be `TRUE` or `FALSE`, not the string "test".
 
 # response can be generated
 

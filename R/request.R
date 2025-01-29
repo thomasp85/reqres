@@ -28,7 +28,6 @@
 #' @seealso [`Response`] for handling http responses
 #'
 #' @importFrom R6 R6Class
-#' @importFrom assertthat assert_that is.flag has_attr is.error
 #' @importFrom stringi stri_match_first_regex stri_trim_both stri_split_fixed stri_split_regex
 #' @importFrom urltools url_decode
 #' @importFrom brotli brotli_decompress
@@ -225,7 +224,9 @@ Request <- R6Class('Request',
         first_parsers <- names(parsers) %in% first_parsers
         parsers <- c(parsers[first_parsers], parsers[!first_parsers])
       }
-      assert_that(has_attr(parsers, 'names'))
+      if (!is_named2(parsers)) {
+        cli::cli_abort("Provided parsers must be named")
+      }
 
       type <- self$get_header('Content-Type')
       if (is.null(type)) return(FALSE)
@@ -240,13 +241,13 @@ Request <- R6Class('Request',
       for (i in names(parsers)) {
         if (self$is(i)) {
           content <- private$get_body()
-          content <- try(private$unpack(content))
-          if (is.error(content)) {
+          content <- tri(private$unpack(content))
+          if (is_condition(content)) {
             if (autofail) self$response$status_with_text(400L)
             return(FALSE)
           }
-          content <- try(parsers[[i]](content, directives))
-          if (!is.error(content)) {
+          content <- tri(parsers[[i]](content, directives))
+          if (!is_condition(content)) {
             private$BODY <- content
             success <- TRUE
             break
@@ -266,8 +267,8 @@ Request <- R6Class('Request',
     #'
     parse_raw = function(autofail = TRUE) {
       content <- private$get_body()
-      content <- try(private$unpack(content))
-      if (is.error(content)) {
+      content <- tri(private$unpack(content))
+      if (is_condition(content)) {
         if (autofail) self$response$status_with_text(400L)
         return(FALSE)
       }
@@ -301,7 +302,7 @@ Request <- R6Class('Request',
     #'
     trust = function(value) {
       if (missing(value)) return(private$TRUST)
-      assert_that(is.flag(value))
+      check_bool(value)
       private$TRUST <- value
     },
     #' @field method A string indicating the request method (in lower case, e.g.
