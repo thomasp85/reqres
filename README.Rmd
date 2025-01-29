@@ -17,8 +17,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check](https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version-ago/reqres)](https://cran.r-project.org/package=reqres)
-[![CRAN_Download_Badge](http://cranlogs.r-pkg.org/badges/reqres)](https://cran.r-project.org/package=reqres)
+[![CRAN status](https://www.r-pkg.org/badges/version/reqres)](https://CRAN.R-project.org/package=reqres)
 [![Codecov test coverage](https://codecov.io/gh/thomasp85/reqres/graph/badge.svg)](https://app.codecov.io/gh/thomasp85/reqres)
 <!-- badges: end -->
 

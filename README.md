@@ -8,10 +8,10 @@
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check](https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thomasp85/reqres/actions/workflows/R-CMD-check.yaml)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version-ago/reqres)](https://cran.r-project.org/package=reqres)
-[![CRAN_Download_Badge](http://cranlogs.r-pkg.org/badges/reqres)](https://cran.r-project.org/package=reqres)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/reqres)](https://CRAN.R-project.org/package=reqres)
 [![Codecov test
-coverage](https://codecov.io/gh/thomasp85/reqres/branch/main/graph/badge.svg)](https://app.codecov.io/gh/thomasp85/reqres?branch=main)
+coverage](https://codecov.io/gh/thomasp85/reqres/graph/badge.svg)](https://app.codecov.io/gh/thomasp85/reqres)
 <!-- badges: end -->
 
 While the http protocol is rather basic in essence, it can be a pain to
@@ -141,8 +141,8 @@ parsers and let the object choose the correct one itself
 ``` r
 req$set_body(NULL)
 req$parse(
-    txt = parse_plain(), 
-    html = parse_html(), 
+    txt = parse_plain(),
+    html = parse_html(),
     json = parse_json()
 )
 #> [1] TRUE
@@ -201,7 +201,7 @@ easily set headers, cookies, etc.
 ``` r
 res$set_header('Date', to_http_date(Sys.time()))
 res$get_header('Date')
-#> [1] "Fri, 19 Aug 2022 12:12:12 GMT"
+#> [1] "Wed, 29 Jan 2025 14:16:46 GMT"
 res$set_cookie('user', req$query$id, max_age = 9000L)
 res$has_cookie('user')
 #> [1] TRUE
