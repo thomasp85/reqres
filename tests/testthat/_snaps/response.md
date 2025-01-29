@@ -33,10 +33,10 @@
 # files are added correctly
 
     Code
-      res$file <- paste0(file, "_test")
+      res$file <- "not_a_real_file"
     Condition
       Error in `file_path_as_absolute()`:
-      ! file '/Users/thomas/GitHub/reqres/DESCRIPTION_test' does not exist
+      ! file 'not_a_real_file' does not exist
 
 # print functino works
 

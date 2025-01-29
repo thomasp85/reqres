@@ -75,73 +75,6 @@
 #'  responding to.}
 #' }
 #'
-#' @section Methods:
-#' The following methods are available in a `Response` object:
-#'
-#' \describe{
-#'  \item{`set_header(name, value)`}{Sets the header given by `name`. `value`
-#'  will be converted to character. A header will be added for each element in
-#'  `value`. Use `append_header()` for setting headers without overwriting
-#'  existing ones.}
-#'  \item{`get_header(name)`}{Returns the header(s) given by `name`}
-#'  \item{`remove_header(name)`}{Removes all headers given by `name`}
-#'  \item{`has_header(name)`}{Test for the existence of any header given by
-#'  `name`}
-#'  \item{`append_header(name, value)`}{Adds an additional header given by
-#'  `name` with the value given by `value`. If the header does not exist yet it
-#'  will be created.}
-#'  \item{`set_data(key, value)`}{Adds `value` to the internal data store and
-#'  stores it with `key`}
-#'  \item{`get_data(key)`}{Retrieves the data stored under `key` in the internal
-#'  data store.}
-#'  \item{`remove_data(key)`}{Removes the data stored under `key` in the
-#'  internal data store.}
-#'  \item{`has_data(key)`}{Queries whether the data store has an entry given by
-#'  `key`}
-#'  \item{`attach(file, filename=basename(file), type=NULL)`}{Sets the body to
-#'  the file given by `file` and marks the response as a download by setting the
-#'  `Content-Disposition` to `attachment; filename=<filename>`. Use the `type`
-#'  argument to overwrite the automatic type inference from the file extension.}
-#'  \item{`status_with_text(code)`}{Sets the status to `code` and sets the body
-#'  to the associated status code description (e.g. `Bad Gateway` for `502L`)}
-#'  \item{`set_cookie(name, value, encode = TRUE, expires = NULL, http_only =
-#'  NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL)`}{Adds
-#'  the cookie given by `name` to the given `value`, optionally url encoding it,
-#'  along with any additional directives. See
-#'  <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie> for a
-#'  description of the different directives. If the cookie already exists it
-#'  will be overwritten. The validity of the directives will automatically be
-#'  checked. `expires` expects a POSIXct object, `http_only` and `secure` expect
-#'  a logical, `max_age` expects an integer, `path` a string, and `same_site`
-#'  either `"Lax"` or `"Strict"`}
-#'  \item{`remove_cookie(name)`}{Removes the cookie named `name` from the
-#'  response.}
-#'  \item{`has_cookie(name)`}{Queries whether the response contains a cookie
-#'  named `name`}
-#'  \item{`set_links(...)`}{Sets the `Link` header based on the named arguments
-#'  passed to `...`. The names will be used for the `rel` directive.}
-#'  \item{`format(..., autofail = TRUE, compress = TRUE)`}{Based on the
-#'  formatters passed in through `...` content negotiation is performed with
-#'  request and the preferred formatter is chosen. The `Content-Type` header is
-#'  set automatically. If `compress = TRUE` the
-#'  `compress()` method will be called after formatting. If an error is
-#'  encountered and `autofail = TRUE` the response will be set to `500`. If a
-#'  formatter is not found and `autofail = TRUE` the response will be set to
-#'  `406`. If formatting is successful it will return `TRUE`, if not it will
-#'  return `FALSE`}
-#'  \item{`compress(priority = c('gzip', 'deflate', 'br', 'identity'))`}{Based
-#'  on the provided priority, an encoding is negotiated with the request and
-#'  applied. The `Content-Encoding` header is set to the chosen compression
-#'  algorithm.}
-#'  \item{`content_length()`}{Calculates the length (in bytes) of the body.
-#'  This is the number that goes into the `Content-Length` header. Note that the
-#'  `Content-Length` header is set automatically by `httpuv` so this method
-#'  should only be called if the response size is needed for other reasons.}
-#'  \item{`as_list()`}{Converts the object to a list for further processing by
-#'  a Rook compliant server such as `httpuv`. Will set `Content-Type` header if
-#'  missing and convert a non-raw body to a single character string.}
-#' }
-#'
 #' @seealso [`Request`] for handling http requests
 #'
 #' @importFrom R6 R6Class
@@ -187,6 +120,9 @@
 Response <- R6Class('Response',
   public = list(
     # Methods
+    #' @description Create a new response from a Request object
+    #' @param request The `Request` object that the `Response` is responding to
+    #'
     initialize = function(request) {
       if (!is.null(request$response)) {
         cli::cli_abort('A response has already been created for this request. Access it using the {.field response} field')
@@ -200,6 +136,9 @@ Response <- R6Class('Response',
       self$type <- 'text/plain'
       request$response <- self
     },
+    #' @description Pretty printing of the object
+    #' @param ... ignored
+    #'
     print = function(...) {
       cat('A HTTP response\n')
       cat('===============\n')
@@ -209,15 +148,27 @@ Response <- R6Class('Response',
       cat('In response to: ', private$REQUEST$url, '\n', sep = '')
       invisible(self)
     },
+    #' @description Sets the header given by `name`. `value` will be converted
+    #' to character. A header will be added for each element in `value`. Use
+    #' `append_header()` for setting headers without overwriting existing ones.
+    #' @param name The name of the header to set
+    #' @param value The value to assign to the header
+    #'
     set_header = function(name, value) {
       assert_that(is.string(name))
       assign(as.character(name), as.character(value), envir = private$HEADERS)
       invisible(self)
     },
+    #' @description Returns the header(s) given by `name`
+    #' @param name The name of the header to retrieve the value for
+    #'
     get_header = function(name) {
       assert_that(is.string(name))
       private$HEADERS[[name]]
     },
+    #' @description Removes all headers given by `name`
+    #' @param name The name of the header to remove
+    #'
     remove_header = function(name) {
       assert_that(is.string(name))
       if (!self$has_header(name)) {
@@ -227,10 +178,18 @@ Response <- R6Class('Response',
       }
       invisible(self)
     },
+    #' @description Test for the existence of any header given by `name`
+    #' @param name The name of the header to look for
+    #'
     has_header = function(name) {
       assert_that(is.string(name))
       !is.null(private$HEADERS[[name]])
     },
+    #' @description Adds an additional header given by `name` with the value
+    #' given by `value`. If the header does not exist yet it will be created.
+    #' @param name The name of the header to append to
+    #' @param value The value to assign to the header
+    #'
     append_header = function(name, value) {
       if (self$has_header(name)) {
         value <- c(self$get_header(name), as.character(value))
@@ -238,15 +197,28 @@ Response <- R6Class('Response',
       self$set_header(name, value)
       invisible(self)
     },
+    #' @description Adds `value` to the internal data store and stores it with
+    #' `key`
+    #' @param key The identifier of the data you set
+    #' @param value An R object
+    #'
     set_data = function(key, value) {
       assert_that(is.string(key))
       assign(key, value, envir = private$DATA)
       invisible(self)
     },
+    #' @description Retrieves the data stored under `key` in the internal data
+    #' store.
+    #' @param key The identifier of the data you wish to retrieve
+    #'
     get_data = function(key) {
       assert_that(is.string(key))
       private$DATA[[key]]
     },
+    #' @description Removes the data stored under `key` in the internal data
+    #' store.
+    #' @param key The identifier of the data you wish to remove
+    #'
     remove_data = function(key) {
       assert_that(is.string(key))
       if (!self$has_data(key)) {
@@ -256,14 +228,27 @@ Response <- R6Class('Response',
       }
       invisible(self)
     },
+    #' @description Queries whether the data store has an entry given by `key`
+    #' @param key The identifier of the data you wish to look for
+    #'
     has_data = function(key) {
       !is.null(self$get_data(key))
     },
+    #' @description Set the `Date` header to the current time
+    #'
     timestamp = function() {
       time <- Sys.time()
       self$set_header('Date', to_http_date(time))
       invisible(self)
     },
+    #' @description Sets the body to the file given by `file` and marks the
+    #' response as a download by setting the `Content-Disposition` to
+    #' `attachment; filename=<filename>`. Use the `type` argument to overwrite
+    #' the automatic type inference from the file extension.
+    #' @param file The path to a file
+    #' @param filename The name of the file as it will appear to the client
+    #' @param type The file type. If not given it will be inferred
+    #'
     attach = function(file, filename = basename(file), type = NULL) {
       self$file <- file
       assert_that(is.string(filename))
@@ -271,6 +256,10 @@ Response <- R6Class('Response',
       self$set_header('Content-Disposition', paste0('attachment; filename=', filename))
       invisible(self)
     },
+    #' @description Sets the status to `code` and sets the body to the
+    #' associated status code description (e.g. `Bad Gateway` for `502L`)
+    #' @param code The status code to set
+    #'
     status_with_text = function(code) {
       self$status <- code
       body <- status$Description[match(code, status$Code)]
@@ -279,6 +268,19 @@ Response <- R6Class('Response',
       self$type <- 'txt'
       invisible(self)
     },
+    #' @description Sets a cookie on the response. See
+    #' <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie>
+    #' for a longer description
+    #' @param name The name of the cookie
+    #' @param value The value of the cookie
+    #' @param encode Should `value` be url encoded
+    #' @param expires A POSIXct object given the expiration time of the cookie
+    #' @param http_only Should the cookie only be readable by the browser
+    #' @param max_age The number of seconds to elapse before the cookie expires
+    #' @param path The URL path this cookie is related to
+    #' @param secure Should the cookie only be send over https
+    #' @param same_site Either `"Lax"` or `"Strict"` indicating whether the
+    #' cookie can be send during cross-site requests
     set_cookie = function(name, value, encode = TRUE, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
       assert_that(is.string(name))
       assert_that(is.scalar(value))
@@ -293,6 +295,9 @@ Response <- R6Class('Response',
       }
       invisible(self)
     },
+    #' @description Removes the cookie named `name` from the response.
+    #' @param name The name of the cookie to remove
+    #'
     remove_cookie = function(name) {
       assert_that(is.string(name))
       if (!self$has_cookie(name)) {
@@ -302,10 +307,17 @@ Response <- R6Class('Response',
       }
       invisible(self)
     },
+    #' @description Queries whether the response contains a cookie named `name`
+    #' @param name The name of the cookie to look for
+    #'
     has_cookie = function(name) {
       assert_that(is.string(name))
       !is.null(private$COOKIES[[name]])
     },
+    #' @description Sets the `Link` header based on the named arguments passed
+    #' to `...`. The names will be used for the `rel` directive.
+    #' @param ... key-value pairs for the links
+    #'
     set_links = function(...) {
       if (is.list(..1)) {
         links <- modifyList(..1, list(...)[-1])
@@ -319,6 +331,18 @@ Response <- R6Class('Response',
       self$set_header('Link', links)
       invisible(self)
     },
+    #' @description Based on the formatters passed in through `...` content
+    #' negotiation is performed with the request and the preferred formatter is
+    #' chosen. The `Content-Type` header is set automatically. If
+    #' `compress = TRUE` the `compress()` method will be called after formatting.
+    #' If an error is encountered and `autofail = TRUE` the response will be set
+    #' to `500`. If a formatter is not found and `autofail = TRUE` the response
+    #' will be set to `406`. If formatting is successful it will return `TRUE`,
+    #' if not it will return `FALSE`
+    #' @param ... A range of formatters
+    #' @param autofail Automatically populate the response if formatting fails
+    #' @param compress Should `$compress()` be run in the end
+    #'
     format = function(..., autofail = TRUE, compress = TRUE) {
       if (!private$has_body()) return(TRUE)
 
@@ -346,6 +370,12 @@ Response <- R6Class('Response',
       if (compress) self$compress()
       return(TRUE)
     },
+    #' @description Based on the provided priority, an encoding is negotiated
+    #' with the request and applied. The `Content-Encoding` header is set to the
+    #' chosen compression algorithm.
+    #' @param priority A vector of compression types ranked by the servers
+    #' priority
+    #'
     compress = function(priority = c('gzip', 'deflate', 'br', 'identity')) {
       encoding <- self$request$accepts_encoding(priority)
       if (is.null(encoding)) return(FALSE)
@@ -360,6 +390,11 @@ Response <- R6Class('Response',
       self$body <- content
       self$set_header('Content-Encoding', encoding)
     },
+    #' @description Calculates the length (in bytes) of the body. This is the
+    #' number that goes into the `Content-Length` header. Note that the
+    #' `Content-Length` header is set automatically by `httpuv` so this method
+    #' should only be called if the response size is needed for other reasons.
+    #'
     content_length = function() {
       body <- private$format_body()
       if (is.scalar(body) && has_name(body, 'file')) {
@@ -370,6 +405,10 @@ Response <- R6Class('Response',
         nchar(body, type = 'bytes')
       }
     },
+    #' @description Converts the object to a list for further processing by
+    #' a Rook compliant server such as `httpuv`. Will set `Content-Type` header
+    #' if missing and convert a non-raw body to a single character string.
+    #'
     as_list = function() {
       list(
         status = private$STATUS,
@@ -377,6 +416,9 @@ Response <- R6Class('Response',
         body = private$format_body()
       )
     },
+    #' @description Prints a HTTP representation of the response to the output
+    #' stream.
+    #'
     as_message = function() {
       response <- self$as_list()
       cat(toupper(self$request$protocol), '/1.1 ', response$status, ' ', status_phrase(response$status), '\n', sep = '')
@@ -407,6 +449,9 @@ Response <- R6Class('Response',
     }
   ),
   active = list(
+    #' @field status Gets or sets the status code of the response. Is
+    #' initialised with `404L`
+    #'
     status = function(code) {
       if (missing(code)) return(private$STATUS)
       if (is.count(code)) {
@@ -423,10 +468,23 @@ Response <- R6Class('Response',
       }
       private$STATUS <- code
     },
+    #' @field body Set or get he body of the response. If it is a character
+    #' vector with a single element named `'file'` it will be interpreted as the
+    #' location of a file. It is better to use the `file` field for creating a
+    #' response referencing a file as it will automatically set the correct
+    #' headers.
+    #'
     body = function(content) {
       if (missing(content)) return(private$BODY)
       private$BODY <- content
     },
+    #' @field file Set or get the location of a file that should be used as the
+    #' body of the response. If the body is not referencing a file (but contains
+    #' something else) it will return `NULL`. The `Content-Type` header will
+    #' automatically be inferred from the file extension, if known. If unknown
+    #' it will defaults to `application/octet-stream`. If the file has no
+    #' extension it will be `text/plain`. Existence of the file will be checked.
+    #'
     file = function(path) {
       if (missing(path)) {
         if (length(private$BODY) != 1 || names(private$BODY) != 'file') {
@@ -442,6 +500,9 @@ Response <- R6Class('Response',
       private$BODY <- c(file = file)
       self$set_header('Last-Modified', to_http_date(file.mtime(file)))
     },
+    #' @field type Get or sets the `Content-Type` header of the response based
+    #' on a file extension or mime-type.
+    #'
     type = function(type) {
       if (missing(type)) return(self$get_header('Content-Type'))
       if (!grepl('/', type)) {
@@ -456,6 +517,8 @@ Response <- R6Class('Response',
       }
       self$set_header('Content-Type', type)
     },
+    #' @field request Get the original `Request` object that the object is
+    #' responding to.
     request = function() {
       private$REQUEST
     }

@@ -99,7 +99,7 @@ test_that('files are added correctly', {
   res <- Response$new(req)
   file <- system.file('DESCRIPTION', package = 'reqres')
 
-  expect_snapshot(res$file <- paste0(file, '_test'), error = TRUE)
+  expect_snapshot(res$file <- "not_a_real_file", error = TRUE)
   res$file <- file
   expect_equal(res$body, c(file = file))
   expect_equal(res$type, 'text/plain')

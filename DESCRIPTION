@@ -29,7 +29,7 @@ Imports:
     webutils,
     utils,
     cli
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Suggests: 
     fiery,

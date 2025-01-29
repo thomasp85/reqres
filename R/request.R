@@ -25,112 +25,6 @@
 #'  \code{req <- Request$new(rook, trust = FALSE)}
 #' }
 #'
-#' \strong{Arguments}
-#' \tabular{lll}{
-#'  \code{rook} \tab  \tab The rook request that the new object should wrap\cr
-#'  \code{trust} \tab  \tab Is this request trusted blindly. If `TRUE` `X-Forwarded-*` headers will be returned when querying host, ip, and protocol
-#' }
-#'
-#' @section Fields:
-#' The following fields are accessible in a `Request` object:
-#'
-#' \describe{
-#'  \item{`trust`}{A logical indicating whether the request is trusted. *Mutable*}
-#'  \item{`method`}{A string indicating the request method (in lower case, e.g.
-#'  'get', 'put', etc.). *Immutable*}
-#'  \item{`body`}{An object holding the body of the request. This is an empty
-#'  string by default and needs to be populated using the `set_body()` method
-#'  (this is often done using a body parser that accesses the Rook$input
-#'  stream). *Immutable*}
-#'  \item{`cookies`}{Access a named list of all cookies in the request. These
-#'  have been URI decoded. *Immutable*}
-#'  \item{`headers`}{Access a named list of all headers in the request. In order
-#'  to follow R variable naming standards `-` have been substituted with `_`.
-#'  Use the `get_header()` method to lookup based on the correct header name.
-#'  *Immutable*}
-#'  \item{`host`}{Return the domain of the server given by the "Host" header if
-#'  `trust == FALSE`. If `trust == true` returns the `X-Forwarded-Host` instead.}
-#'  \item{`ip`}{Returns the remote address of the request if `trust == FALSE`.
-#'  if `trust == TRUE` it will instead return the first value of the
-#'  `X-Forwarded-For` header. *Immutable*}
-#'  \item{`ips`}{If `trust == TRUE` it will return the full list of ips in the
-#'  `X-Forwarded-For` header. If `trust == FALSE` it will return an empty
-#'  vector. *Immutable*}
-#'  \item{`protocol`}{Returns the protocol (e.g. 'http') used for the request.
-#'  If `trust == TRUE` it will use the value of the `X-Forwarded-Proto` header.
-#'  *Immutable*}
-#'  \item{`root`}{The mount point of the application receiving this request. Can
-#'  be empty if the application is mounted on the server root. *Immutable*}
-#'  \item{`path`}{The part of the url following the root. Defines the local
-#'  target of the request (independent of where it is mounted). *Immutable*}
-#'  \item{`url`}{The full URL of the request. *Immutable*}
-#'  \item{`query`}{The query string of the request (anything following "?" in
-#'  the URL) parsed into a named list. The query has been url decoded and "+"
-#'  has been substituted with space. Multiple queries are expected to be
-#'  separated by either "&" or "|". *Immutable*}
-#'  \item{`querystring`}{The unparsed query string of the request, including
-#'  "?". If no query string exists it will be `""` rather than `"?"`}
-#'  \item{`xhr`}{A logical indicating whether the `X-Requested-With` header
-#'  equals `XMLHttpRequest` thus indicating that the request was performed using
-#'  a JavaScript library such as jQuery. *Immutable*}
-#'  \item{`secure`}{A logical indicating whether the request was performed using
-#'  a secure connection, i.e. `protocol == 'https'`. *Immutable*}
-#'  \item{`origin`}{The original object used to create the `Request` object. As
-#'  `reqres` currently only works with rook this will always return the original
-#'  rook object. *Immutable*, though the content of the rook object itself might
-#'  be manipulated as it is an environment.}
-#'  \item{`response`}{If a `Response` object has been created for this request
-#'  it is accessible through this field. *Immutable*}
-#' }
-#'
-#' @section Methods:
-#' The following methods are available in a `Request` object:
-#'
-#' \describe{
-#'  \item{`set_body(content)`}{Sets the content of the request body. This method
-#'  should mainly be used in concert with a body parser that reads the
-#'  `rook$input` stream}
-#'  \item{`set_cookies(cookies)`}{Sets the cookies of the request. The cookies
-#'  are automatically parsed and populated, so this method is mainly available
-#'  to facilitate cookie signing and encryption}
-#'  \item{`get_header(name)`}{Get the header of the specified name.}
-#'  \item{`accepts(types)`}{Given a vector of response content types it returns
-#'  the preferred one based on the `Accept` header.}
-#'  \item{`accepts_charsets(charsets)`}{Given a vector of possible character
-#'  encodings it returns the preferred one based on the `Accept-Charset`
-#'  header.}
-#'  \item{`accepts_encoding(encoding)`}{Given a vector of possible content
-#'  encodings (usually compression algorithms) it selects the preferred one
-#'  based on the `Accept-Encoding` header. If there is no match it will return
-#'  `"identity"` signaling no compression.}
-#'  \item{`accepts_language(language)`}{Given a vector of possible content
-#'  languages it selects the best one based on the `Accept-Language` header.}
-#'  \item{`is(type)`}{Queries whether the body of the request is in a given
-#'  format by looking at the `Content-Type` header. Used for selecting the best
-#'  parsing method.}
-#'  \item{`respond()`}{Creates a new `Response` object from the request}
-#'  \item{`parse(..., autofail = TRUE)`}{Based on provided parsers it selects
-#'  the appropriate one by looking at the `Content-Type` header and assigns the
-#'  result to the request body. A parser is a function accepting a raw vector,
-#'  and a named list of additional directives,
-#'  and returns an R object of any kind (if the parser knows the input to be
-#'  plain text, simply wrap it in [rawToChar()]). If the body is compressed, it
-#'  will be decompressed based on the `Content-Encoding` header prior to passing
-#'  it on to the parser. See [parsers] for a list of pre-supplied parsers.
-#'  Parsers are either supplied in a named list or as named arguments to the
-#'  parse method. The names should correspond to mime types or known file
-#'  extensions. If `autofail = TRUE` the response will be set with the correct
-#'  error code if parsing fails. `parse()` returns `TRUE` if parsing was
-#'  successful and `FALSE` if not}
-#'  \item{`parse_raw(autofail = TRUE)`}{This is a simpler version of the
-#'  `parse()` method. It will attempt to decompress the body and set the `body`
-#'  field to the resulting raw vector. It is then up to the server to decide how
-#'  to handle the payload. It returns `TRUE` if successful and `FALSE`
-#'  otherwise.}
-#'  \item{`as_message()`}{Prints a HTTP representation of the request to the
-#'  output stream.}
-#' }
-#'
 #' @seealso [`Response`] for handling http responses
 #'
 #' @importFrom R6 R6Class
@@ -172,6 +66,11 @@
 #'
 Request <- R6Class('Request',
   public = list(
+    # Methods
+    #' @description Create a new request from a rook object
+    #' @param rook The [rook](https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md) object to base the request on
+    #' @param trust Is this request trusted blindly. If `TRUE` `X-Forwarded-*` headers will be returned when querying host, ip, and protocol
+    #'
     initialize = function(rook, trust = FALSE) {
       self$trust <- trust
       private$ORIGIN <- rook
@@ -194,6 +93,9 @@ Request <- R6Class('Request',
 
       private$COOKIES <- private$parse_cookies()
     },
+    #' @description Pretty printing of the object
+    #' @param ... ignored
+    #'
     print = function(...) {
       cat('A HTTP request\n')
       cat('==============\n')
@@ -202,14 +104,28 @@ Request <- R6Class('Request',
       cat('    URL: ', self$url, '\n', sep = '')
       invisible(self)
     },
+    #' @description Sets the content of the request body. This method should
+    #' mainly be used in concert with a body parser that reads the `rook$input`
+    #' stream
+    #' @param content An R object representing the body of the request
+    #'
     set_body = function(content) {
       private$BODY <- content
       invisible(self)
     },
+    #' @description Sets the cookies of the request. The cookies are
+    #' automatically parsed and populated, so this method is mainly available
+    #' to facilitate cookie signing and encryption
+    #' @param cookies A named list of cookie values
+    #'
     set_cookies = function(cookies) {
       private$COOKIES <- cookies
       invisible(self)
     },
+    #' @description Given a vector of response content types it returns the
+    #' preferred one based on the `Accept` header.
+    #' @param types A vector of types
+    #'
     accepts = function(types) {
       accept <- private$format_mimes(self$headers$Accept)
       if (is.null(accept)) return(types[1])
@@ -218,6 +134,10 @@ Request <- R6Class('Request',
       if (is.null(ind)) return(NULL)
       types[ind]
     },
+    #' @description Given a vector of possible character encodings it returns
+    #' the preferred one based on the `Accept-Charset` header.
+    #' @param charsets A vector of charsets
+    #'
     accepts_charsets = function(charsets) {
       accept <- private$format_charsets(self$headers$Accept_Charset)
       if (is.null(accept)) return(charsets[1])
@@ -225,6 +145,12 @@ Request <- R6Class('Request',
       if (is.null(ind)) return(NULL)
       charsets[ind]
     },
+    #' @description Given a vector of possible content encodings (usually
+    #' compression algorithms) it selects the preferred one based on the
+    #' `Accept-Encoding` header. If there is no match it will return `"identity"`
+    #' signaling no compression.
+    #' @param encoding A vector of encoding names
+    #'
     accepts_encoding = function(encoding) {
       acc_enc <- self$get_header('Accept-Encoding')
       if (is.null(acc_enc)) acc_enc <- 'identity'
@@ -233,6 +159,10 @@ Request <- R6Class('Request',
       if (is.null(ind)) return('identity')
       encoding[ind]
     },
+    #' @description Given a vector of possible content languages it selects the
+    #' best one based on the `Accept-Language` header.
+    #' @param language A vector of languages
+    #'
     accepts_language = function(language) {
       accept <- private$format_languages(self$headers$Accept_Language)
       if (is.null(accept)) return(language[1])
@@ -240,6 +170,11 @@ Request <- R6Class('Request',
       if (is.null(ind)) return(NULL)
       language[ind]
     },
+    #' @description Queries whether the body of the request is in a given format
+    #' by looking at the `Content-Type` header. Used for selecting the best
+    #' parsing method.
+    #' @param type A content type to check for
+    #'
     is = function(type) {
       accept <- self$get_header('Content-Type')
       if (is.null(accept)) return(NULL)
@@ -249,9 +184,14 @@ Request <- R6Class('Request',
       if (nrow(full_type) == 0) return(FALSE)
       !is.null(private$get_format_spec(full_type, content))
     },
+    #' @description Get the header of the specified name.
+    #' @param name The name of the header to get
+    #'
     get_header = function(name) {
       self$headers[[gsub('-', '_', name)]]
     },
+    #' @description Creates a new `Response` object from the request
+    #'
     respond = function() {
       if (is.null(self$response)) {
         Response$new(self)
@@ -259,6 +199,22 @@ Request <- R6Class('Request',
         self$response
       }
     },
+    #' @description Based on provided parsers it selects the appropriate one by
+    #' looking at the `Content-Type` header and assigns the result to the
+    #' request body. A parser is a function accepting a raw vector, and a named
+    #' list of additional directives, and returns an R object of any kind (if
+    #' the parser knows the input to be plain text, simply wrap it in
+    #' [rawToChar()]). If the body is compressed, it will be decompressed based
+    #' on the `Content-Encoding` header prior to passing it on to the parser.
+    #' See [parsers] for a list of pre-supplied parsers. Parsers are either
+    #' supplied in a named list or as named arguments to the parse method. The
+    #' names should correspond to mime types or known file extensions. If
+    #' `autofail = TRUE` the response will be set with the correct error code if
+    #' parsing fails. `parse()` returns `TRUE` if parsing was successful and
+    #' `FALSE` if not
+    #' @param ... A named set of parser functions
+    #' @param autofail Automatically populate the response if parsing fails
+    #'
     parse = function(..., autofail = TRUE) {
       if (!private$has_body()) return(TRUE)
 
@@ -302,6 +258,12 @@ Request <- R6Class('Request',
       }
       success
     },
+    #' @description This is a simpler version of the `parse()` method. It will
+    #' attempt to decompress the body and set the `body` field to the resulting
+    #' raw vector. It is then up to the server to decide how to handle the
+    #' payload. It returns `TRUE` if successful and `FALSE` otherwise.
+    #' @param autofail Automatically populate the response if parsing fails
+    #'
     parse_raw = function(autofail = TRUE) {
       content <- private$get_body()
       content <- try(private$unpack(content))
@@ -312,6 +274,9 @@ Request <- R6Class('Request',
       private$BODY <- content
       TRUE
     },
+    #' @description Prints a HTTP representation of the request to the output
+    #' stream.
+    #'
     as_message = function() {
       cat(toupper(self$method), ' ', self$root, self$path, self$querystring, ' ', toupper(self$protocol), '/1.1\n', sep = '')
       if (is.null(self$get_header('Host'))) {
@@ -332,23 +297,45 @@ Request <- R6Class('Request',
     }
   ),
   active = list(
+    #' @field trust A logical indicating whether the request is trusted. *Mutable*
+    #'
     trust = function(value) {
       if (missing(value)) return(private$TRUST)
       assert_that(is.flag(value))
       private$TRUST <- value
     },
+    #' @field method A string indicating the request method (in lower case, e.g.
+    #' 'get', 'put', etc.). *Immutable*
+    #'
     method = function() {
       private$METHOD
     },
+    #' @field body An object holding the body of the request. This is an empty
+    #' string by default and needs to be populated using the `set_body()` method
+    #' (this is often done using a body parser that accesses the Rook$input
+    #' stream). *Immutable*
+    #'
     body = function() {
       private$BODY
     },
+    #' @field cookies Access a named list of all cookies in the request. These
+    #' have been URI decoded. *Immutable*
+    #'
     cookies = function() {
       private$COOKIES
     },
+    #' @field headers Access a named list of all headers in the request. In
+    #' order to follow R variable naming standards `-` have been substituted
+    #' with `_`. Use the `get_header()` method to lookup based on the correct
+    #' header name. *Immutable*
+    #'
     headers = function() {
       private$HEADERS
     },
+    #' @field host Return the domain of the server given by the "Host" header if
+    #' `trust == FALSE`. If `trust == true` returns the `X-Forwarded-Host`
+    #' instead. *Immutable*
+    #'
     host = function() {
       if (self$trust && !is.null(self$headers$X_Forwarded_Host)) {
         self$headers$X_Forwarded_Host
@@ -356,6 +343,10 @@ Request <- R6Class('Request',
         private$HOST
       }
     },
+    #' @field ip Returns the remote address of the request if `trust == FALSE`.
+    #' If `trust == TRUE` it will instead return the first value of the
+    #' `X-Forwarded-For` header. *Immutable*
+    #'
     ip = function() {
       if (self$trust && !is.null(self$headers$X_Forwarded_For)) {
         self$headers$X_Forwarded_For[1]
@@ -363,6 +354,10 @@ Request <- R6Class('Request',
         private$IP
       }
     },
+    #' @field ips If `trust == TRUE` it will return the full list of ips in the
+    #' `X-Forwarded-For` header. If `trust == FALSE` it will return an empty
+    #' vector. *Immutable*
+    #'
     ips = function() {
       if (self$trust && !is.null(self$headers$X_Forwarded_For)) {
         self$headers$X_Forwarded_For
@@ -370,6 +365,10 @@ Request <- R6Class('Request',
         character(0)
       }
     },
+    #' @field protocol Returns the protocol (e.g. 'http') used for the request.
+    #' If `trust == TRUE` it will use the value of the `X-Forwarded-Proto` header.
+    #' *Immutable*
+    #'
     protocol = function() {
       if (self$trust && !is.null(self$headers$X_Forwarded_Proto)) {
         self$headers$X_Forwarded_Proto
@@ -377,12 +376,20 @@ Request <- R6Class('Request',
         private$PROTOCOL
       }
     },
+    #' @field root The mount point of the application receiving this request.
+    #' Can be empty if the application is mounted on the server root.
+    #' *Immutable*
+    #'
     root = function() {
       private$ROOT
     },
+    #' @field path The part of the url following the root. Defines the local
+    #' target of the request (independent of where it is mounted). *Immutable*
+    #'
     path = function() {
       private$PATH
     },
+    #' @field url The full URL of the request. *Immutable*
     url = function() {
       paste0(self$protocol, '://',
              self$host,
@@ -390,22 +397,44 @@ Request <- R6Class('Request',
              self$path,
              self$querystring)
     },
+    #' @field query The query string of the request (anything following "?" in
+    #' the URL) parsed into a named list. The query has been url decoded and "+"
+    #' has been substituted with space. Multiple queries are expected to be
+    #' separated by either "&" or "|". *Immutable*
+    #'
     query = function() {
       private$QUERY
     },
+    #' @field querystring The unparsed query string of the request, including
+    #' "?". If no query string exists it will be `""` rather than `"?"`
+    #'
     querystring = function() {
       private$QUERYSTRING
     },
+    #' @field xhr A logical indicating whether the `X-Requested-With` header
+    #' equals `XMLHttpRequest` thus indicating that the request was performed
+    #' using JavaScript library such as jQuery. *Immutable*
+    #'
     xhr = function() {
       xhr <- self$get_header('X-Requested-With')
       !is.null(xhr) && xhr == 'XMLHttpRequest'
     },
+    #' @field secure A logical indicating whether the request was performed
+    #' using a secure connection, i.e. `protocol == 'https'`. *Immutable*
     secure = function() {
       self$protocol == 'https'
     },
+    #' @field origin The original object used to create the `Request` object. As
+    #' `reqres` currently only works with rook this will always return the
+    #' original rook object. *Immutable*, though the content of the rook object
+    #' itself might be manipulated as it is an environment.
+    #'
     origin = function() {
       private$ORIGIN
     },
+    #' @field response If a `Response` object has been created for this request
+    #' it is accessible through this field. *Immutable*
+    #'
     response = function(res) {
       if (missing(res)) return(private$RESPONSE)
       if (!is.null(private$RESPONSE)) {
