@@ -17,7 +17,8 @@ Description: In order to facilitate parsing of http requests and creating
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 2.10)
-Imports: R6,
+Imports: 
+    R6,
     assertthat,
     stringi,
     urltools,
@@ -26,11 +27,14 @@ Imports: R6,
     jsonlite,
     xml2,
     webutils,
-    utils
+    utils,
+    cli
 RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
-Suggests: fiery,
-    testthat,
+Suggests: 
+    fiery,
+    testthat (>= 3.0.0),
     covr
 URL: https://reqres.data-imaginist.com, https://github.com/thomasp85/reqres#reqres
 BugReports: https://github.com/thomasp85/reqres/issues
+Config/testthat/edition: 3

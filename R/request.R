@@ -409,11 +409,13 @@ Request <- R6Class('Request',
     response = function(res) {
       if (missing(res)) return(private$RESPONSE)
       if (!is.null(private$RESPONSE)) {
-        stop('Response can only be assigned once', call. = FALSE)
+        cli::cli_abort('Response can only be assigned once')
       }
-      stopifnot(inherits(res, 'Response'))
+      if (!inherits(res, 'Response')) {
+        cli::cli_abort('{.arg res} must be a {.cls Response} object')
+      }
       if (!identical(self, res$request)) {
-        stop('response can only be set to an object responding to this request', call. = FALSE)
+        cli::cli_abort('{.arg res} must be a Response responding to this request')
       }
       private$RESPONSE <- res
     }
@@ -588,7 +590,7 @@ Request <- R6Class('Request',
             l
           },
           deflate = memDecompress(l, type = 'gzip'),
-          stop('Unsupported compression', call. = FALSE)
+          cli::cli_abort('Unsupported compression {.val {r}}')
         )
       }, x = compression, init = raw)
     },
@@ -620,7 +622,7 @@ as.Request.Request <- function(x, ...) x
 #' @export
 as.Request.environment <- function(x, ...) {
   if (is.null(x[['rook.version']])) {
-    stop('Must be a Rook object', call. = FALSE)
+    cli::cli_abort('{.arg x} must be a Rook object')
   }
   Request$new(x, ...)
 }

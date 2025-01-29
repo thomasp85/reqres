@@ -1,5 +1,3 @@
-context("response")
-
 headers <- list(
   Content_Type = 'application/json',
   Accept = 'application/json, application/xml; q=0.5, text/*; q=0.3',
@@ -22,7 +20,7 @@ test_that('response are created correctly', {
   res <- Response$new(req)
   expect_identical(req$response, res)
   expect_identical(res$request, req)
-  expect_error(Response$new(req))
+  expect_snapshot(Response$new(req), error = TRUE)
 
   expect_equal(res$status, 404L)
   expect_identical(res$body, '')
@@ -43,7 +41,7 @@ test_that('headers can be get, set, appended, and removed', {
   res$remove_header('Date')
   expect_false(res$has_header('Date'))
   expect_null(res$get_header('Date'))
-  expect_warning(res$remove_header('Date'), 'No header named Date')
+  expect_snapshot(res$remove_header('Date'))
 
   res$append_header('Content-Encoding', 'gzip')
   expect_equal(res$get_header('Content-Encoding'), 'gzip')
@@ -64,7 +62,7 @@ test_that('data can be get, set, and removed', {
   res$remove_data('test')
   expect_false(res$has_data('test'))
   expect_null(res$get_data('test'))
-  expect_warning(res$remove_data('test'), 'No data named test')
+  expect_snapshot(res$remove_data('test'))
 })
 
 test_that('cookies can be get, set, and removed', {
@@ -72,7 +70,7 @@ test_that('cookies can be get, set, and removed', {
   res <- Response$new(req)
 
   expect_false(res$has_cookie('test'))
-  expect_warning(res$remove_cookie('test'), 'No cookie named test')
+  expect_snapshot(res$remove_cookie('test'))
 
   exp <- Sys.Date() + 1000
   res$set_cookie('test', 'this is a test', TRUE, expires = exp, http_only = TRUE, max_age = 1000, path = '/test', secure = TRUE, same_site = 'Lax')
@@ -101,7 +99,7 @@ test_that('files are added correctly', {
   res <- Response$new(req)
   file <- system.file('DESCRIPTION', package = 'reqres')
 
-  expect_error(res$file <- paste0(file, '_test'))
+  expect_snapshot(res$file <- paste0(file, '_test'), error = TRUE)
   res$file <- file
   expect_equal(res$body, c(file = file))
   expect_equal(res$type, 'text/plain')
@@ -124,7 +122,7 @@ test_that('print functino works', {
   req <- Request$new(rook)
   res <- Response$new(req)
 
-  expect_output(res$print(), 'A HTTP response')
+  expect_snapshot(res$print())
 })
 
 test_that('body formatting works', {

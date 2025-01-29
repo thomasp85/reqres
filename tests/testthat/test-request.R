@@ -1,5 +1,3 @@
-context("request")
-
 headers <- list(
   Content_Type = 'application/json',
   Accept = 'application/json, application/xml; q=0.5, text/*; q=0.3',
@@ -38,13 +36,13 @@ test_that('request gets created correctly', {
   expect_false(req$secure)
   expect_identical(req$origin, rook)
   expect_null(req$response)
-  expect_output(print(req), 'A HTTP request')
+  expect_snapshot(print(req))
 })
 
 test_that('trust works', {
   req <- Request$new(rook)
   expect_false(req$trust)
-  expect_error(req$trust <- 'test')
+  expect_snapshot(req$trust <- 'test', error = TRUE)
   req$trust <- TRUE
   expect_true(req$trust)
   expect_equal(req$host, 'www.example.com:80')
@@ -65,7 +63,7 @@ test_that('response can be generated', {
   expect_identical(req$response, res)
   req2 <- Request$new(rook)
   res2 <- req2$respond()
-  expect_error(req$response <- res2)
+  expect_snapshot(req$response <- res2, error = TRUE)
 })
 
 test_that('content type can be queried', {

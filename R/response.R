@@ -189,7 +189,7 @@ Response <- R6Class('Response',
     # Methods
     initialize = function(request) {
       if (!is.null(request$response)) {
-        stop('Response already created for this request. Access it using the `response` field', call. = FALSE)
+        cli::cli_abort('A response has already been created for this request. Access it using the {.field response} field')
       }
       private$REQUEST = request
       private$STATUS = 404L
@@ -221,7 +221,7 @@ Response <- R6Class('Response',
     remove_header = function(name) {
       assert_that(is.string(name))
       if (!self$has_header(name)) {
-        warning('No header named ', name, call. = FALSE)
+        cli::cli_warn('No header named {.val {name}}')
       } else {
         rm(list = name, envir = private$HEADERS)
       }
@@ -250,7 +250,7 @@ Response <- R6Class('Response',
     remove_data = function(key) {
       assert_that(is.string(key))
       if (!self$has_data(key)) {
-        warning('No data named ', key, call. = FALSE)
+        cli::cli_warn('No data named {.val {key}}')
       } else {
         rm(list = key, envir = private$DATA)
       }
@@ -284,7 +284,7 @@ Response <- R6Class('Response',
       assert_that(is.scalar(value))
       ascii <- iconv(c(name, value), to = 'ASCII')
       if (anyNA(ascii)) {
-        warning('Cookie name and value must only use valid ASCII characters. Cookie "', name, '" not set', call. = FALSE)
+        cli::cli_warn('Cookie name and value must only use valid ASCII characters. Cookie {.field {name}} not set')
       } else {
         if (encode) value <- url_encode(value)
         if (grepl('(^__Secure-)|(^__Host-)', name)) secure <- TRUE
@@ -296,7 +296,7 @@ Response <- R6Class('Response',
     remove_cookie = function(name) {
       assert_that(is.string(name))
       if (!self$has_cookie(name)) {
-        warning('No cookie named ', name, call. = FALSE)
+        cli::cli_warn('No cookie named {.val {name}}')
       } else {
         rm(list = name, envir = private$COOKIES)
       }
@@ -411,13 +411,13 @@ Response <- R6Class('Response',
       if (missing(code)) return(private$STATUS)
       if (is.count(code)) {
         if (code < 100L || code > 599L) {
-          stop('Response code out of range', call. = FALSE)
+          cli::cli_abort('Response code ({.val {code}}) out of range')
         }
       }
       if (is.string(code)) {
         ind <- match(tolower(code), tolower(status$Description))
         if (is.na(ind)) {
-          stop('Unknown status', call. = FALSE)
+          cli::cli_abort('Unknown status: {.val {code}}')
         }
         code <- status$Code[ind]
       }
@@ -548,7 +548,9 @@ cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path
   }
   if (!is.null(same_site)) {
     assert_that(is.string(same_site))
-    stopifnot(same_site %in% c('Lax', 'Strict'))
+    if (!same_site %in% c('Lax', 'Strict')) {
+      cli::cli_abort("{.arg same_site} must be {.or {.val {c('Lax', 'Strict')}}}")
+    }
     opts <- c(opts, paste0('SameSite=', same_site))
   }
   paste(opts, collapse = '; ')
