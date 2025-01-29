@@ -74,7 +74,7 @@ Request <- R6Class('Request',
       self$trust <- trust
       private$ORIGIN <- rook
       private$METHOD <- tolower(rook$REQUEST_METHOD)
-      private$HEADERS <- private$get_headers(rook)
+      delayedAssign("HEADERS", private$get_headers(rook), assign.env = private)
       if (is.null(rook$HTTP_HOST)) {
         private$HOST <- paste(rook$SERVER_NAME, rook$SERVER_PORT, sep = ':')
       } else {
@@ -88,9 +88,9 @@ Request <- R6Class('Request',
         private$QUERYSTRING <- paste0('?', sub('^\\?', '', private$QUERYSTRING))
       }
       private$IP <- rook$REMOTE_ADDR
-      private$QUERY <- private$parse_query(private$QUERYSTRING)
+      delayedAssign("QUERY", private$parse_query(private$QUERYSTRING), assign.env = private)
 
-      private$COOKIES <- private$parse_cookies()
+      delayedAssign("COOKIES", private$parse_cookies(), assign.env = private)
     },
     #' @description Pretty printing of the object
     #' @param ... ignored
