@@ -60,7 +60,6 @@ query_parser <- function(query = NULL, delim = NULL) {
   check_string(query, allow_null = TRUE)
   if (is.null(query) || query == '') return(list())
   query <- stringi::stri_replace_first_regex(query, '^\\?', '')
-  query <- stringi::stri_replace_all_fixed(query, '+', ' ')
   query <- stringi::stri_split_fixed(query, '&')[[1]]
   query <- stringi::stri_split_fixed(query, '=')
   id <- rep(seq_along(query), lengths(query))
@@ -70,6 +69,7 @@ query_parser <- function(query = NULL, delim = NULL) {
     id <- rep(id, lengths(query))
     query <- unlist(query)
   }
+  query <- stringi::stri_replace_all_fixed(query, '+', ' ')
   query <- url_decode(query)
   key_ind <- which(!duplicated(id))
   key <- query[key_ind]
