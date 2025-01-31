@@ -2,12 +2,11 @@
 
     Code
       print(req)
-    Output
-      A HTTP request
-      ==============
+    Message
+      -- An HTTP request -------------------------------------------------------------
       Trusted: No
-       Method: get
-          URL: http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen
+      Method: get
+      URL: http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen
 
 # trust works
 

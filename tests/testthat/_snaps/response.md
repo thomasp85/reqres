@@ -42,11 +42,9 @@
 
     Code
       res$print()
-    Output
-      A HTTP response
-      ===============
-              Status: 404 - Not Found
-        Content type: text/plain
-      
-      In response to: http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen
+    Message
+      -- An HTTP response ------------------------------------------------------------
+      Status: 404 - Not Found
+      Content type: text/plain
+      > Responding to: http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen
 
