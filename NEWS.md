@@ -8,6 +8,9 @@
   (exploded and non-exploded with different delimiters).
 * BREAKING: query values are no longer automatically type converted during
   parsing as this could lead to loss of information.
+* DEPRECATED: `Request$parse()`, `Response$set_links()`, and `Response$format()`
+  has soft deprecated passing in a list of values as the first element. Instead
+  use `!!!` splicing
 
 # reqres 0.2.5
 
