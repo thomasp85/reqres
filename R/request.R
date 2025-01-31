@@ -406,6 +406,18 @@ Request <- R6Class('Request',
     query = function() {
       private$QUERY
     },
+    #' @field query_delim The delimiter used for specifying multiple values in a
+    #' query. If `NULL` then queries are expected to contain multiple key-value
+    #' pairs for the same key in order to provide an array, e.g.
+    #' `?arg1=3&arg1=7`. If setting it to `",""`, `"|"`, or `" "` then an array
+    #' can be provided in a single key-value pair, e.g. `?arg1=3|7`
+    #'
+    query_delim = function(value) {
+      if (missing(value)) return(private$QUERYDELIM)
+      if (!is.null(value)) value <- arg_match0(value, c(",", "|", " "))
+      private$QUERYDELIM <- value
+      delayedAssign("QUERY", private$parse_query(private$QUERYSTRING), assign.env = private)
+    },
     #' @field querystring The unparsed query string of the request, including
     #' "?". If no query string exists it will be `""` rather than `"?"`
     #'
@@ -459,6 +471,7 @@ Request <- R6Class('Request',
     ROOT = NULL,
     PATH = NULL,
     QUERYSTRING = NULL,
+    QUERYDELIM = NULL,
     IP = NULL,
     QUERY = NULL,
     BODY = NULL,
@@ -476,16 +489,7 @@ Request <- R6Class('Request',
       )
     },
     parse_query = function(query) {
-      if (query == '') return(list())
-      query <- url_decode(query)
-      query <- sub('^\\?', '', query)
-      query <- gsub('\\+', ' ', query)
-      query <- strsplit(unlist(strsplit(query, '&|;')), '=')
-      ans <- list()
-      for (i in query) {
-        ans[[i[1]]] <- append(ans[[i[1]]], i[2])
-      }
-      lapply(ans, type.convert, as.is = TRUE)
+      query_parser(query, private$QUERYDELIM)
     },
     get_headers = function(rook) {
       vars <- ls(rook)

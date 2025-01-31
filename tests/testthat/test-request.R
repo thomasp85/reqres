@@ -33,7 +33,7 @@ test_that('request gets created correctly', {
   expect_equal(req$root, '')
   expect_equal(req$path, '/summary')
   expect_equal(req$url, 'http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen')
-  expect_equal(req$query, list(id = 2347, user = 'Thomas Lin Pedersen'))
+  expect_equal(req$query, list(id = "2347", user = 'Thomas Lin Pedersen'))
   expect_false(req$xhr)
   expect_false(req$secure)
   expect_identical(req$origin, rook)

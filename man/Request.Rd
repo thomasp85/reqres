@@ -132,6 +132,12 @@ the URL) parsed into a named list. The query has been url decoded and "+"
 has been substituted with space. Multiple queries are expected to be
 separated by either "&" or "|". \emph{Immutable}}
 
+\item{\code{query_delim}}{The delimiter used for specifying multiple values in a
+query. If \code{NULL} then queries are expected to contain multiple key-value
+pairs for the same key in order to provide an array, e.g.
+\code{?arg1=3&arg1=7}. If setting it to \verb{",""}, \code{"|"}, or \code{" "} then an array
+can be provided in a single key-value pair, e.g. \code{?arg1=3|7}}
+
 \item{\code{querystring}}{The unparsed query string of the request, including
 "?". If no query string exists it will be \code{""} rather than \code{"?"}}
 

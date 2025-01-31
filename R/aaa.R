@@ -34,6 +34,52 @@ from_http_date <- function(time) {
   as.POSIXct(time, format = '%a, %d %b %Y %H:%M:%S', tz = 'GMT')
 }
 
+#' Parse a query string
+#'
+#' This function facilitates the parsing of querystrings, either from the URL or
+#' a POST or PUT body with `Content-Type` set to
+#' `application/x-www-form-urlencoded`.
+#'
+#' @param query The query as a single string
+#' @param delim Optional delimiter of array values. If omitted it is expected
+#' that arrays are provided in exploded form (e.g. `arg1=3&arg1=7`)
+#'
+#' @return A named list giving the keys and values of the query. Values fron the
+#' same key are combined if given multiple times
+#'
+#' @export
+#'
+#' @examples
+#' # Using delimiter to provide array
+#' query_parser("?name=Thomas%20Lin%20Pedersen&numbers=1 2 3", delim = " ")
+#'
+#' # No delimiter (exploded form)
+#' query_parser("?name=Thomas%20Lin%20Pedersen&numbers=1&numbers=2&numbers=3")
+#'
+query_parser <- function(query = NULL, delim = NULL) {
+  check_string(query, allow_null = TRUE)
+  if (is.null(query) || query == '') return(list())
+  query <- stringi::stri_replace_first_regex(query, '^\\?', '')
+  query <- stringi::stri_replace_all_fixed(query, '+', ' ')
+  query <- stringi::stri_split_fixed(query, '&')[[1]]
+  query <- stringi::stri_split_fixed(query, '=')
+  id <- rep(seq_along(query), lengths(query))
+  query <- unlist(query)
+  if (!is.null(delim)) {
+    query <- stringi::stri_split_fixed(query, delim)
+    id <- rep(id, lengths(query))
+    query <- unlist(query)
+  }
+  query <- url_decode(query)
+  key_ind <- which(!duplicated(id))
+  key <- query[key_ind]
+  final_keys <- unique(key)
+  final <- structure(vector("list", length(final_keys)), names = final_keys)
+  value_loc <- match(key, final_keys)[id[-key_ind]]
+  final[unique(value_loc)] <- split(query[-key_ind], value_loc)
+  final
+}
+
 
 req_headers <- c(
   'Accept',

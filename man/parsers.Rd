@@ -30,7 +30,7 @@ parse_html(
 
 parse_multiform()
 
-parse_queryform()
+parse_queryform(delim = NULL)
 
 parse_table(...)
 }
@@ -81,6 +81,9 @@ encoding directive, this allows you to supply a default.}
 \item{base_url}{When loading from a connection, raw vector or literal
 html/xml, this allows you to specify a base url for the document. Base
 urls are used to turn relative urls into absolute urls.}
+
+\item{delim}{The delimiter to use for parsing arrays in non-exploded form.
+Either \code{NULL} (no delimiter) or one of \code{","}, \code{"|"}, or \code{" "}}
 
 \item{...}{parameters passed on to \code{\link[=read.table]{read.table()}}}
 }

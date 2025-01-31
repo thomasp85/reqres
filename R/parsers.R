@@ -91,11 +91,14 @@ parse_multiform <- function() {
 }
 #' @rdname parsers
 #'
-#' @importFrom webutils parse_query
+#' @param delim The delimiter to use for parsing arrays in non-exploded form.
+#' Either `NULL` (no delimiter) or one of `","`, `"|"`, or `" "`
+#'
 #' @export
-parse_queryform <- function() {
+parse_queryform <- function(delim = NULL) {
+  force(delim)
   function(raw, directives) {
-    parse_query(rawToChar(raw))
+    query_parser(rawToChar(raw), delim)
   }
 }
 #' @rdname parsers

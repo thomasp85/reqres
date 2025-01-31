@@ -4,6 +4,10 @@
 * Avoid request parsing until needed (if ever)
 * Fix bug that resulted in unintentional splitting of headers containing
   date-times (#11)
+* Improved query parsing that properly handles various forms of array notation
+  (exploded and non-exploded with different delimiters).
+* BREAKING: query values are no longer automatically type converted during
+  parsing as this could lead to loss of information.
 
 # reqres 0.2.5
 
