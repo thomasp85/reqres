@@ -321,7 +321,7 @@ Response <- R6Class('Response',
     #'
     set_links = function(...) {
       if (is.list(..1)) {
-        lifecycle::deprecate_soft("0.3", "Response$set_links(list(...))", "Response$set_links(!!!list(...))")
+        lifecycle::deprecate_soft("0.3", I("Response$set_links(list(...))"), I("Response$set_links(!!!list(...))"))
         links <- modifyList(..1, list2(...)[-1])
       } else {
         links <- list2(...)
@@ -352,7 +352,7 @@ Response <- R6Class('Response',
 
       formatters <- list2(...)
       if (is.list(..1)) {
-        lifecycle::deprecate_soft("0.3", "Response$format(list(...))", "Response$format(!!!list(...))")
+        lifecycle::deprecate_soft("0.3", I("Response$format(list(...))"), I("Response$format(!!!list(...))"))
         first_formatters <- names(formatters)[-1]
         formatters <- modifyList(..1, list2(...)[-1])
         first_formatters <- names(formatters) %in% first_formatters

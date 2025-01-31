@@ -89,7 +89,7 @@ test_that('special header method works', {
   res$has_header('Date')
   expect_equal(res$get_header('Date'), to_http_date(time))
 
-  res$set_links(list(alternate = '/feed'))
+  res$set_links(alternate = '/feed')
   res$has_header('Link')
   expect_equal(res$get_header('Link'), "</feed>; rel=\"alternate\"")
 })
@@ -131,7 +131,7 @@ test_that('body formatting works', {
   body <- list(lower = letters, upper = LETTERS)
   res$body <- body
   expect_false(res$format('zip' = function(x) x, autofail = FALSE))
-  expect_true(res$format(default_formatters, compress = FALSE))
+  expect_true(res$format(!!!default_formatters, compress = FALSE))
   expect_equal(res$body, jsonlite::toJSON(body))
 
   rook2 <- fiery::fake_request(
@@ -142,7 +142,7 @@ test_that('body formatting works', {
   req <- Request$new(rook2)
   res <- Response$new(req)
   res$body <- body
-  expect_true(res$format(default_formatters))
+  expect_true(res$format(!!!default_formatters))
   expect_equal(res$body, gzip(charToRaw(jsonlite::toJSON(body))))
 
   rook2 <- fiery::fake_request(
@@ -153,7 +153,7 @@ test_that('body formatting works', {
   req <- Request$new(rook2)
   res <- Response$new(req)
   res$body <- body
-  expect_true(res$format(default_formatters))
+  expect_true(res$format(!!!default_formatters))
   expect_equal(res$body, brotli::brotli_compress(charToRaw(jsonlite::toJSON(body))))
 
   rook2 <- fiery::fake_request(
@@ -164,6 +164,6 @@ test_that('body formatting works', {
   req <- Request$new(rook2)
   res <- Response$new(req)
   res$body <- body
-  expect_true(res$format(default_formatters))
+  expect_true(res$format(!!!default_formatters))
   expect_equal(res$body, memCompress(charToRaw(jsonlite::toJSON(body))))
 })

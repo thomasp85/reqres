@@ -219,7 +219,7 @@ Request <- R6Class('Request',
 
       parsers <- list2(...)
       if (is.list(..1)) {
-        lifecycle::deprecate_soft("0.3", "Request$parse(list(...))", "Request$parse(!!!list(...))")
+        lifecycle::deprecate_soft("0.3", I("Request$parse(list(...))"), I("Request$parse(!!!list(...))"))
         first_parsers <- names(parsers)[-1]
         parsers <- modifyList(..1, list2(...)[-1])
         first_parsers <- names(parsers) %in% first_parsers
