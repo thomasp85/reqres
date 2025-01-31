@@ -217,10 +217,11 @@ Request <- R6Class('Request',
     parse = function(..., autofail = TRUE) {
       if (!private$has_body()) return(TRUE)
 
-      parsers <- list(...)
+      parsers <- list2(...)
       if (is.list(..1)) {
+        lifecycle::deprecate_soft("0.3", "Request$parse(list(...))", "Request$parse(!!!list(...))")
         first_parsers <- names(parsers)[-1]
-        parsers <- modifyList(..1, list(...)[-1])
+        parsers <- modifyList(..1, list2(...)[-1])
         first_parsers <- names(parsers) %in% first_parsers
         parsers <- c(parsers[first_parsers], parsers[!first_parsers])
       }

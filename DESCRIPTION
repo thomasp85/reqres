@@ -28,7 +28,8 @@ Imports:
     webutils,
     utils,
     cli,
-    rlang
+    rlang,
+    lifecycle
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Suggests:
