@@ -139,12 +139,12 @@ Response <- R6Class('Response',
     #' @param ... ignored
     #'
     print = function(...) {
-      cat('A HTTP response\n')
-      cat('===============\n')
-      cat('        Status: ', self$status, ' - ', status_phrase(self$status), '\n', sep = '')
-      cat('  Content type: ', self$type, '\n', sep = '')
-      cat('\n')
-      cat('In response to: ', private$REQUEST$url, '\n', sep = '')
+      cli::cli_rule('An HTTP response')
+      cli::cli_dl(c(
+        "Status" = '{self$status} - {status_phrase(self$status)}',
+        "Content type" = self$type
+      ))
+      cli::cli_text(cli::style_italic('{cli::symbol$arrow_right} Responding to: {private$REQUEST$url}'))
       invisible(self)
     },
     #' @description Sets the header given by `name`. `value` will be converted

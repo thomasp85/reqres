@@ -96,11 +96,12 @@ Request <- R6Class('Request',
     #' @param ... ignored
     #'
     print = function(...) {
-      cat('A HTTP request\n')
-      cat('==============\n')
-      cat('Trusted: ', if (self$trust) 'Yes' else 'No', '\n', sep = '')
-      cat(' Method: ', self$method, '\n', sep = '')
-      cat('    URL: ', self$url, '\n', sep = '')
+      cli::cli_rule('An HTTP request')
+      cli::cli_dl(c(
+        Trusted = '{if (self$trust) cli::col_green("Yes") else cli::col_red("No")}',
+        Method = self$method,
+        URL = self$url
+      ))
       invisible(self)
     },
     #' @description Sets the content of the request body. This method should
