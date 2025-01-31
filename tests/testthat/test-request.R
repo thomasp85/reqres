@@ -1,11 +1,13 @@
 headers <- list(
   Content_Type = 'application/json',
+  Date = 'Wed, 21 Oct 2015 07:28:00 GMT',
   Accept = 'application/json, application/xml; q=0.5, text/*; q=0.3',
   Accept_Encoding = 'gzip, br',
   Cookie = 'id=Thomas; key=123',
   X_Forwarded_For = '500.0.0.0, 400.0.0.0',
   X_Forwarded_Host = 'www.example.com:80',
-  X_Forwarded_Proto = 'https'
+  X_Forwarded_Proto = 'https',
+  X_Custom_Message = '"Testing string literals, with comma", no-literal'
 )
 body <- '{"name":["Thomas Lin Pedersen"],"age":[31],"homepage":["www.data-imaginist.com","www.github.com/thomasp85"]}'
 rook <- fiery::fake_request(
@@ -55,6 +57,8 @@ test_that('trust works', {
 test_that('header parsing works', {
   req <- Request$new(rook)
   expect_equal(req$get_header('Content-Type'), headers$Content_Type)
+  expect_equal(req$get_header('Date'), headers$Date)
+  expect_equal(req$get_header('X-Custom-Message'), c("\"Testing string literals, with comma\"", "no-literal"))
 })
 
 test_that('response can be generated', {

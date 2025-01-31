@@ -1,6 +1,9 @@
 # reqres (development version)
 
 * Use rlang native type checking instead of assertthat
+* Avoid request parsing until needed (if ever)
+* Fix bug that resulted in unintentional splitting of headers containing
+  date-times (#11)
 
 # reqres 0.2.5
 
