@@ -6,8 +6,8 @@ authors:
     href: https://data-imaginist.com
 
 template:
-  params:
-    bootswatch: simplex
+  bootstrap: 5
+  bootswatch: simplex
 
 navbar:
   left:
@@ -60,3 +60,4 @@ reference:
       above, which are listed here.
     contents:
       - to_http_date
+      - query_parser
