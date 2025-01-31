@@ -682,12 +682,10 @@ stream.</p><div class="section">
 <span class="r-in"><span><span class="va">req</span> <span class="op">&lt;-</span> <span class="va"><a href="Request.html">Request</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">fake_rook</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">Response</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">req</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> A HTTP response</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ===============</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         Status: 404 - Not Found</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Content type: text/plain</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> In response to: http://example.com:80/test?id=34632&amp;question=who+is+hadley</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── An HTTP response ────────────────────────────────────────────────────────────</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Status: 404 - Not Found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Content type: text/plain</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">→ Responding to: http://example.com:80/test?id=34632&amp;question=who+is+hadley</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Set the body to the associated status text</span></span></span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="fu">status_with_text</span><span class="op">(</span><span class="fl">200L</span><span class="op">)</span></span></span>
@@ -713,8 +711,8 @@ stream.</p><div class="section">
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span>, <span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1139065 60.9    2189071  117  2189071 117.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2134134 16.3    8388608   64  3098152  23.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1140052 60.9    2189045  117  2189045 117.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2136604 16.4    8388608   64  3097748  23.7</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
