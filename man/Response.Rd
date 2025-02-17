@@ -180,6 +180,7 @@ responding to.}
 \item \href{#method-Response-has_data}{\code{Response$has_data()}}
 \item \href{#method-Response-timestamp}{\code{Response$timestamp()}}
 \item \href{#method-Response-attach}{\code{Response$attach()}}
+\item \href{#method-Response-as_download}{\code{Response$as_download()}}
 \item \href{#method-Response-status_with_text}{\code{Response$status_with_text()}}
 \item \href{#method-Response-set_cookie}{\code{Response$set_cookie()}}
 \item \href{#method-Response-remove_cookie}{\code{Response$remove_cookie()}}
@@ -422,6 +423,24 @@ the automatic type inference from the file extension.
 \item{\code{filename}}{The name of the file as it will appear to the client}
 
 \item{\code{type}}{The file type. If not given it will be inferred}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Response-as_download"></a>}}
+\if{latex}{\out{\hypertarget{method-Response-as_download}{}}}
+\subsection{Method \code{as_download()}}{
+Marks the response as a downloadable file, rather than data
+to be shown in the browser
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Response$as_download(filename = NULL)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{filename}}{Optional filename as hint for the client}
 }
 \if{html}{\out{</div>}}
 }

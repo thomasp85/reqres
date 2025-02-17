@@ -252,7 +252,19 @@ Response <- R6Class('Response',
       self$file <- file
       check_string(filename)
       if (!is.null(type)) self$type <- type
-      self$set_header('Content-Disposition', paste0('attachment; filename=', filename))
+      self$as_download(filename)
+      invisible(self)
+    },
+    #' @description Marks the response as a downloadable file, rather than data
+    #' to be shown in the browser
+    #' @param filename Optional filename as hint for the client
+    #'
+    as_download = function(filename = NULL) {
+      if (is.null(filename)) {
+        self$set_header('Content-Disposition', 'attachment')
+      } else {
+        self$set_header('Content-Disposition', paste0('attachment; filename="', filename, '"'))
+      }
       invisible(self)
     },
     #' @description Sets the status to `code` and sets the body to the
