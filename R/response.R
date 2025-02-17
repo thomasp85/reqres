@@ -382,7 +382,13 @@ Response <- R6Class('Response',
     #' @param priority A vector of compression types ranked by the servers
     #' priority
     #'
-    compress = function(priority = c('gzip', 'deflate', 'br', 'identity')) {
+    compress = function(priority = c('gzip', 'deflate', 'br', 'identity'), force = FALSE) {
+      if (!force) {
+        type <- self$type
+        if (!is.null(type) && isFALSE(mimes$compressible[mimes$name == type])) {
+          return(FALSE)
+        }
+      }
       encoding <- self$request$accepts_encoding(priority)
       if (is.null(encoding)) return(FALSE)
       if (!is_string(self$body)) return(FALSE)
@@ -395,6 +401,7 @@ Response <- R6Class('Response',
       )
       self$body <- content
       self$set_header('Content-Encoding', encoding)
+      return(TRUE)
     },
     #' @description Calculates the length (in bytes) of the body. This is the
     #' number that goes into the `Content-Length` header. Note that the

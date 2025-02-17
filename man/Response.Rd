@@ -578,7 +578,10 @@ Based on the provided priority, an encoding is negotiated
 with the request and applied. The \code{Content-Encoding} header is set to the
 chosen compression algorithm.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Response$compress(priority = c("gzip", "deflate", "br", "identity"))}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Response$compress(
+  priority = c("gzip", "deflate", "br", "identity"),
+  force = FALSE
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -586,6 +589,9 @@ chosen compression algorithm.
 \describe{
 \item{\code{priority}}{A vector of compression types ranked by the servers
 priority}
+
+\item{\code{force}}{Should compression be done even if the type is known to be
+uncompressible}
 }
 \if{html}{\out{</div>}}
 }
