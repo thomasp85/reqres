@@ -42,12 +42,10 @@ mimes$extensions[[feather]] <- unique(append(mimes$extensions[[feather]], "feath
 parquet <- which(mimes$name == "application/vnd.apache.parquet")
 mimes$extensions[[parquet]] <- unique(append(mimes$extensions[[parquet]], "parquet"))
 
-usethis::use_data(mimes, overwrite = TRUE, internal = TRUE)
-
 # Fast Extension lookup
 mimes_ext <- data.frame(
   ext = unlist(mimes$extensions),
   index = rep(seq_along(mimes$extensions), lengths(mimes$extensions))
 )
 
-usethis::use_data(mimes_ext, overwrite = TRUE, internal = TRUE)
+usethis::use_data(mimes, mimes_ext, overwrite = TRUE, internal = TRUE)
