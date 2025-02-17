@@ -275,8 +275,9 @@ Response <- R6Class('Response',
       self$status <- code
       body <- status$Description[match(code, status$Code)]
       if (is.na(body)) body <- as.character(code)
-      self$body <- body
+      private$BODY <- body
       self$type <- 'txt'
+      private$IS_FORMATTED <- TRUE
       invisible(self)
     },
     #' @description Sets a cookie on the response. See
@@ -348,7 +349,7 @@ Response <- R6Class('Response',
     },
     #' @description Based on the formatters passed in through `...` content
     #' negotiation is performed with the request and the preferred formatter is
-    #' chosen. The `Content-Type` header is set automatically. If
+    #' chosen and applied. The `Content-Type` header is set automatically. If
     #' `compress = TRUE` the `compress()` method will be called after formatting.
     #' If an error is encountered and `autofail = TRUE` the response will be set
     #' to `500`. If a formatter is not found and `autofail = TRUE` the response
@@ -359,6 +360,10 @@ Response <- R6Class('Response',
     #' @param compress Should `$compress()` be run in the end
     #'
     format = function(..., autofail = TRUE, compress = TRUE) {
+      if (self$is_formatted) {
+        cli::cli_warn("The response has already been formatted. Will not format again")
+        return(FALSE)
+      }
       if (!private$has_body()) return(TRUE)
 
       formatters <- list2(...)
@@ -373,6 +378,8 @@ Response <- R6Class('Response',
         stop_input_type(formatters, "a named list")
       }
 
+      private$IS_FORMATTED <- TRUE
+
       format <- self$request$accepts(names(formatters))
       if (is.null(format)) {
         if (autofail) self$status_with_text(406L)
@@ -383,9 +390,30 @@ Response <- R6Class('Response',
         if (autofail) self$status_with_text(500L)
         return(FALSE)
       }
-      self$body <- content
+      private$BODY <- content
       self$type <- format
       if (compress) self$compress()
+      return(TRUE)
+    },
+    #' @description Based on the formatters passed in through `...` content
+    #' negotiation is performed with the request and the preferred formatter is
+    #' chosen. The `Content-Type` header is set automatically. If a formatter is
+    #' not found and `autofail = TRUE` the response will be set to `406`. The
+    #' found formatter is registered with the response and will be applied just
+    #' before handing off the response to httpuv, unless the response has been
+    #' manually formatted.
+    #' @param ... A range of formatters
+    #' @param autofail Automatically populate the response if formatting fails
+    #'
+    set_formatter = function(...) {
+      formatters <- list2(...)
+      format <- self$request$accepts(names(formatters))
+      if (is.null(format)) {
+        if (autofail) self$status_with_text(406L)
+        return(FALSE)
+      }
+      private$FORMATTER <- formatters[[format]]
+      self$type <- format
       return(TRUE)
     },
     #' @description Based on the provided priority, an encoding is negotiated
@@ -393,6 +421,8 @@ Response <- R6Class('Response',
     #' chosen compression algorithm.
     #' @param priority A vector of compression types ranked by the servers
     #' priority
+    #' @param force Should compression be done even if the type is known to be
+    #' uncompressible
     #'
     compress = function(priority = c('gzip', 'deflate', 'br', 'identity'), force = FALSE) {
       if (!force) {
@@ -411,7 +441,7 @@ Response <- R6Class('Response',
         deflate = memCompress(charToRaw(self$body)),
         br = brotli_compress(charToRaw(self$body))
       )
-      self$body <- content
+      private$BODY <- content
       self$set_header('Content-Encoding', encoding)
       return(TRUE)
     },
@@ -435,6 +465,16 @@ Response <- R6Class('Response',
     #' if missing and convert a non-raw body to a single character string.
     #'
     as_list = function() {
+      if (!self$is_formatted && !is.null(self$formatter)) {
+        private$FORMATTED <- TRUE
+        content <- tri(self$formatter(self$body))
+        if (is_condition(content)) {
+          self$status_with_text(500L)
+        } else {
+          private$BODY <- content
+          self$compress()
+        }
+      }
       list(
         status = private$STATUS,
         headers = private$format_headers(),
@@ -502,6 +542,7 @@ Response <- R6Class('Response',
     body = function(content) {
       if (missing(content)) return(private$BODY)
       private$BODY <- content
+      private$IS_FORMATTED <- FALSE
     },
     #' @field file Set or get the location of a file that should be used as the
     #' body of the response. If the body is not referencing a file (but contains
@@ -548,6 +589,14 @@ Response <- R6Class('Response',
     #' responding to.
     request = function() {
       private$REQUEST
+    },
+    #' @field formatter Get the registered formatter for the response body.
+    formatter = function() {
+      private$FORMATTER
+    },
+    #' @field is_formatted Has the body been formatted
+    is_formatted = function() {
+      private$IS_FORMATTED
     }
   ),
   private = list(
@@ -558,6 +607,8 @@ Response <- R6Class('Response',
     COOKIES = NULL,
     BODY = NULL,
     DATA = NULL,
+    FORMATTER = NULL,
+    IS_FORMATTED = FALSE,
 
     format_headers = function() {
       headers <- as.list(private$HEADERS)

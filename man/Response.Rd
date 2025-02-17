@@ -161,6 +161,10 @@ on a file extension or mime-type.}
 
 \item{\code{request}}{Get the original \code{Request} object that the object is
 responding to.}
+
+\item{\code{formatter}}{Get the registered formatter for the response body.}
+
+\item{\code{is_formatted}}{Has the body been formatted}
 }
 \if{html}{\out{</div>}}
 }
@@ -187,6 +191,7 @@ responding to.}
 \item \href{#method-Response-has_cookie}{\code{Response$has_cookie()}}
 \item \href{#method-Response-set_links}{\code{Response$set_links()}}
 \item \href{#method-Response-format}{\code{Response$format()}}
+\item \href{#method-Response-set_formatter}{\code{Response$set_formatter()}}
 \item \href{#method-Response-compress}{\code{Response$compress()}}
 \item \href{#method-Response-content_length}{\code{Response$content_length()}}
 \item \href{#method-Response-as_list}{\code{Response$as_list()}}
@@ -567,7 +572,7 @@ to \code{...}. The names will be used for the \code{rel} directive.
 \subsection{Method \code{format()}}{
 Based on the formatters passed in through \code{...} content
 negotiation is performed with the request and the preferred formatter is
-chosen. The \code{Content-Type} header is set automatically. If
+chosen and applied. The \code{Content-Type} header is set automatically. If
 \code{compress = TRUE} the \code{compress()} method will be called after formatting.
 If an error is encountered and \code{autofail = TRUE} the response will be set
 to \code{500}. If a formatter is not found and \code{autofail = TRUE} the response
@@ -585,6 +590,31 @@ if not it will return \code{FALSE}
 \item{\code{autofail}}{Automatically populate the response if formatting fails}
 
 \item{\code{compress}}{Should \verb{$compress()} be run in the end}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Response-set_formatter"></a>}}
+\if{latex}{\out{\hypertarget{method-Response-set_formatter}{}}}
+\subsection{Method \code{set_formatter()}}{
+Based on the formatters passed in through \code{...} content
+negotiation is performed with the request and the preferred formatter is
+chosen. The \code{Content-Type} header is set automatically. If a formatter is
+not found and \code{autofail = TRUE} the response will be set to \code{406}. The
+found formatter is registered with the response and will be applied just
+before handing off the response to httpuv, unless the response has been
+manually formatted.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Response$set_formatter(...)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{A range of formatters}
+
+\item{\code{autofail}}{Automatically populate the response if formatting fails}
 }
 \if{html}{\out{</div>}}
 }
