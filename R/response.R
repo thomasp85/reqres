@@ -320,11 +320,10 @@ Response <- R6Class('Response',
     #' @param ... key-value pairs for the links
     #'
     set_links = function(...) {
-      if (is.list(..1)) {
+      links <- list2(...)
+      if (is.list(links[[1]])) {
         lifecycle::deprecate_soft("0.3", I("Response$set_links(list(...))"), I("Response$set_links(!!!list(...))"))
-        links <- modifyList(..1, list2(...)[-1])
-      } else {
-        links <- list2(...)
+        links <- modifyList(links[[1]], list2(...)[-1])
       }
       if (!is_named2(links)) {
         stop_input_type(links, "a named list")
@@ -351,10 +350,10 @@ Response <- R6Class('Response',
       if (!private$has_body()) return(TRUE)
 
       formatters <- list2(...)
-      if (is.list(..1)) {
+      if (is.list(formatters[[1]])) {
         lifecycle::deprecate_soft("0.3", I("Response$format(list(...))"), I("Response$format(!!!list(...))"))
         first_formatters <- names(formatters)[-1]
-        formatters <- modifyList(..1, list2(...)[-1])
+        formatters <- modifyList(formatters[[1]], list2(...)[-1])
         first_formatters <- names(formatters) %in% first_formatters
         formatters <- c(formatters[first_formatters], formatters[!first_formatters])
       }
