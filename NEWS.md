@@ -16,6 +16,8 @@
   `Response$is_formatted` fields to allow delaying formatting until the
   response is sent off
 * The `Date` header is now always added if missing
+* `Request$is()` is now vectorised and provides the prefered choice as an
+  attribute in the return
 
 # reqres 0.2.5
 

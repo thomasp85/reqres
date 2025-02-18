@@ -173,16 +173,23 @@ Request <- R6Class('Request',
     #' @description Queries whether the body of the request is in a given format
     #' by looking at the `Content-Type` header. Used for selecting the best
     #' parsing method.
-    #' @param type A content type to check for
+    #' @param type A vector of content types to check for. Can be fully
+    #' qualified MIME types, a file extension, or a mime type with wildcards
     #'
     is = function(type) {
       accept <- self$get_header('Content-Type')
       if (is.null(accept)) return(NULL)
       accept <- trimws(strsplit(accept, ';')[[1]])[1]
       content <- private$format_mimes(accept)
-      full_type <- private$format_types(type)
-      if (nrow(full_type) == 0) return(FALSE)
-      !is.null(private$get_format_spec(full_type, content))
+      ext <- !grepl('/', type)
+      type[ext] <- mimes$name[mimes_ext$index[match(sub('^[.]', '', type[ext]), mimes_ext$ext)]]
+      type <- strsplit(type, '/', TRUE)
+      main <- vapply(type, `[[`, character(1), 1L)
+      sub <- vapply(type, `[[`, character(1), 2L)
+      match <- (main == content$main | main == "*") & (sub == content$sub | sub == "*")
+      priority <- order(main == "*", sub == "*", ext)
+      attr(match, "pick") <- priority[which(match[priority])[1]]
+      match
     },
     #' @description Get the header of the specified name.
     #' @param name The name of the header to get
@@ -232,6 +239,25 @@ Request <- R6Class('Request',
 
       type <- self$get_header('Content-Type')
       if (is.null(type)) return(FALSE)
+
+      parser_match <- self$is(names(parsers))
+
+      if (!any(parser_match)) {
+        if (autofail) {
+          self$respond()$status_with_text(415L)
+        }
+        return(FALSE)
+      }
+
+      content <- private$get_body()
+      content <- tri(private$unpack(content))
+      if (is_condition(content)) {
+        if (autofail) self$respond()$status_with_text(400L)
+        return(FALSE)
+      }
+
+      parser <- parsers[attr(parser_match, "pick")]
+
       directives <- trimws(strsplit(type, ';')[[1]])[-1]
       directives <- strsplit(directives, '=')
       directives <- structure(
@@ -239,27 +265,14 @@ Request <- R6Class('Request',
         names = lapply(directives, `[`, 1)
       )
 
-      success <- FALSE
-      for (i in names(parsers)) {
-        if (self$is(i)) {
-          content <- private$get_body()
-          content <- tri(private$unpack(content))
-          if (is_condition(content)) {
-            if (autofail) self$response$status_with_text(400L)
-            return(FALSE)
-          }
-          content <- tri(parsers[[i]](content, directives))
-          if (!is_condition(content)) {
-            private$BODY <- content
-            success <- TRUE
-            break
-          }
-        }
+      content <- tri(parser(content, directives))
+      if (is_condition(content)) {
+        if (autofail) self$respond()$status_with_text(400L)
+        return(FALSE)
       }
-      if (!success && autofail && !is.null(self$response)) {
-        self$response$status_with_text(415L)
-      }
-      success
+
+      private$BODY <- content
+      return(TRUE)
     },
     #' @description This is a simpler version of the `parse()` method. It will
     #' attempt to decompress the body and set the `body` field to the resulting
