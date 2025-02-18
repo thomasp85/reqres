@@ -20,11 +20,6 @@ A \code{Request} object (for \code{as.Request()}) or a logical indicating whethe
 the object is a \code{Request} (for \code{is.Request()})
 }
 \description{
-HTTP Request Handling
-
-HTTP Request Handling
-}
-\details{
 This class wraps all functionality related to extracting information from a
 http request. Much of the functionality is inspired by the Request class in
 Express.js, so \href{https://expressjs.com/en/4x/api.html#req}{the documentation}
@@ -340,7 +335,8 @@ parsing method.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{type}}{A content type to check for}
+\item{\code{type}}{A vector of content types to check for. Can be fully
+qualified MIME types, a file extension, or a mime type with wildcards}
 }
 \if{html}{\out{</div>}}
 }

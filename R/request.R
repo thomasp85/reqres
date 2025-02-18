@@ -1,5 +1,6 @@
 #' HTTP Request Handling
 #'
+#' @description
 #' This class wraps all functionality related to extracting information from a
 #' http request. Much of the functionality is inspired by the Request class in
 #' Express.js, so [the documentation](https://expressjs.com/en/4x/api.html#req)
