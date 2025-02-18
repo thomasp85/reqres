@@ -652,9 +652,8 @@ Request <- R6Class('Request',
           gzip =,
           "x-gzip" = {
             con <- gzcon(rawConnection(l))
-            l <- readBin(con, raw(), length(l))
-            close(con)
-            l
+            on.exit(close(con), add = TRUE)
+            readBin(con, "raw", length(l))
           },
           deflate = memDecompress(l, type = 'gzip'),
           cli::cli_abort('Unsupported compression {.val {r}}')
