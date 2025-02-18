@@ -284,7 +284,7 @@ Request <- R6Class('Request',
       content <- private$get_body()
       content <- tri(private$unpack(content))
       if (is_condition(content)) {
-        if (autofail) self$response$status_with_text(400L)
+        if (autofail) self$respond()$status_with_text(400L)
         return(FALSE)
       }
       private$BODY <- content
