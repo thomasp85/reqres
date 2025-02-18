@@ -20,20 +20,13 @@ A rook-compliant list-response (in case of \code{as.list()}) or a logical
 indicating whether the object is a \code{Response} (in case of \code{is.Response()})
 }
 \description{
-HTTP Response handling
-
-HTTP Response handling
-}
-\details{
 This class handles all functionality involved in crafting a http response.
 Much of the functionality is inspired by the Request class in Express.js, so
 \href{https://expressjs.com/en/4x/api.html#res}{the documentation} for this will
 complement this document. As \code{reqres} is build on top of the
 \href{https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md}{Rook specifications}
 the \code{Response} object can be converted to a compliant list object to be
-passed on to e.g. the \code{httpuv} handler.
-
-A \code{Response} object is always created
+passed on to e.g. the \code{httpuv} handler. A \code{Response} object is always created
 as a response to a \code{Request} object and contains a reference to the
 originating \code{Request} object. A \code{Response} is always initialized with a
 404 Not Found code, an empty string as body and the \code{Content-Type} header set
@@ -457,7 +450,7 @@ to be shown in the browser
 Sets the status to \code{code} and sets the body to the
 associated status code description (e.g. \verb{Bad Gateway} for \code{502L})
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Response$status_with_text(code)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Response$status_with_text(code, clear_headers = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -667,7 +660,9 @@ should only be called if the response size is needed for other reasons.
 \subsection{Method \code{as_list()}}{
 Converts the object to a list for further processing by
 a Rook compliant server such as \code{httpuv}. Will set \code{Content-Type} header
-if missing and convert a non-raw body to a single character string.
+if missing and convert a non-raw body to a single character string. Will
+apply the formatter set by \code{set_formatter()} unless the body has already
+been formatted. Will add a Date header if none exist.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Response$as_list()}\if{html}{\out{</div>}}
 }

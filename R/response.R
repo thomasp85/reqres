@@ -1,14 +1,13 @@
 #' HTTP Response handling
 #'
+#' @description
 #' This class handles all functionality involved in crafting a http response.
 #' Much of the functionality is inspired by the Request class in Express.js, so
 #' [the documentation](https://expressjs.com/en/4x/api.html#res) for this will
 #' complement this document. As `reqres` is build on top of the
 #' [Rook specifications](https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md)
 #' the `Response` object can be converted to a compliant list object to be
-#' passed on to e.g. the `httpuv` handler.
-#'
-#' A `Response` object is always created
+#' passed on to e.g. the `httpuv` handler. A `Response` object is always created
 #' as a response to a `Request` object and contains a reference to the
 #' originating `Request` object. A `Response` is always initialized with a
 #' 404 Not Found code, an empty string as body and the `Content-Type` header set
@@ -467,7 +466,9 @@ Response <- R6Class('Response',
     },
     #' @description Converts the object to a list for further processing by
     #' a Rook compliant server such as `httpuv`. Will set `Content-Type` header
-    #' if missing and convert a non-raw body to a single character string.
+    #' if missing and convert a non-raw body to a single character string. Will
+    #' apply the formatter set by `set_formatter()` unless the body has already
+    #' been formatted. Will add a Date header if none exist.
     #'
     as_list = function() {
       if (!self$is_formatted && !is.null(self$formatter)) {
@@ -593,14 +594,17 @@ Response <- R6Class('Response',
     },
     #' @field request Get the original `Request` object that the object is
     #' responding to.
+    #'
     request = function() {
       private$REQUEST
     },
     #' @field formatter Get the registered formatter for the response body.
+    #'
     formatter = function() {
       private$FORMATTER
     },
     #' @field is_formatted Has the body been formatted
+    #' 
     is_formatted = function() {
       private$IS_FORMATTED
     }
