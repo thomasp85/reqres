@@ -464,6 +464,9 @@ associated status code description (e.g. \verb{Bad Gateway} for \code{502L})
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{code}}{The status code to set}
+
+\item{\code{clear_headers}}{Should all currently set headers be cleared (useful
+for converting a response to an error halfway through processing)}
 }
 \if{html}{\out{</div>}}
 }

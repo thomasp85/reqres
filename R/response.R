@@ -270,8 +270,13 @@ Response <- R6Class('Response',
     #' @description Sets the status to `code` and sets the body to the
     #' associated status code description (e.g. `Bad Gateway` for `502L`)
     #' @param code The status code to set
+    #' @param clear_headers Should all currently set headers be cleared (useful
+    #' for converting a response to an error halfway through processing)
     #'
-    status_with_text = function(code) {
+    status_with_text = function(code, clear_headers = FALSE) {
+      if (clear_headers) {
+        rm(list = ls(private$HEADERS), envir = private$HEADERS)
+      }
       self$status <- code
       body <- status$Description[match(code, status$Code)]
       if (is.na(body)) body <- as.character(code)

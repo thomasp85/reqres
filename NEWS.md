@@ -11,6 +11,7 @@
 * DEPRECATED: `Request$parse()`, `Response$set_links()`, and `Response$format()`
   has soft deprecated passing in a list of values as the first element. Instead
   use `!!!` splicing
+* `Response$status_with_text()` now has a `clear_headers` argument
 
 # reqres 0.2.5
 
