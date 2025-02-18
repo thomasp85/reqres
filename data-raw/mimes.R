@@ -25,6 +25,9 @@ mimes$extensions[[plain]] <- unique(append(mimes$extensions[[plain]], c("r", "rd
 md <- which(mimes$name == "text/x-markdown")
 mimes$extensions[[md]] <- unique(append(mimes$extensions[[md]], c("md", "rmd", "qmd")))
 
+md <- which(mimes$name == "text/markdown")
+mimes$extensions[[md]] <- unique(append(mimes$extensions[[md]], c("md", "rmd", "qmd")))
+
 mimes <- rbind(mimes,
   data.frame(name = "text/x-sweave", extensions = I(list("rnw")), charset = NA_character_, compressible = TRUE, source = "reqres")
 )
