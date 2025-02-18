@@ -12,6 +12,9 @@
   has soft deprecated passing in a list of values as the first element. Instead
   use `!!!` splicing
 * `Response$status_with_text()` now has a `clear_headers` argument
+* Added `Response$set_formatter()` method and `Response$formatter` and
+  `Response$is_formatted` fields to allow delaying formatting until the
+  response is sent off
 
 # reqres 0.2.5
 
