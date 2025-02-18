@@ -15,6 +15,7 @@
 * Added `Response$set_formatter()` method and `Response$formatter` and
   `Response$is_formatted` fields to allow delaying formatting until the
   response is sent off
+* The `Date` header is now always added if missing
 
 # reqres 0.2.5
 

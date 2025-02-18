@@ -480,6 +480,7 @@ Response <- R6Class('Response',
           self$compress()
         }
       }
+      if (!self$has_header("Date")) self$timestamp()
       list(
         status = private$STATUS,
         headers = private$format_headers(),
