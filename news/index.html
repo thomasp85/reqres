@@ -46,6 +46,12 @@
 <li>Improved query parsing that properly handles various forms of array notation (exploded and non-exploded with different delimiters).</li>
 <li>BREAKING: query values are no longer automatically type converted during parsing as this could lead to loss of information.</li>
 <li>DEPRECATED: <code>Request$parse()</code>, <code>Response$set_links()</code>, and <code>Response$format()</code> has soft deprecated passing in a list of values as the first element. Instead use <code>!!!</code> splicing</li>
+<li>
+<code>Response$status_with_text()</code> now has a <code>clear_headers</code> argument</li>
+<li>Added <code>Response$set_formatter()</code> method and <code>Response$formatter</code> and <code>Response$is_formatted</code> fields to allow delaying formatting until the response is sent off</li>
+<li>The <code>Date</code> header is now always added if missing</li>
+<li>
+<code>Request$is()</code> is now vectorised and provides the prefered choice as an attribute in the return</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.5" id="reqres-025">reqres 0.2.5<a class="anchor" aria-label="anchor" href="#reqres-025"></a></h2><p class="text-muted">CRAN release: 2022-08-19</p>
