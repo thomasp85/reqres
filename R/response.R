@@ -472,7 +472,7 @@ Response <- R6Class('Response',
     #'
     as_list = function() {
       if (!self$is_formatted && !is.null(self$formatter)) {
-        private$FORMATTED <- TRUE
+        private$IS_FORMATTED <- TRUE
         content <- tri(self$formatter(self$body))
         if (is_condition(content)) {
           self$status_with_text(500L)
@@ -604,7 +604,7 @@ Response <- R6Class('Response',
       private$FORMATTER
     },
     #' @field is_formatted Has the body been formatted
-    #' 
+    #'
     is_formatted = function() {
       private$IS_FORMATTED
     }
