@@ -277,7 +277,7 @@ Response <- R6Class('Response',
         rm(list = ls(private$HEADERS), envir = private$HEADERS)
       }
       self$status <- code
-      body <- status$Description[match(code, status$Code)]
+      body <- status_phrase(code)
       if (is.na(body)) body <- as.character(code)
       private$BODY <- body
       self$type <- 'txt'
@@ -532,11 +532,11 @@ Response <- R6Class('Response',
         }
       }
       if (is_string(code)) {
-        ind <- match(tolower(code), tolower(status$Description))
+        ind <- match(tolower(code), tolower(status$message))
         if (is.na(ind)) {
           cli::cli_abort('Unknown status: {.val {code}}')
         }
-        code <- status$Code[ind]
+        code <- status$code[ind]
       }
       private$STATUS <- code
     },
@@ -719,5 +719,5 @@ gzip <- function(x) {
 }
 
 status_phrase <- function(code) {
-  status$Description[match(code, status$Code)]
+  status$message[match(code, status$code)]
 }

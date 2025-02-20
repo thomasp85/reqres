@@ -51,4 +51,13 @@ mimes_ext <- data.frame(
   index = rep(seq_along(mimes$extensions), lengths(mimes$extensions))
 )
 
-usethis::use_data(mimes, mimes_ext, overwrite = TRUE, internal = TRUE)
+# Status code names
+codes <- jsonlite::read_json("https://status.js.org/codes.json")
+status <- data.frame(
+  code = as.integer(unlist(lapply(codes, `[[`, "code"))),
+  message = vapply(codes, `[[`, character(1), "message"),
+  description = vapply(codes, `[[`, character(1), "description"),
+  row.names = unlist(lapply(codes, `[[`, "code"))
+)
+
+usethis::use_data(mimes, mimes_ext, status, overwrite = TRUE, internal = TRUE)
