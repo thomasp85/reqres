@@ -789,15 +789,14 @@ stream.</p><div class="section">
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">Response</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">req</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── An HTTP response ────────────────────────────────────────────────────────────</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in c("cli::cli_dl(c(Status = \"{self$status} - {status_phrase(self$status)}\", ", "    `Content type` = self$type))"):</span> <span style="color: #BBBB00;">!</span> Could not evaluate cli `{}` expression: `status_phrase(self$…`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span> in `status_phrase(self$status)`:</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> object 'status' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Status: 404 - Not Found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Content type: text/plain</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">→ Responding to: http://example.com:80/test?id=34632&amp;question=who+is+hadley</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Set the body to the associated status text</span></span></span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="fu">status_with_text</span><span class="op">(</span><span class="fl">200L</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in res$status_with_text(200L):</span> object 'status' not found</span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">body</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "OK"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Infer Content-Type from file extension</span></span></span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">type</span> <span class="op">&lt;-</span> <span class="st">'json'</span></span></span>
@@ -818,8 +817,8 @@ stream.</p><div class="section">
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span>, <span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1145420 61.2    2194595 117.3  2194595 117.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2145104 16.4    8388608  64.0  3004499  23.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1145168 61.2    2194742 117.3  2194742 117.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2146571 16.4    8388608  64.0  3004359  23.0</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
