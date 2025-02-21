@@ -362,8 +362,11 @@ Response <- R6Class('Response',
     #' @param ... A range of formatters
     #' @param autofail Automatically populate the response if formatting fails
     #' @param compress Should `$compress()` be run in the end
+    #' @param default The name of the default formatter, which will be used if
+    #' none match. Setting this will avoid autofailing with 406 as a formatter
+    #' is always selected
     #'
-    format = function(..., autofail = TRUE, compress = TRUE) {
+    format = function(..., autofail = TRUE, compress = TRUE, default = NULL) {
       if (self$is_formatted) {
         cli::cli_warn("The response has already been formatted. Will not format again")
         return(FALSE)
@@ -384,7 +387,7 @@ Response <- R6Class('Response',
 
       private$IS_FORMATTED <- TRUE
 
-      format <- self$request$accepts(names(formatters))
+      format <- self$request$accepts(names(formatters)) %||% default
       if (is.null(format)) {
         if (autofail) self$status_with_text(406L)
         return(FALSE)
@@ -408,10 +411,13 @@ Response <- R6Class('Response',
     #' manually formatted.
     #' @param ... A range of formatters
     #' @param autofail Automatically populate the response if formatting fails
+    #' @param default The name of the default formatter, which will be used if
+    #' none match. Setting this will avoid autofailing with 406 as a formatter
+    #' is always selected
     #'
-    set_formatter = function(...) {
+    set_formatter = function(..., autofail = TRUE, default = NULL) {
       formatters <- list2(...)
-      format <- self$request$accepts(names(formatters))
+      format <- self$request$accepts(names(formatters)) %||% default
       if (is.null(format)) {
         if (autofail) self$status_with_text(406L)
         return(FALSE)

@@ -575,7 +575,7 @@ to \code{500}. If a formatter is not found and \code{autofail = TRUE} the respon
 will be set to \code{406}. If formatting is successful it will return \code{TRUE},
 if not it will return \code{FALSE}
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Response$format(..., autofail = TRUE, compress = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Response$format(..., autofail = TRUE, compress = TRUE, default = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -586,6 +586,10 @@ if not it will return \code{FALSE}
 \item{\code{autofail}}{Automatically populate the response if formatting fails}
 
 \item{\code{compress}}{Should \verb{$compress()} be run in the end}
+
+\item{\code{default}}{The name of the default formatter, which will be used if
+none match. Setting this will avoid autofailing with 406 as a formatter
+is always selected}
 }
 \if{html}{\out{</div>}}
 }
@@ -602,7 +606,7 @@ found formatter is registered with the response and will be applied just
 before handing off the response to httpuv, unless the response has been
 manually formatted.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Response$set_formatter(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Response$set_formatter(..., autofail = TRUE, default = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -611,6 +615,10 @@ manually formatted.
 \item{\code{...}}{A range of formatters}
 
 \item{\code{autofail}}{Automatically populate the response if formatting fails}
+
+\item{\code{default}}{The name of the default formatter, which will be used if
+none match. Setting this will avoid autofailing with 406 as a formatter
+is always selected}
 }
 \if{html}{\out{</div>}}
 }
