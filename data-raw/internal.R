@@ -52,12 +52,25 @@ mimes_ext <- data.frame(
 )
 
 # Status code names
-codes <- jsonlite::read_json("https://status.js.org/codes.json")
+doc <- "https://datatracker.ietf.org/doc/html/rfc9110"
+codes <- rvest::read_html(doc) |>
+  rvest::html_element("#status\\.codes") |>
+  rvest::html_elements('div[id^="status"]>section>h4')
+
+links <- codes |>
+  rvest::html_element('.section-number') |>
+  rvest::html_attr("href")
+links <- paste0(doc, links)
+codes <- codes |>
+  rvest::html_element('.section-name') |>
+  rvest::html_text()
+message <- sub("^\\d\\d\\d ", "", codes)
+code <- as.integer(substr(codes, 1, 3))
+
 status <- data.frame(
-  code = as.integer(unlist(lapply(codes, `[[`, "code"))),
-  message = vapply(codes, `[[`, character(1), "message"),
-  description = vapply(codes, `[[`, character(1), "description"),
-  row.names = unlist(lapply(codes, `[[`, "code"))
+  code = as.integer(substr(codes, 1, 3)),
+  message = sub("^\\d\\d\\d ", "", codes),
+  link = links
 )
 
 usethis::use_data(mimes, mimes_ext, status, overwrite = TRUE, internal = TRUE)
