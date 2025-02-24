@@ -54,6 +54,14 @@ reference:
       - default_parsers
       - formatters
       - default_formatters
+  - title: "Error handling"
+    desc: >
+      reqres provides a suite of helper functions to make it easy to report
+      problems to the client in a standard way. These are all based on the HTTP
+      Problems spec defined in
+      [RFC 9457](https://datatracker.ietf.org/doc/html/rfc9457)
+    contents:
+      - abort_http_problem
   - title: "Utilities"
     desc: >
       reqres includes a small selection of utilities beyond the ones mentioned

@@ -431,7 +431,7 @@ Response <- R6Class('Response',
             types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or", types[n])
           }
           detail <- paste0("Only ", types, " content type", if (n > 1) "s" else "", " supported.")
-          self$problem(406L, detail)
+          abort_not_acceptable(detail = )
         }
         return(FALSE)
       }
@@ -440,8 +440,7 @@ Response <- R6Class('Response',
 
       content <- tri(formatters[[format]](self$body))
       if (is_reqres_problem(content)) {
-        handle_problem(self, content)
-        return(FALSE)
+        cnd_signal(content)
       } else if (is_condition(content)) {
         if (autofail) self$status_with_text(500L)
         return(FALSE)
@@ -475,7 +474,7 @@ Response <- R6Class('Response',
             types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or", types[n])
           }
           detail <- paste0("Only ", types, " content type", if (n > 1) "s" else "", " supported.")
-          self$problem(406L, detail)
+          abort_not_acceptable(detail)
         }
         return(FALSE)
       }
@@ -538,8 +537,7 @@ Response <- R6Class('Response',
         private$IS_FORMATTED <- TRUE
         content <- tri(self$formatter(self$body))
         if (is_reqres_problem(content)) {
-          handle_problem(self, content)
-          return(FALSE)
+          cnd_signal(content)
         } else if (is_condition(content)) {
           self$status_with_text(500L)
         } else {
