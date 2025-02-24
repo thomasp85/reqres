@@ -246,6 +246,11 @@ Request <- R6Class('Request',
       if (!any(parser_match)) {
         if (autofail) {
           self$respond()$status_with_text(415L)
+          if (self$method == "post") {
+            self$response$set_header("Accept-Post", paste0(format_types(names(parsers)), collapse = ", "))
+          } else if (self$method == "patch") {
+            self$response$set_header("Accept-Patch", paste0(format_types(names(parsers)), collapse = ", "))
+          }
         }
         return(FALSE)
       }
