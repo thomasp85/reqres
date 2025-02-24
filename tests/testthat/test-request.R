@@ -74,9 +74,11 @@ test_that('content type can be queried', {
   req <- Request$new(rook)
   expect_true(req$is('json'))
   expect_true(req$is('application/json'))
+  expect_true(req$is('application/*'))
+  expect_true(req$is('*/json'))
+  expect_true(req$is('*'))
   expect_false(req$is('application'))
   expect_false(req$is('text'))
-  expect_false(req$is('*'))
 })
 
 test_that('body can be parsed', {

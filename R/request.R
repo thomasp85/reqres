@@ -182,6 +182,7 @@ Request <- R6Class('Request',
       if (is.null(accept)) return(NULL)
       accept <- trimws(strsplit(accept, ';')[[1]])[1]
       content <- private$format_mimes(accept)
+      type <- ifelse(type == "*", "*/*", type)
       ext <- !grepl('/', type)
       type[ext] <- mimes$name[mimes_ext$index[match(sub('^[.]', '', type[ext]), mimes_ext$ext)]]
       type <- strsplit(type, '/', TRUE)
