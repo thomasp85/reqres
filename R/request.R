@@ -263,7 +263,7 @@ Request <- R6Class('Request',
         return(FALSE)
       }
 
-      parser <- parsers[attr(parser_match, "pick")]
+      parser <- parsers[[attr(parser_match, "pick")]]
 
       directives <- trimws(strsplit(type, ';')[[1]])[-1]
       directives <- strsplit(directives, '=')
