@@ -105,7 +105,7 @@ test_that('files are added correctly', {
   expect_equal(res$type, 'text/plain')
   expect_equal(res$get_header('Last-Modified'), to_http_date(file.mtime(file)))
   res$attach(file)
-  expect_equal(res$get_header('Content-Disposition'), "attachment; filename=DESCRIPTION")
+  expect_equal(res$get_header('Content-Disposition'), "attachment; filename=\"DESCRIPTION\"")
 
   expect_equal(res$as_list()$body, c(file = file))
 })
