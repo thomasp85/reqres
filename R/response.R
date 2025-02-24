@@ -284,6 +284,43 @@ Response <- R6Class('Response',
       private$IS_FORMATTED <- TRUE
       invisible(self)
     },
+    #' @description Signals an API problem using the HTTP Problems spec
+    #' [RFC 9457](https://datatracker.ietf.org/doc/html/rfc9457). This should
+    #' only be used in cases where returning a bare response code is
+    #' insufficient to describe the issue.
+    #' @param code The HTTP status code to use
+    #' @param detail A string detailing the problem. Make sure the information
+    #' given does not pose a security risk
+    #' @param title A human-readable title of the issue. Should not vary from
+    #' instance to instance of the specific issue. If `NULL` then the status
+    #' code title is used
+    #' @param type A URI that uniquely identifies this type of problem. The URI
+    #' must resolve to an HTTP document describing the problem in human readable
+    #' text. If `NULL`, the most recent link to the given status code definition
+    #' is used
+    #' @param instance A unique identifier of the specific instance of this
+    #' problem that can be used for further debugging. Can be omitted.
+    #' @param clear_headers Should all currently set headers be cleared
+    #'
+    problem = function(code, detail, title = NULL, type = NULL, instance = NULL, clear_headers = TRUE) {
+      if (clear_headers) {
+        rm(list = ls(private$HEADERS), envir = private$HEADERS)
+      }
+      self$status <- code
+      private$BODY <- list(
+        type = type %||% status$link[match(code, status$code)],
+        title = title %||% status_phrase(code),
+        status = code,
+        detail = detail
+      )
+      if (!is.null(instance)) {
+        private$BODY$instance <- instance
+      }
+      self$format(json = format_json(auto_unbox = TRUE), xml = format_xml(), default = "json")
+      if (self$type == "application/json") self$type <- "application/problem+json"
+      if (self$type == "application/xml") self$type <- "application/problem+xml"
+      invisible(self)
+    },
     #' @description Sets a cookie on the response. See
     #' <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie>
     #' for a longer description
@@ -385,23 +422,27 @@ Response <- R6Class('Response',
         stop_input_type(formatters, "a named list")
       }
 
-      private$IS_FORMATTED <- TRUE
-
       format <- self$request$accepts(names(formatters)) %||% default
       if (is.null(format)) {
         if (autofail) {
-          self$status_with_text(406L)
           types <- self$request$format_types(names(formatters))
           n <- length(types)
           if (n > 1) {
             types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or", types[n])
           }
-          private$BODY <- paste0("Only ", types, " content type", if (n > 1) "s" else "", " supported.")
+          detail <- paste0("Only ", types, " content type", if (n > 1) "s" else "", " supported.")
+          self$problem(406L, detail)
         }
         return(FALSE)
       }
+
+      private$IS_FORMATTED <- TRUE
+
       content <- tri(formatters[[format]](self$body))
-      if (is_condition(content)) {
+      if (is_reqres_problem(content)) {
+        handle_problem(self, content)
+        return(FALSE)
+      } else if (is_condition(content)) {
         if (autofail) self$status_with_text(500L)
         return(FALSE)
       }
@@ -427,7 +468,15 @@ Response <- R6Class('Response',
       formatters <- list2(...)
       format <- self$request$accepts(names(formatters)) %||% default
       if (is.null(format)) {
-        if (autofail) self$status_with_text(406L)
+        if (autofail) {
+          types <- self$request$format_types(names(formatters))
+          n <- length(types)
+          if (n > 1) {
+            types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or", types[n])
+          }
+          detail <- paste0("Only ", types, " content type", if (n > 1) "s" else "", " supported.")
+          self$problem(406L, detail)
+        }
         return(FALSE)
       }
       private$FORMATTER <- formatters[[format]]
@@ -488,7 +537,10 @@ Response <- R6Class('Response',
       if (!self$is_formatted && !is.null(self$formatter)) {
         private$IS_FORMATTED <- TRUE
         content <- tri(self$formatter(self$body))
-        if (is_condition(content)) {
+        if (is_reqres_problem(content)) {
+          handle_problem(self, content)
+          return(FALSE)
+        } else if (is_condition(content)) {
           self$status_with_text(500L)
         } else {
           private$BODY <- content

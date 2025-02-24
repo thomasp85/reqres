@@ -179,6 +179,7 @@ responding to.}
 \item \href{#method-Response-attach}{\code{Response$attach()}}
 \item \href{#method-Response-as_download}{\code{Response$as_download()}}
 \item \href{#method-Response-status_with_text}{\code{Response$status_with_text()}}
+\item \href{#method-Response-problem}{\code{Response$problem()}}
 \item \href{#method-Response-set_cookie}{\code{Response$set_cookie()}}
 \item \href{#method-Response-remove_cookie}{\code{Response$remove_cookie()}}
 \item \href{#method-Response-has_cookie}{\code{Response$has_cookie()}}
@@ -460,6 +461,50 @@ associated status code description (e.g. \verb{Bad Gateway} for \code{502L})
 
 \item{\code{clear_headers}}{Should all currently set headers be cleared (useful
 for converting a response to an error halfway through processing)}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Response-problem"></a>}}
+\if{latex}{\out{\hypertarget{method-Response-problem}{}}}
+\subsection{Method \code{problem()}}{
+Signals an API problem using the HTTP Problems spec
+\href{https://datatracker.ietf.org/doc/html/rfc9457}{RFC 9457}. This should
+only be used in cases where returning a bare response code is
+insufficient to describe the issue.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Response$problem(
+  code,
+  detail,
+  title = NULL,
+  type = NULL,
+  instance = NULL,
+  clear_headers = TRUE
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{code}}{The HTTP status code to use}
+
+\item{\code{detail}}{A string detailing the problem. Make sure the information
+given does not pose a security risk}
+
+\item{\code{title}}{A human-readable title of the issue. Should not vary from
+instance to instance of the specific issue. If \code{NULL} then the status
+code title is used}
+
+\item{\code{type}}{A URI that uniquely identifies this type of problem. The URI
+must resolve to an HTTP document describing the problem in human readable
+text. If \code{NULL}, the most recent link to the given status code definition
+is used}
+
+\item{\code{instance}}{A unique identifier of the specific instance of this
+problem that can be used for further debugging. Can be omitted.}
+
+\item{\code{clear_headers}}{Should all currently set headers be cleared}
 }
 \if{html}{\out{</div>}}
 }

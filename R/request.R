@@ -259,7 +259,7 @@ Request <- R6Class('Request',
       content <- private$get_body()
       content <- tri(private$unpack(content))
       if (is_condition(content)) {
-        if (autofail) self$respond()$status_with_text(400L)
+        if (autofail) self$respond()$problem(400L, "Request body failed to be decoded")
         return(FALSE)
       }
 
@@ -273,7 +273,10 @@ Request <- R6Class('Request',
       )
 
       content <- tri(parser(content, directives))
-      if (is_condition(content)) {
+      if (is_reqres_problem(content)) {
+        handle_problem(self$respond(), content)
+        return(FALSE)
+      } else if (is_condition(content)) {
         if (autofail) self$respond()$status_with_text(400L)
         return(FALSE)
       }
@@ -291,7 +294,7 @@ Request <- R6Class('Request',
       content <- private$get_body()
       content <- tri(private$unpack(content))
       if (is_condition(content)) {
-        if (autofail) self$respond()$status_with_text(400L)
+        if (autofail) self$respond()$problem(400L, "Request body failed to be decoded")
         return(FALSE)
       }
       private$BODY <- content
