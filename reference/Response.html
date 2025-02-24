@@ -249,6 +249,7 @@ responding to.</p></dd>
 <li><p><a href="#method-Response-attach"><code>Response$attach()</code></a></p></li>
 <li><p><a href="#method-Response-as_download"><code>Response$as_download()</code></a></p></li>
 <li><p><a href="#method-Response-status_with_text"><code>Response$status_with_text()</code></a></p></li>
+<li><p><a href="#method-Response-problem"><code>Response$problem()</code></a></p></li>
 <li><p><a href="#method-Response-set_cookie"><code>Response$set_cookie()</code></a></p></li>
 <li><p><a href="#method-Response-remove_cookie"><code>Response$remove_cookie()</code></a></p></li>
 <li><p><a href="#method-Response-has_cookie"><code>Response$has_cookie()</code></a></p></li>
@@ -528,12 +529,65 @@ for converting a response to an error halfway through processing)</p></dd>
 </dl><p></p></div>
 </div>
 
+</div><p></p><hr><a id="method-Response-problem"></a><div class="section">
+<h3 id="method-problem-">Method <code>problem()</code><a class="anchor" aria-label="anchor" href="#method-problem-"></a></h3>
+<p>Signals an API problem using the HTTP Problems spec
+<a href="https://datatracker.ietf.org/doc/html/rfc9457" class="external-link">RFC 9457</a>. This should
+only be used in cases where returning a bare response code is
+insufficient to describe the issue.</p><div class="section">
+<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">problem</span><span class="op">(</span></span>
+<span>  <span class="va">code</span>,</span>
+<span>  <span class="va">detail</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  instance <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  clear_headers <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-15">Arguments<a class="anchor" aria-label="anchor" href="#arguments-15"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>code</code></dt>
+<dd><p>The HTTP status code to use</p></dd>
+
+
+<dt><code>detail</code></dt>
+<dd><p>A string detailing the problem. Make sure the information
+given does not pose a security risk</p></dd>
+
+
+<dt><code>title</code></dt>
+<dd><p>A human-readable title of the issue. Should not vary from
+instance to instance of the specific issue. If <code>NULL</code> then the status
+code title is used</p></dd>
+
+
+<dt><code>type</code></dt>
+<dd><p>A URI that uniquely identifies this type of problem. The URI
+must resolve to an HTTP document describing the problem in human readable
+text. If <code>NULL</code>, the most recent link to the given status code definition
+is used</p></dd>
+
+
+<dt><code>instance</code></dt>
+<dd><p>A unique identifier of the specific instance of this
+problem that can be used for further debugging. Can be omitted.</p></dd>
+
+
+<dt><code>clear_headers</code></dt>
+<dd><p>Should all currently set headers be cleared</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
 </div><p></p><hr><a id="method-Response-set_cookie"></a><div class="section">
 <h3 id="method-set-cookie-">Method <code>set_cookie()</code><a class="anchor" aria-label="anchor" href="#method-set-cookie-"></a></h3>
 <p>Sets a cookie on the response. See
 <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie" class="external-link">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie</a>
 for a longer description</p><div class="section">
-<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
+<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">set_cookie</span><span class="op">(</span></span>
 <span>  <span class="va">name</span>,</span>
 <span>  <span class="va">value</span>,</span>
@@ -548,7 +602,7 @@ for a longer description</p><div class="section">
 </div>
 
 <div class="section">
-<h4 id="arguments-15">Arguments<a class="anchor" aria-label="anchor" href="#arguments-15"></a></h4>
+<h4 id="arguments-16">Arguments<a class="anchor" aria-label="anchor" href="#arguments-16"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
 <dd><p>The name of the cookie</p></dd>
 
@@ -592,12 +646,12 @@ cookie can be send during cross-site requests</p></dd>
 </div><p></p><hr><a id="method-Response-remove_cookie"></a><div class="section">
 <h3 id="method-remove-cookie-">Method <code>remove_cookie()</code><a class="anchor" aria-label="anchor" href="#method-remove-cookie-"></a></h3>
 <p>Removes the cookie named <code>name</code> from the response.</p><div class="section">
-<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
+<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">remove_cookie</span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-16">Arguments<a class="anchor" aria-label="anchor" href="#arguments-16"></a></h4>
+<h4 id="arguments-17">Arguments<a class="anchor" aria-label="anchor" href="#arguments-17"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
 <dd><p>The name of the cookie to remove</p></dd>
 
@@ -608,12 +662,12 @@ cookie can be send during cross-site requests</p></dd>
 </div><p></p><hr><a id="method-Response-has_cookie"></a><div class="section">
 <h3 id="method-has-cookie-">Method <code>has_cookie()</code><a class="anchor" aria-label="anchor" href="#method-has-cookie-"></a></h3>
 <p>Queries whether the response contains a cookie named <code>name</code></p><div class="section">
-<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
+<h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">has_cookie</span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-17">Arguments<a class="anchor" aria-label="anchor" href="#arguments-17"></a></h4>
+<h4 id="arguments-18">Arguments<a class="anchor" aria-label="anchor" href="#arguments-18"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
 <dd><p>The name of the cookie to look for</p></dd>
 
@@ -625,12 +679,12 @@ cookie can be send during cross-site requests</p></dd>
 <h3 id="method-set-links-">Method <code>set_links()</code><a class="anchor" aria-label="anchor" href="#method-set-links-"></a></h3>
 <p>Sets the <code>Link</code> header based on the named arguments passed
 to <code>...</code>. The names will be used for the <code>rel</code> directive.</p><div class="section">
-<h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
+<h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">set_links</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-18">Arguments<a class="anchor" aria-label="anchor" href="#arguments-18"></a></h4>
+<h4 id="arguments-19">Arguments<a class="anchor" aria-label="anchor" href="#arguments-19"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>key-value pairs for the links</p></dd>
 
@@ -648,12 +702,12 @@ If an error is encountered and <code>autofail = TRUE</code> the response will be
 to <code>500</code>. If a formatter is not found and <code>autofail = TRUE</code> the response
 will be set to <code>406</code>. If formatting is successful it will return <code>TRUE</code>,
 if not it will return <code>FALSE</code></p><div class="section">
-<h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">format</span><span class="op">(</span><span class="va">...</span>, autofail <span class="op">=</span> <span class="cn">TRUE</span>, compress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">format</span><span class="op">(</span><span class="va">...</span>, autofail <span class="op">=</span> <span class="cn">TRUE</span>, compress <span class="op">=</span> <span class="cn">TRUE</span>, default <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-19">Arguments<a class="anchor" aria-label="anchor" href="#arguments-19"></a></h4>
+<h4 id="arguments-20">Arguments<a class="anchor" aria-label="anchor" href="#arguments-20"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>A range of formatters</p></dd>
 
@@ -664,6 +718,12 @@ if not it will return <code>FALSE</code></p><div class="section">
 
 <dt><code>compress</code></dt>
 <dd><p>Should <code>$compress()</code> be run in the end</p></dd>
+
+
+<dt><code>default</code></dt>
+<dd><p>The name of the default formatter, which will be used if
+none match. Setting this will avoid autofailing with 406 as a formatter
+is always selected</p></dd>
 
 
 </dl><p></p></div>
@@ -678,18 +738,24 @@ not found and <code>autofail = TRUE</code> the response will be set to <code>406
 found formatter is registered with the response and will be applied just
 before handing off the response to httpuv, unless the response has been
 manually formatted.</p><div class="section">
-<h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">set_formatter</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<h4 id="usage-21">Usage<a class="anchor" aria-label="anchor" href="#usage-21"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">set_formatter</span><span class="op">(</span><span class="va">...</span>, autofail <span class="op">=</span> <span class="cn">TRUE</span>, default <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-20">Arguments<a class="anchor" aria-label="anchor" href="#arguments-20"></a></h4>
+<h4 id="arguments-21">Arguments<a class="anchor" aria-label="anchor" href="#arguments-21"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>A range of formatters</p></dd>
 
 
 <dt><code>autofail</code></dt>
 <dd><p>Automatically populate the response if formatting fails</p></dd>
+
+
+<dt><code>default</code></dt>
+<dd><p>The name of the default formatter, which will be used if
+none match. Setting this will avoid autofailing with 406 as a formatter
+is always selected</p></dd>
 
 
 </dl><p></p></div>
@@ -700,7 +766,7 @@ manually formatted.</p><div class="section">
 <p>Based on the provided priority, an encoding is negotiated
 with the request and applied. The <code>Content-Encoding</code> header is set to the
 chosen compression algorithm.</p><div class="section">
-<h4 id="usage-21">Usage<a class="anchor" aria-label="anchor" href="#usage-21"></a></h4>
+<h4 id="usage-22">Usage<a class="anchor" aria-label="anchor" href="#usage-22"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">compress</span><span class="op">(</span></span>
 <span>  priority <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gzip"</span>, <span class="st">"deflate"</span>, <span class="st">"br"</span>, <span class="st">"identity"</span><span class="op">)</span>,</span>
 <span>  force <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -708,7 +774,7 @@ chosen compression algorithm.</p><div class="section">
 </div>
 
 <div class="section">
-<h4 id="arguments-21">Arguments<a class="anchor" aria-label="anchor" href="#arguments-21"></a></h4>
+<h4 id="arguments-22">Arguments<a class="anchor" aria-label="anchor" href="#arguments-22"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>priority</code></dt>
 <dd><p>A vector of compression types ranked by the servers
 priority</p></dd>
@@ -728,7 +794,7 @@ uncompressible</p></dd>
 number that goes into the <code>Content-Length</code> header. Note that the
 <code>Content-Length</code> header is set automatically by <code>httpuv</code> so this method
 should only be called if the response size is needed for other reasons.</p><div class="section">
-<h4 id="usage-22">Usage<a class="anchor" aria-label="anchor" href="#usage-22"></a></h4>
+<h4 id="usage-23">Usage<a class="anchor" aria-label="anchor" href="#usage-23"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">content_length</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -740,7 +806,7 @@ a Rook compliant server such as <code>httpuv</code>. Will set <code>Content-Type
 if missing and convert a non-raw body to a single character string. Will
 apply the formatter set by <code>set_formatter()</code> unless the body has already
 been formatted. Will add a Date header if none exist.</p><div class="section">
-<h4 id="usage-23">Usage<a class="anchor" aria-label="anchor" href="#usage-23"></a></h4>
+<h4 id="usage-24">Usage<a class="anchor" aria-label="anchor" href="#usage-24"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">as_list</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -749,7 +815,7 @@ been formatted. Will add a Date header if none exist.</p><div class="section">
 <h3 id="method-as-message-">Method <code>as_message()</code><a class="anchor" aria-label="anchor" href="#method-as-message-"></a></h3>
 <p>Prints a HTTP representation of the response to the output
 stream.</p><div class="section">
-<h4 id="usage-24">Usage<a class="anchor" aria-label="anchor" href="#usage-24"></a></h4>
+<h4 id="usage-25">Usage<a class="anchor" aria-label="anchor" href="#usage-25"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">as_message</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -757,12 +823,12 @@ stream.</p><div class="section">
 </div><p></p><hr><a id="method-Response-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-25">Usage<a class="anchor" aria-label="anchor" href="#usage-25"></a></h4>
+<h4 id="usage-26">Usage<a class="anchor" aria-label="anchor" href="#usage-26"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-22">Arguments<a class="anchor" aria-label="anchor" href="#arguments-22"></a></h4>
+<h4 id="arguments-23">Arguments<a class="anchor" aria-label="anchor" href="#arguments-23"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -817,8 +883,8 @@ stream.</p><div class="section">
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span>, <span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1145168 61.2    2194742 117.3  2194742 117.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2146571 16.4    8388608  64.0  3004359  23.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1147705 61.3    2197947 117.4  2197947 117.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2149830 16.5    8388608  64.0  3099524  23.7</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
