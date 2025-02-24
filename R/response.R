@@ -389,7 +389,15 @@ Response <- R6Class('Response',
 
       format <- self$request$accepts(names(formatters)) %||% default
       if (is.null(format)) {
-        if (autofail) self$status_with_text(406L)
+        if (autofail) {
+          self$status_with_text(406L)
+          types <- self$request$format_types(names(formatters))
+          n <- length(types)
+          if (n > 1) {
+            types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or", types[n])
+          }
+          private$BODY <- paste0("Only ", types, " content type", if (n > 1) "s" else "", " supported.")
+        }
         return(FALSE)
       }
       content <- tri(formatters[[format]](self$body))
