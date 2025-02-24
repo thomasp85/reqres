@@ -52,6 +52,8 @@ mimes_ext <- data.frame(
 )
 
 # Status code names
+
+## Main RFC
 doc <- "https://datatracker.ietf.org/doc/html/rfc9110"
 codes <- rvest::read_html(doc) |>
   rvest::html_element("#status\\.codes") |>
@@ -64,13 +66,222 @@ links <- paste0(doc, links)
 codes <- codes |>
   rvest::html_element('.section-name') |>
   rvest::html_text()
-message <- sub("^\\d\\d\\d ", "", codes)
-code <- as.integer(substr(codes, 1, 3))
 
 status <- data.frame(
   code = as.integer(substr(codes, 1, 3)),
   message = sub("^\\d\\d\\d ", "", codes),
   link = links
 )
+
+## A Few additionals
+doc <- "https://datatracker.ietf.org/doc/html/rfc6585"
+codes <- rvest::read_html(doc) |>
+  rvest::html_elements('span.h2')
+
+links <- codes |>
+  rvest::html_element('.selflink') |>
+  rvest::html_attr("href")
+links <- paste0(doc, links)
+
+codes <- codes |>
+  rvest::html_text()
+
+is_code <- grepl("\\d\\d\\d", codes)
+links <- links[is_code]
+codes <- codes[is_code]
+
+status <- rbind(status, data.frame(
+  code = as.integer(sub("^.*(\\d\\d\\d).*$", "\\1", codes)),
+  message = sub("^.*\\d\\d\\d\\s+", "", codes),
+  link = links
+))
+
+## Legal reasons
+doc <- "https://datatracker.ietf.org/doc/html/rfc7725"
+codes <- rvest::read_html(doc) |>
+  rvest::html_elements('span.h2')
+
+links <- codes |>
+  rvest::html_element('.selflink') |>
+  rvest::html_attr("href")
+links <- paste0(doc, links)
+
+codes <- codes |>
+  rvest::html_text()
+
+is_code <- grepl("\\d\\d\\d", codes)
+links <- links[is_code]
+codes <- codes[is_code]
+
+status <- rbind(status, data.frame(
+  code = as.integer(sub("^.*(\\d\\d\\d).*$", "\\1", codes)),
+  message = sub("^.*\\d\\d\\d\\s+", "", codes),
+  link = links
+))
+
+## Early hints
+doc <- "https://datatracker.ietf.org/doc/html/rfc8297"
+codes <- rvest::read_html(doc) |>
+  rvest::html_elements('span.h2')
+
+links <- codes |>
+  rvest::html_element('.selflink') |>
+  rvest::html_attr("href")
+links <- paste0(doc, links)
+
+codes <- codes |>
+  rvest::html_text()
+
+is_code <- grepl("\\d\\d\\d", codes)
+links <- links[is_code]
+codes <- codes[is_code]
+
+status <- rbind(status, data.frame(
+  code = as.integer(sub("^.*(\\d\\d\\d).*$", "\\1", codes)),
+  message = sub("^.*\\d\\d\\d:", "", codes),
+  link = links
+))
+
+## WebDAV
+doc <- "https://datatracker.ietf.org/doc/html/rfc4918"
+codes <- rvest::read_html(doc) |>
+  rvest::html_elements('span.h3')
+
+links <- codes |>
+  rvest::html_element('.selflink') |>
+  rvest::html_attr("href")
+links <- paste0(doc, links)
+
+codes <- codes |>
+  rvest::html_text()
+
+is_code <- grepl("\\d\\d\\d", codes)
+links <- links[is_code]
+codes <- codes[is_code]
+
+status <- rbind(status, data.frame(
+  code = as.integer(sub("^.*(\\d\\d\\d).*$", "\\1", codes)),
+  message = sub("^.*\\d\\d\\d\\s+", "", codes),
+  link = links
+))
+
+## WebDAV++
+doc <- "https://datatracker.ietf.org/doc/html/rfc5842"
+codes <- rvest::read_html(doc) |>
+  rvest::html_elements('span.h3')
+
+links <- codes |>
+  rvest::html_element('.selflink') |>
+  rvest::html_attr("href")
+links <- paste0(doc, links)
+
+codes <- codes |>
+  rvest::html_text()
+
+is_code <- grepl("\\d\\d\\d", codes)
+links <- links[is_code]
+codes <- codes[is_code]
+
+status <- rbind(status, data.frame(
+  code = as.integer(sub("^.*(\\d\\d\\d).*$", "\\1", codes)),
+  message = sub("^.*\\d\\d\\d\\s+", "", codes),
+  link = links
+))
+
+## IM Used
+doc <- "https://datatracker.ietf.org/doc/html/rfc3229"
+codes <- rvest::read_html(doc) |>
+  rvest::html_elements('span.h4')
+
+links <- codes |>
+  rvest::html_element('.selflink') |>
+  rvest::html_attr("href")
+links <- paste0(doc, links)
+
+codes <- codes |>
+  rvest::html_text()
+
+is_code <- grepl("\\d\\d\\d", codes)
+links <- links[is_code]
+codes <- codes[is_code]
+
+status <- rbind(status, data.frame(
+  code = as.integer(sub("^.*(\\d\\d\\d).*$", "\\1", codes)),
+  message = sub("^.*\\d\\d\\d\\s+", "", codes),
+  link = links
+))
+
+## Too Early
+doc <- "https://datatracker.ietf.org/doc/html/rfc8470"
+codes <- rvest::read_html(doc) |>
+  rvest::html_elements('span.h3')
+
+links <- codes |>
+  rvest::html_element('.selflink') |>
+  rvest::html_attr("href")
+links <- paste0(doc, links)
+
+codes <- codes |>
+  rvest::html_text()
+
+is_code <- grepl("\\d\\d\\d", codes)
+links <- links[is_code]
+codes <- codes[is_code]
+
+status <- rbind(status, data.frame(
+  code = as.integer(sub("^.*(\\d\\d\\d).*$", "\\1", codes)),
+  message = sub("^.*\\((.+)\\).*$", "\\1", codes),
+  link = links
+))
+
+## Variant also negotiates
+doc <- "https://datatracker.ietf.org/doc/html/rfc2295"
+codes <- rvest::read_html(doc) |>
+  rvest::html_elements('span.h3')
+
+links <- codes |>
+  rvest::html_element('.selflink') |>
+  rvest::html_attr("href")
+links <- paste0(doc, links)
+
+codes <- codes |>
+  rvest::html_text()
+
+is_code <- grepl("\\d\\d\\d", codes)
+links <- links[is_code]
+codes <- codes[is_code]
+
+status <- rbind(status, data.frame(
+  code = as.integer(sub("^.*(\\d\\d\\d).*$", "\\1", codes)),
+  message = sub("^.*\\d\\d\\d\\s+", "", codes),
+  link = links
+))
+
+## Not Extended
+doc <- "https://datatracker.ietf.org/doc/html/rfc2774"
+codes <- rvest::read_html(doc) |>
+  rvest::html_elements('span.h2')
+
+links <- codes |>
+  rvest::html_element('.selflink') |>
+  rvest::html_attr("href")
+links <- paste0(doc, links)
+
+codes <- codes |>
+  rvest::html_text()
+
+is_code <- grepl("\\d\\d\\d", codes)
+links <- links[is_code]
+codes <- codes[is_code]
+
+status <- rbind(status, data.frame(
+  code = as.integer(sub("^.*(\\d\\d\\d).*$", "\\1", codes)),
+  message = sub("^.*\\d\\d\\d\\s+", "", codes),
+  link = links
+))
+
+status <- status[!duplicated(status$code), ]
+status <- status[order(status$code), ]
+attr(status, "row.names") <- .set_row_names(nrow(status))
 
 usethis::use_data(mimes, mimes_ext, status, overwrite = TRUE, internal = TRUE)
