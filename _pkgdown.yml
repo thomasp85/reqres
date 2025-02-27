@@ -69,3 +69,5 @@ reference:
     contents:
       - to_http_date
       - query_parser
+      - session_cookie
+      - random_key
