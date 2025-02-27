@@ -18,6 +18,23 @@
 * The `Date` header is now always added if missing
 * `Request$is()` is now vectorised and provides the prefered choice as an
   attribute in the return
+* New condition signalling based on the HTTP Problems Spec. Request and response
+  objects will now throw classed errors where they are encounters so that server
+  implementations can catch these and handle them sensibly. This is in
+  opposition to the prior setup where reqres would handle any errors internally
+  leaving the server implementation in the blank
+* Added `Response$clear_cookie()` for requesting the client to remove the cookie
+* `Response$set_cookie()` now also accepts `same_site = "None"` if
+  `secure = TRUE` is also given
+* Added `Request$encode_string()` and `Request$decode_string()` with the
+  possibility of encrypting a string as well with a `key` given during
+  initialisation
+* Added facilities for maintaining a session data store through an encrypted
+  session cookie. The data store is made available through the `session` field
+  in both `Request` and `Response` and the content will automatically be send
+  along with the response as an encrypted cookie.
+* Added `random_key()` and `session_cookie()` helpter functions to support the
+  above
 
 # reqres 0.2.5
 

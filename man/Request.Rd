@@ -89,6 +89,24 @@ string by default and needs to be populated using the \code{set_body()} method
 (this is often done using a body parser that accesses the Rook$input
 stream). \emph{Immutable}}
 
+\item{\code{session}}{The content of the session cookie. If session cookies has
+not been activated it will be an empty write-protected list. If session
+cookies are activated but the request did not contain one it will be an
+empty list. The content of this field will be send encrypted as part of
+the response according to the cookie settings in
+\verb{$session_cookie_settings}. This field is reflected in the
+\code{Response$session} field and using either produces the same result}
+
+\item{\code{has_session_cookie}}{Query whether the request came with a session
+cookie \emph{Immutable}}
+
+\item{\code{session_cookie_settings}}{Get the settings for the session cookie as
+they were provided during initialisation
+cookie \emph{Immutable}}
+
+\item{\code{has_key}}{Query whether the request was initialised with an
+encryption key \emph{Immutable}}
+
 \item{\code{cookies}}{Access a named list of all cookies in the request. These
 have been URI decoded. \emph{Immutable}}
 
@@ -170,6 +188,9 @@ it is accessible through this field. \emph{Immutable}}
 \item \href{#method-Request-parse}{\code{Request$parse()}}
 \item \href{#method-Request-parse_raw}{\code{Request$parse_raw()}}
 \item \href{#method-Request-as_message}{\code{Request$as_message()}}
+\item \href{#method-Request-encode_string}{\code{Request$encode_string()}}
+\item \href{#method-Request-decode_string}{\code{Request$decode_string()}}
+\item \href{#method-Request-forward}{\code{Request$forward()}}
 \item \href{#method-Request-clone}{\code{Request$clone()}}
 }
 }
@@ -179,7 +200,7 @@ it is accessible through this field. \emph{Immutable}}
 \subsection{Method \code{new()}}{
 Create a new request from a rook object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Request$new(rook, trust = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Request$new(rook, trust = FALSE, key = NULL, session_cookie = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -187,7 +208,19 @@ Create a new request from a rook object
 \describe{
 \item{\code{rook}}{The \href{https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md}{rook} object to base the request on}
 
-\item{\code{trust}}{Is this request trusted blindly. If \code{TRUE} \verb{X-Forwarded-*} headers will be returned when querying host, ip, and protocol}
+\item{\code{trust}}{Is this request trusted blindly. If \code{TRUE} \verb{X-Forwarded-*}
+headers will be returned when querying host, ip, and protocol}
+
+\item{\code{key}}{A 32-bit secret key as a hex encoded string or a raw vector to
+use for \verb{$encode_string()} and \verb{$decode_string()} and by extension to
+encrypt a session cookie. It must be given to turn on session cookie
+support. A valid key can be generated using \code{\link[=random_key]{random_key()}}. NEVER STORE
+THE KEY IN PLAIN TEXT. Optimalle use the keyring package to store it or
+set it as an environment variable}
+
+\item{\code{session_cookie}}{Settings for the session cookie created using
+\code{\link[=session_cookie]{session_cookie()}}. Will be ignored if \code{key} is not provided to ensure
+session cookies are properly encrypted}
 }
 \if{html}{\out{</div>}}
 }
@@ -429,6 +462,87 @@ stream.
 \if{html}{\out{<div class="r">}}\preformatted{Request$as_message()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Request-encode_string"></a>}}
+\if{latex}{\out{\hypertarget{method-Request-encode_string}{}}}
+\subsection{Method \code{encode_string()}}{
+base64-encode a string. If a key has been provided during
+initialisation the string is first encrypted and the final result is a
+combination of the encrypted text and the nonce, both base64 encoded and
+combined with a \code{"_"}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Request$encode_string(val)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{val}}{A single string to encrypt}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Request-decode_string"></a>}}
+\if{latex}{\out{\hypertarget{method-Request-decode_string}{}}}
+\subsection{Method \code{decode_string()}}{
+base64-decodes a string. If a key has been provided during
+initialisation the input is first split by \code{"_"} and then the two parts
+are base64 decoded and decrypted. Otherwise the input is base64-decoded
+as-is. It will always hold that
+\code{val == decode_string(encode_string(val))}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Request$decode_string(val)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{val}}{A single string to encrypt}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Request-forward"></a>}}
+\if{latex}{\out{\hypertarget{method-Request-forward}{}}}
+\subsection{Method \code{forward()}}{
+Forward a request to a new url, optionally setting different
+headers, queries, etc. Uses httr2 under the hood
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Request$forward(
+  url,
+  query = NULL,
+  method = NULL,
+  headers = NULL,
+  body = NULL,
+  ...
+)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{url}}{The url to forward to}
+
+\item{\code{query}}{Optional querystring to append to \code{url}. If \code{NULL} the query
+string of the current request will be used}
+
+\item{\code{method}}{The HTTP method to use. If \code{NULL} the method of the current
+request will be used}
+
+\item{\code{headers}}{A list of headers to add to the headers of the current
+request. You can remove a header from the current request by setting it
+to \code{NULL} here}
+
+\item{\code{body}}{The body to send with the forward. If \code{NULL} the body of the
+current request will be used}
+
+\item{\code{...}}{Additional arguments passed to \code{\link[httr2:req_options]{httr2::req_options()}}}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Request-clone"></a>}}

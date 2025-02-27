@@ -34,6 +34,8 @@ from_http_date <- function(time) {
   as.POSIXct(time, format = '%a, %d %b %Y %H:%M:%S', tz = 'GMT')
 }
 
+past_date <- to_http_date(as.POSIXct(0))
+
 #' Parse a query string
 #'
 #' This function facilitates the parsing of querystrings, either from the URL or
@@ -151,3 +153,84 @@ cat_headers <- function(headers) {
 }
 
 tri <- function(expr) try_fetch(expr, error = function(e, ...) e)
+
+#' Generate a random key compatible with encryption and decryption in requests and responses
+#'
+#' The encryption/decryption used in reqres is based on the [sodium](https://github.com/r-lib/sodium)
+#' package and requires a 32-bit encryption key encoded as hexadecimal values.
+#' While you can craft your own, this function will take care of creating a
+#' compliant key using a cryptographically secure pseudorandom number generator
+#' from `sodium::helpers()`.
+#'
+#'
+#' Keep your encryption keys safe! Anyone with the key will be able to eavesdrop
+#' on your communication and tamper with the information stored in encrypted
+#' cookies through man-in-the-middle attacks. The best approach is to use the
+#' keyring package to manage your keys, but as an alternative you can store it
+#' as environment variables.
+#'
+#' **NEVER STORE THE KEY IN PLAIN TEXT.**
+#'
+#' **NEVER PUT THE KEY SOMEWHERE WHERE IT CAN ACCIDENTALLY BE COMMITTED TO GIT OR
+#' OTHER VERSION CONTROL SOFTWARE**
+#'
+#' @return A 32-bit key as a hex-encoded string
+#'
+#' @export
+#'
+#' @examplesIf FALSE
+#' # Store a key with keyring and use it
+#' keyring::key_set_with_value("reqres_key", random_key())
+#'
+#' rook <- fiery::fake_request("http://example.com")
+#'
+#' Request$new(rook, key = keyring::key_get("reqres_key"))
+#'
+random_key <- function() {
+  sodium::bin2hex(
+    sodium::random(32)
+  )
+}
+
+#' Collect settings for a session cookie
+#'
+#' A session cookie is just like any other cookie, but reqres treats this one
+#' different, parsing it's value and making it available in the `$session`
+#' field. However, the same settings as any other cookies applies and can be
+#' given during request initialisation using this function.
+#'
+#' @note As opposed to regular cookies the session cookie is forced to be HTTP
+#' only which is why this argument is missing.
+#'
+#' @param name The name of the cookie
+#' @param expires A POSIXct object given the expiration time of the cookie
+#' @param max_age The number of seconds to elapse before the cookie expires
+#' @param path The URL path this cookie is related to
+#' @param secure Should the cookie only be send over https
+#' @param same_site Either `"Lax"`, `"Strict"`, or `"None"` indicating
+#' how the cookie can be send during cross-site requests. If this is set to
+#' `"None"` then `secure` *must* also be set to `TRUE`
+#'
+#' @return A `session_cookie_settings` object that can be used during request
+#' initialisation. Can be cached and reused for all requests in a server
+#'
+#' @export
+#'
+#' @examples
+#' session_cookie <- session_cookie()
+#'
+#' rook <- fiery::fake_request("http://example.com")
+#'
+#' # A key must be provided for session_cookie to be used
+#' Request$new(rook, key = random_key(), session_cookie = session_cookie)
+#'
+session_cookie <- function(name = "reqres", expires = NULL, max_age = NULL,
+                           path = NULL, secure = NULL, same_site = NULL) {
+  check_string(name)
+  opts <- cookie("", expires = expires, http_only = TRUE, max_age = max_age, path = path, secure = secure, same_site = same_site)
+  structure(list(
+    name = name,
+    options = sub("^=", "", opts)
+  ), class = "session_cookie_settings")
+}
+is_session_cookie_settings <- function(x) inherits(x, "session_cookie_settings")

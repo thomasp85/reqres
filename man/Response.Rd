@@ -158,6 +158,21 @@ responding to.}
 \item{\code{formatter}}{Get the registered formatter for the response body.}
 
 \item{\code{is_formatted}}{Has the body been formatted}
+
+\item{\code{session}}{The content of the session cookie. If session cookies has
+not been activated it will be an empty write-protected list. If session
+cookies are activated but the request did not contain one it will be an
+empty list. The content of this field will be send encrypted as part of
+the response according to the cookie settings in
+\verb{$session_cookie_settings}. This field is reflected in the
+\code{Request$session} field and using either produces the same result}
+
+\item{\code{session_cookie_settings}}{Get the settings for the session cookie as
+they were provided during initialisation of the request
+cookie \emph{Immutable}}
+
+\item{\code{has_key}}{Query whether the request was initialised with an
+encryption key \emph{Immutable}}
 }
 \if{html}{\out{</div>}}
 }
@@ -182,6 +197,7 @@ responding to.}
 \item \href{#method-Response-problem}{\code{Response$problem()}}
 \item \href{#method-Response-set_cookie}{\code{Response$set_cookie()}}
 \item \href{#method-Response-remove_cookie}{\code{Response$remove_cookie()}}
+\item \href{#method-Response-clear_cookie}{\code{Response$clear_cookie()}}
 \item \href{#method-Response-has_cookie}{\code{Response$has_cookie()}}
 \item \href{#method-Response-set_links}{\code{Response$set_links()}}
 \item \href{#method-Response-format}{\code{Response$format()}}
@@ -190,6 +206,8 @@ responding to.}
 \item \href{#method-Response-content_length}{\code{Response$content_length()}}
 \item \href{#method-Response-as_list}{\code{Response$as_list()}}
 \item \href{#method-Response-as_message}{\code{Response$as_message()}}
+\item \href{#method-Response-encode_string}{\code{Response$encode_string()}}
+\item \href{#method-Response-decode_string}{\code{Response$decode_string()}}
 \item \href{#method-Response-clone}{\code{Response$clone()}}
 }
 }
@@ -549,8 +567,9 @@ for a longer description
 
 \item{\code{secure}}{Should the cookie only be send over https}
 
-\item{\code{same_site}}{Either \code{"Lax"} or \code{"Strict"} indicating whether the
-cookie can be send during cross-site requests}
+\item{\code{same_site}}{Either \code{"Lax"}, \code{"Strict"}, or \code{"None"} indicating
+how the cookie can be send during cross-site requests. If this is set to
+\code{"None"} then \code{secure} \emph{must} also be set to \code{TRUE}}
 }
 \if{html}{\out{</div>}}
 }
@@ -568,6 +587,23 @@ Removes the cookie named \code{name} from the response.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{name}}{The name of the cookie to remove}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Response-clear_cookie"></a>}}
+\if{latex}{\out{\hypertarget{method-Response-clear_cookie}{}}}
+\subsection{Method \code{clear_cookie()}}{
+Request the client to delete the given cookie
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Response$clear_cookie(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name of the cookie to delete}
 }
 \if{html}{\out{</div>}}
 }
@@ -731,6 +767,47 @@ stream.
 \if{html}{\out{<div class="r">}}\preformatted{Response$as_message()}\if{html}{\out{</div>}}
 }
 
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Response-encode_string"></a>}}
+\if{latex}{\out{\hypertarget{method-Response-encode_string}{}}}
+\subsection{Method \code{encode_string()}}{
+base64-encode a string. If a key has been provided during
+initialisation the string is first encrypted and the final result is a
+combination of the encrypted text and the nonce, both base64 encoded and
+combined with a \code{"_"}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Response$encode_string(val)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{val}}{A single string to encrypt}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Response-decode_string"></a>}}
+\if{latex}{\out{\hypertarget{method-Response-decode_string}{}}}
+\subsection{Method \code{decode_string()}}{
+base64-decodes a string. If a key has been provided during
+initialisation the input is first split by \code{"_"} and then the two parts
+are base64 decoded and decrypted. Otherwise the input is base64-decoded
+as-is. It will always hold that
+\code{val == decode_string(encode_string(val))}.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Response$decode_string(val)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{val}}{A single string to encrypt}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Response-clone"></a>}}

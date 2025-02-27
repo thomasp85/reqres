@@ -332,8 +332,9 @@ Response <- R6Class('Response',
     #' @param max_age The number of seconds to elapse before the cookie expires
     #' @param path The URL path this cookie is related to
     #' @param secure Should the cookie only be send over https
-    #' @param same_site Either `"Lax"` or `"Strict"` indicating whether the
-    #' cookie can be send during cross-site requests
+    #' @param same_site Either `"Lax"`, `"Strict"`, or `"None"` indicating
+    #' how the cookie can be send during cross-site requests. If this is set to
+    #' `"None"` then `secure` *must* also be set to `TRUE`
     set_cookie = function(name, value, encode = TRUE, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
       check_string(name)
       if (length(value) != 1) {
@@ -359,6 +360,17 @@ Response <- R6Class('Response',
         cli::cli_warn('No cookie named {.val {name}}')
       } else {
         rm(list = name, envir = private$COOKIES)
+      }
+      invisible(self)
+    },
+    #' @description Request the client to delete the given cookie
+    #' @param name The name of the cookie to delete
+    #'
+    clear_cookie = function(name) {
+      check_string(name)
+      if (!is.null(private$REQUEST$cookies[[name]])) {
+        secure <- grepl('(^__Secure-)|(^__Host-)', name)
+        assign(as.character(name), if (secure) secure_cookie_clearer else cookie_clearer, envir = private$COOKIES)
       }
       invisible(self)
     },
@@ -442,7 +454,7 @@ Response <- R6Class('Response',
       if (is_reqres_problem(content)) {
         cnd_signal(content)
       } else if (is_condition(content)) {
-        if (autofail) self$status_with_text(500L)
+        if (autofail) abort_status(500L, "Error formatting the response body", parent = content)
         return(FALSE)
       }
       private$BODY <- content
@@ -539,7 +551,7 @@ Response <- R6Class('Response',
         if (is_reqres_problem(content)) {
           cnd_signal(content)
         } else if (is_condition(content)) {
-          self$status_with_text(500L)
+          abort_status(500L, "Error formatting the response body", parent = content)
         } else {
           private$BODY <- content
           self$compress()
@@ -582,6 +594,23 @@ Response <- R6Class('Response',
         body <- gsub('\t', '\\\\t', body)
         cat(body, '\n', sep = '')
       }
+    },
+    #' @description base64-encode a string. If a key has been provided during
+    #' initialisation the string is first encrypted and the final result is a
+    #' combination of the encrypted text and the nonce, both base64 encoded and
+    #' combined with a `"_"`.
+    #' @param val A single string to encrypt
+    encode_string = function(val) {
+      private$REQUEST$encode_string(val)
+    },
+    #' @description base64-decodes a string. If a key has been provided during
+    #' initialisation the input is first split by `"_"` and then the two parts
+    #' are base64 decoded and decrypted. Otherwise the input is base64-decoded
+    #' as-is. It will always hold that
+    #' `val == decode_string(encode_string(val))`.
+    #' @param val A single string to encrypt
+    decode_string = function(val) {
+      private$REQUEST$decode_string(val)
     }
   ),
   active = list(
@@ -671,6 +700,31 @@ Response <- R6Class('Response',
     #'
     is_formatted = function() {
       private$IS_FORMATTED
+    },
+    #' @field session The content of the session cookie. If session cookies has
+    #' not been activated it will be an empty write-protected list. If session
+    #' cookies are activated but the request did not contain one it will be an
+    #' empty list. The content of this field will be send encrypted as part of
+    #' the response according to the cookie settings in
+    #' `$session_cookie_settings`. This field is reflected in the
+    #' `Request$session` field and using either produces the same result
+    #'
+    session = function(value) {
+      if (missing(value)) return(private$REQUEST$session)
+      private$REQUEST$session <- value
+    },
+    #' @field session_cookie_settings Get the settings for the session cookie as
+    #' they were provided during initialisation of the request
+    #' cookie *Immutable*
+    #'
+    session_cookie_settings = function() {
+      private$REQUEST$session_cookie_settings
+    },
+    #' @field has_key Query whether the request was initialised with an
+    #' encryption key *Immutable*
+    #'
+    has_key = function() {
+      private$REQUEST$has_key
     }
   ),
   private = list(
@@ -697,8 +751,19 @@ Response <- R6Class('Response',
         as.list(unlist(headers)),
         names = rep(names(headers), lengths(headers))
       )
+      session_cookie <- character()
+      if (length(self$session) != 0 && !is.null(self$session_cookie_settings)) {
+        session_cookie <- paste0(
+          self$session_cookie_settings$name,
+          "=",
+          url_encode(self$encode_string(jsonlite::toJSON(self$session))),
+          self$session_cookie_settings$options
+        )
+      } else if (private$REQUEST$has_session_cookie) {
+        self$clear_cookie(self$session_cookie_settings$name)
+      }
       cookies <- as.list(private$COOKIES)
-      cookies <- paste0(names(cookies), unlist(cookies))
+      cookies <- c(paste0(names(cookies), unlist(cookies)), session_cookie)
       c(headers, structure(
         as.list(cookies),
         names = rep('Set-Cookie', length(cookies))
@@ -765,13 +830,18 @@ cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path
   }
   if (!is.null(same_site)) {
     check_string(same_site)
-    if (!same_site %in% c('Lax', 'Strict')) {
-      cli::cli_abort("{.arg same_site} must be {.or {.val {c('Lax', 'Strict')}}}")
+    if (!same_site %in% c('Lax', 'Strict', 'None')) {
+      cli::cli_abort("{.arg same_site} must be {.or {.val {c('Lax', 'Strict', 'None')}}}")
+    }
+    if (same_site == "None" && !isTRUE(secure)) {
+      cli::cli_abort("If {.arg same_site = \"None\"} then {.arg secure = TRUE} must also be used")
     }
     opts <- c(opts, paste0('SameSite=', same_site))
   }
   paste(opts, collapse = '; ')
 }
+cookie_clearer <- cookie("", expires = as.POSIXct(0))
+secure_cookie_clearer <- cookie("", expires = as.POSIXct(0), secure = TRUE)
 gzip <- function(x) {
   f <- tempfile()
   con <- gzcon(file(f, open = 'wb'))

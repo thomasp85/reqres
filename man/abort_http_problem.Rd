@@ -27,7 +27,7 @@ abort_http_problem(
   call = caller_env()
 )
 
-abort_status(code, ..., message = status_phrase(code), call = caller_env())
+abort_status(code, message = status_phrase(code), ..., call = caller_env())
 
 abort_bad_request(
   detail,

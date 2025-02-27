@@ -69,12 +69,45 @@ Request <- R6Class('Request',
     # Methods
     #' @description Create a new request from a rook object
     #' @param rook The [rook](https://github.com/jeffreyhorner/Rook/blob/a5e45f751/README.md) object to base the request on
-    #' @param trust Is this request trusted blindly. If `TRUE` `X-Forwarded-*` headers will be returned when querying host, ip, and protocol
+    #' @param trust Is this request trusted blindly. If `TRUE` `X-Forwarded-*`
+    #' headers will be returned when querying host, ip, and protocol
+    #' @param key A 32-bit secret key as a hex encoded string or a raw vector to
+    #' use for `$encode_string()` and `$decode_string()` and by extension to
+    #' encrypt a session cookie. It must be given to turn on session cookie
+    #' support. A valid key can be generated using [random_key()]. NEVER STORE
+    #' THE KEY IN PLAIN TEXT. Optimalle use the keyring package to store it or
+    #' set it as an environment variable
+    #' @param session_cookie Settings for the session cookie created using
+    #' [session_cookie()]. Will be ignored if `key` is not provided to ensure
+    #' session cookies are properly encrypted
     #'
-    initialize = function(rook, trust = FALSE) {
+    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL) {
       self$trust <- trust
       private$ORIGIN <- rook
       private$METHOD <- tolower(rook$REQUEST_METHOD)
+      if (!is.null(key)) {
+        if (!is.raw(key)) {
+          check_string(key)
+          key <- sodium::hex2bin(key)
+        }
+        if (length(key) != 32) {
+          cli::cli_warn(c(
+            "Ignoring key as it is not 32-bit",
+            "i" = "Consider using {.fun random_key} to generate a key"
+          ))
+        }
+      }
+      private$KEY <- key
+      if (!is.null(session_cookie) && !is_session_cookie_settings(session_cookie)) {
+        cli::cli_warn("Ignoring malformed {.arg session_cookie} argument")
+        session_cookie <- NULL
+      }
+      if (is.null(key) && !is.null(session_cookie)) {
+        cli::cli_warn("Ignoring {.arg session_cookie} argument when {.arg key} is {.val {factor('NULL')}}")
+        session_cookie <- NULL
+      }
+      private$SESSION_COOKIE_SETTINGS <- session_cookie
+      private$HAS_SESSION_COOKIE <- !is.null(session_cookie) && isTRUE(grepl(paste0(" ", session_cookie$name, "="), rook$HTTP_COOKIE, fixed = TRUE))
       delayedAssign("HEADERS", private$get_headers(rook), assign.env = private)
       if (is.null(rook$HTTP_HOST)) {
         private$HOST <- paste(rook$SERVER_NAME, rook$SERVER_PORT, sep = ':')
@@ -92,6 +125,8 @@ Request <- R6Class('Request',
       delayedAssign("QUERY", private$parse_query(private$QUERYSTRING), assign.env = private)
 
       delayedAssign("COOKIES", private$parse_cookies(), assign.env = private)
+
+      delayedAssign("SESSION", private$get_session_cookie(), assign.env = private)
     },
     #' @description Pretty printing of the object
     #' @param ... ignored
@@ -259,7 +294,7 @@ Request <- R6Class('Request',
       content <- private$get_body()
       content <- tri(private$unpack(content))
       if (is_condition(content)) {
-        if (autofail) abort_bad_request("Request body failed to be decoded")
+        if (autofail) abort_bad_request("Request body failed to be decoded", parent = content)
         return(FALSE)
       }
 
@@ -276,7 +311,7 @@ Request <- R6Class('Request',
       if (is_reqres_problem(content)) {
         cnd_signal(content)
       } else if (is_condition(content)) {
-        if (autofail) self$respond()$status_with_text(400L)
+        if (autofail) abort_status(400L, "Error parsing the request body", parent = content)
         return(FALSE)
       }
 
@@ -293,7 +328,7 @@ Request <- R6Class('Request',
       content <- private$get_body()
       content <- tri(private$unpack(content))
       if (is_condition(content)) {
-        if (autofail) abort_bad_request("Request body failed to be decoded")
+        if (autofail) abort_bad_request("Request body failed to be decoded", parent = content)
         return(FALSE)
       }
       private$BODY <- content
@@ -319,6 +354,89 @@ Request <- R6Class('Request',
         body <- gsub('\t', '\\\\t', body)
         cat(substr(body, 1, 77), if (nchar(body) > 77) '...\n' else '\n', sep = '')
       }
+    },
+    #' @description base64-encode a string. If a key has been provided during
+    #' initialisation the string is first encrypted and the final result is a
+    #' combination of the encrypted text and the nonce, both base64 encoded and
+    #' combined with a `"_"`.
+    #' @param val A single string to encrypt
+    #'
+    #' @importFrom base64enc base64encode
+    encode_string = function(val) {
+      check_string(val)
+      if (length(val) == 0) return("")
+      val <- charToRaw(val)
+      if (is.null(private$KEY)) {
+        base64encode(val)
+      } else {
+        nonce <- sodium::random(24)
+        val <- sodium::data_encrypt(val, private$KEY, nonce)
+        paste0(base64encode(val), "_", base64encode(nonce))
+      }
+    },
+    #' @description base64-decodes a string. If a key has been provided during
+    #' initialisation the input is first split by `"_"` and then the two parts
+    #' are base64 decoded and decrypted. Otherwise the input is base64-decoded
+    #' as-is. It will always hold that
+    #' `val == decode_string(encode_string(val))`.
+    #' @param val A single string to encrypt
+    #'
+    #' @importFrom base64enc base64decode
+    decode_string = function(val) {
+      if (length(val) == 0) return(NULL)
+      if (is.null(private$KEY)) {
+        val <- base64decode(val)
+      } else {
+        val <- stringi::stri_split_fixed(val, "_", n = 2)[[1]]
+        if (length(val) != 2) {
+          cli::cli_warn("Failed to decode encrypted value")
+          return(NULL)
+        }
+        val <- sodium::data_decrypt(
+          base64decode(val[[1]]),
+          private$KEY,
+          base64decode(val[[2]])
+        )
+      }
+      rawToChar(val)
+    },
+    #' @description Forward a request to a new url, optionally setting different
+    #' headers, queries, etc. Uses httr2 under the hood
+    #' @param url The url to forward to
+    #' @param query Optional querystring to append to `url`. If `NULL` the query
+    #' string of the current request will be used
+    #' @param method The HTTP method to use. If `NULL` the method of the current
+    #' request will be used
+    #' @param headers A list of headers to add to the headers of the current
+    #' request. You can remove a header from the current request by setting it
+    #' to `NULL` here
+    #' @param body The body to send with the forward. If `NULL` the body of the
+    #' current request will be used
+    #' @param ... Additional arguments passed to [httr2::req_options()]
+    #'
+    forward = function(url, query = NULL, method = NULL, headers = NULL, body = NULL, ...) {
+      if (!is.null(query) && substr(query, 1, 1) != "?") {
+        query <- paste0("?", query)
+      }
+      req <- httr2::request(paste0(url, query %||% private$QUERYSTRING))
+      req <- httr2::req_headers(req,
+        !!!modifyList(private$HEADERS, headers %||% NULL)
+      )
+      req <- httr2::req_body_raw(req, body %||% private$BODY)
+      req <- httr2::req_method(req, method %||% private$METHOD)
+      req <- httr2::req_options(req, ...)
+      req <- httr2::req_error(req, is_error = function(...) FALSE)
+      fwd_res <- httr2::req_perform(req, verbosity = 0)
+
+      res <- self$respond()
+      res$status <- httr2::resp_status(fwd_res)
+      res$body <- httr2::resp_body_raw(fwd_res)
+      fwd_headers <- httr2::resp_headers(fwd_res)
+      for (name in names(fwd_headers)) {
+        res$set_header(name, fwd_headers[[name]])
+      }
+      res$set_data("httr2_response", fwd_res)
+      invisible(res)
     }
   ),
   active = list(
@@ -342,6 +460,44 @@ Request <- R6Class('Request',
     #'
     body = function() {
       private$BODY
+    },
+    #' @field session The content of the session cookie. If session cookies has
+    #' not been activated it will be an empty write-protected list. If session
+    #' cookies are activated but the request did not contain one it will be an
+    #' empty list. The content of this field will be send encrypted as part of
+    #' the response according to the cookie settings in
+    #' `$session_cookie_settings`. This field is reflected in the
+    #' `Response$session` field and using either produces the same result
+    #'
+    session = function(value) {
+      if (missing(value)) return(private$SESSION %||% list())
+      if (is.null(private$SESSION_COOKIE_SETTINGS)) {
+        cli::cli_warn(c(
+          "Session cookie is not active",
+          "i" = "Provide {.arg key} and {.arg session_cookie} values to turn on this feature"
+        ))
+      } else {
+        private$SESSION <- value
+      }
+    },
+    #' @field has_session_cookie Query whether the request came with a session
+    #' cookie *Immutable*
+    #'
+    has_session_cookie = function() {
+      private$HAS_SESSION_COOKIE
+    },
+    #' @field session_cookie_settings Get the settings for the session cookie as
+    #' they were provided during initialisation
+    #' cookie *Immutable*
+    #'
+    session_cookie_settings = function() {
+      private$SESSION_COOKIE_SETTINGS
+    },
+    #' @field has_key Query whether the request was initialised with an
+    #' encryption key *Immutable*
+    #'
+    has_key = function() {
+      !is.null(private$KEY)
     },
     #' @field cookies Access a named list of all cookies in the request. These
     #' have been URI decoded. *Immutable*
@@ -490,6 +646,7 @@ Request <- R6Class('Request',
     TRUST = FALSE,
     ORIGIN = NULL,
     METHOD = NULL,
+    KEY = NULL,
     HOST = NULL,
     PROTOCOL = NULL,
     ROOT = NULL,
@@ -501,6 +658,9 @@ Request <- R6Class('Request',
     BODY = NULL,
     HEADERS = NULL,
     COOKIES = NULL,
+    SESSION = NULL,
+    SESSION_COOKIE_SETTINGS = NULL,
+    HAS_SESSION_COOKIE = FALSE,
     RESPONSE = NULL,
 
     parse_cookies = function() {
@@ -678,6 +838,22 @@ Request <- R6Class('Request',
       body <- private$ORIGIN$rook.input$read()
       private$ORIGIN$rook.input$rewind()
       body
+    },
+    get_session_cookie = function() {
+      if (!private$HAS_SESSION_COOKIE) {
+        return(list())
+      }
+      val <- self$decode_string(
+        private$COOKIES[[private$SESSION_COOKIE_SETTINGS$name]]
+      )
+      if (is.null(val)) return(list())
+      try_fetch(
+        jsonlite::fromJSON(val),
+        error = function(e) {
+          cli::cli_warn("Failed to decode session cookie")
+          list()
+        }
+      )
     }
   )
 )

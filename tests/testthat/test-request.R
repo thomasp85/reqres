@@ -133,3 +133,19 @@ test_that('accept negotiation works', {
   expect_equal(req$accepts_encoding(c('deflate', 'zip')), 'identity')
   expect_equal(req$accepts_encoding(c('gzip', 'br')), 'gzip')
 })
+
+test_that("encode and decode works", {
+  test_string <- "This is a test string for testing"
+
+  # No key
+  req <- Request$new(rook)
+  encoded <- req$encode_string(test_string)
+  expect_equal(req$decode_string(encoded), test_string)
+
+  # With key
+  req <- Request$new(rook, key = random_key())
+  encoded_key <- req$encode_string(test_string)
+  expect_equal(req$decode_string(encoded_key), test_string)
+
+  expect_true(encoded != encoded_key)
+})

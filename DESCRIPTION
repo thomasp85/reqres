@@ -30,13 +30,16 @@ Imports:
     utils,
     cli,
     rlang,
-    lifecycle
+    lifecycle,
+    base64enc,
+    sodium
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Suggests:
     fiery,
     testthat (>= 3.0.0),
-    covr
+    covr,
+    keyring
 URL: https://reqres.data-imaginist.com, https://github.com/thomasp85/reqres#reqres
 BugReports: https://github.com/thomasp85/reqres/issues
 Config/testthat/edition: 3
