@@ -226,6 +226,27 @@ responding to.</p></dd>
 <dd><p>Has the body been formatted</p></dd>
 
 
+<dt><code>session</code></dt>
+<dd><p>The content of the session cookie. If session cookies has
+not been activated it will be an empty write-protected list. If session
+cookies are activated but the request did not contain one it will be an
+empty list. The content of this field will be send encrypted as part of
+the response according to the cookie settings in
+<code>$session_cookie_settings</code>. This field is reflected in the
+<code>Request$session</code> field and using either produces the same result</p></dd>
+
+
+<dt><code>session_cookie_settings</code></dt>
+<dd><p>Get the settings for the session cookie as
+they were provided during initialisation of the request
+cookie <em>Immutable</em></p></dd>
+
+
+<dt><code>has_key</code></dt>
+<dd><p>Query whether the request was initialised with an
+encryption key <em>Immutable</em></p></dd>
+
+
 </dl><p></p></div>
     </div>
     <div class="section level2">
@@ -252,6 +273,7 @@ responding to.</p></dd>
 <li><p><a href="#method-Response-problem"><code>Response$problem()</code></a></p></li>
 <li><p><a href="#method-Response-set_cookie"><code>Response$set_cookie()</code></a></p></li>
 <li><p><a href="#method-Response-remove_cookie"><code>Response$remove_cookie()</code></a></p></li>
+<li><p><a href="#method-Response-clear_cookie"><code>Response$clear_cookie()</code></a></p></li>
 <li><p><a href="#method-Response-has_cookie"><code>Response$has_cookie()</code></a></p></li>
 <li><p><a href="#method-Response-set_links"><code>Response$set_links()</code></a></p></li>
 <li><p><a href="#method-Response-format"><code>Response$format()</code></a></p></li>
@@ -260,6 +282,8 @@ responding to.</p></dd>
 <li><p><a href="#method-Response-content_length"><code>Response$content_length()</code></a></p></li>
 <li><p><a href="#method-Response-as_list"><code>Response$as_list()</code></a></p></li>
 <li><p><a href="#method-Response-as_message"><code>Response$as_message()</code></a></p></li>
+<li><p><a href="#method-Response-encode_string"><code>Response$encode_string()</code></a></p></li>
+<li><p><a href="#method-Response-decode_string"><code>Response$decode_string()</code></a></p></li>
 <li><p><a href="#method-Response-clone"><code>Response$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-Response-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -636,8 +660,9 @@ for a longer description</p><div class="section">
 
 
 <dt><code>same_site</code></dt>
-<dd><p>Either <code>"Lax"</code> or <code>"Strict"</code> indicating whether the
-cookie can be send during cross-site requests</p></dd>
+<dd><p>Either <code>"Lax"</code>, <code>"Strict"</code>, or <code>"None"</code> indicating
+how the cookie can be send during cross-site requests. If this is set to
+<code>"None"</code> then <code>secure</code> <em>must</em> also be set to <code>TRUE</code></p></dd>
 
 
 </dl><p></p></div>
@@ -659,15 +684,31 @@ cookie can be send during cross-site requests</p></dd>
 </dl><p></p></div>
 </div>
 
-</div><p></p><hr><a id="method-Response-has_cookie"></a><div class="section">
-<h3 id="method-has-cookie-">Method <code>has_cookie()</code><a class="anchor" aria-label="anchor" href="#method-has-cookie-"></a></h3>
-<p>Queries whether the response contains a cookie named <code>name</code></p><div class="section">
+</div><p></p><hr><a id="method-Response-clear_cookie"></a><div class="section">
+<h3 id="method-clear-cookie-">Method <code>clear_cookie()</code><a class="anchor" aria-label="anchor" href="#method-clear-cookie-"></a></h3>
+<p>Request the client to delete the given cookie</p><div class="section">
 <h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">has_cookie</span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">clear_cookie</span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-18">Arguments<a class="anchor" aria-label="anchor" href="#arguments-18"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>name</code></dt>
+<dd><p>The name of the cookie to delete</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-Response-has_cookie"></a><div class="section">
+<h3 id="method-has-cookie-">Method <code>has_cookie()</code><a class="anchor" aria-label="anchor" href="#method-has-cookie-"></a></h3>
+<p>Queries whether the response contains a cookie named <code>name</code></p><div class="section">
+<h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">has_cookie</span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-19">Arguments<a class="anchor" aria-label="anchor" href="#arguments-19"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>name</code></dt>
 <dd><p>The name of the cookie to look for</p></dd>
 
@@ -679,12 +720,12 @@ cookie can be send during cross-site requests</p></dd>
 <h3 id="method-set-links-">Method <code>set_links()</code><a class="anchor" aria-label="anchor" href="#method-set-links-"></a></h3>
 <p>Sets the <code>Link</code> header based on the named arguments passed
 to <code>...</code>. The names will be used for the <code>rel</code> directive.</p><div class="section">
-<h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
+<h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">set_links</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-19">Arguments<a class="anchor" aria-label="anchor" href="#arguments-19"></a></h4>
+<h4 id="arguments-20">Arguments<a class="anchor" aria-label="anchor" href="#arguments-20"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>key-value pairs for the links</p></dd>
 
@@ -702,12 +743,12 @@ If an error is encountered and <code>autofail = TRUE</code> the response will be
 to <code>500</code>. If a formatter is not found and <code>autofail = TRUE</code> the response
 will be set to <code>406</code>. If formatting is successful it will return <code>TRUE</code>,
 if not it will return <code>FALSE</code></p><div class="section">
-<h4 id="usage-20">Usage<a class="anchor" aria-label="anchor" href="#usage-20"></a></h4>
+<h4 id="usage-21">Usage<a class="anchor" aria-label="anchor" href="#usage-21"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">format</span><span class="op">(</span><span class="va">...</span>, autofail <span class="op">=</span> <span class="cn">TRUE</span>, compress <span class="op">=</span> <span class="cn">TRUE</span>, default <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-20">Arguments<a class="anchor" aria-label="anchor" href="#arguments-20"></a></h4>
+<h4 id="arguments-21">Arguments<a class="anchor" aria-label="anchor" href="#arguments-21"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>A range of formatters</p></dd>
 
@@ -738,12 +779,12 @@ not found and <code>autofail = TRUE</code> the response will be set to <code>406
 found formatter is registered with the response and will be applied just
 before handing off the response to httpuv, unless the response has been
 manually formatted.</p><div class="section">
-<h4 id="usage-21">Usage<a class="anchor" aria-label="anchor" href="#usage-21"></a></h4>
+<h4 id="usage-22">Usage<a class="anchor" aria-label="anchor" href="#usage-22"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">set_formatter</span><span class="op">(</span><span class="va">...</span>, autofail <span class="op">=</span> <span class="cn">TRUE</span>, default <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-21">Arguments<a class="anchor" aria-label="anchor" href="#arguments-21"></a></h4>
+<h4 id="arguments-22">Arguments<a class="anchor" aria-label="anchor" href="#arguments-22"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>A range of formatters</p></dd>
 
@@ -766,7 +807,7 @@ is always selected</p></dd>
 <p>Based on the provided priority, an encoding is negotiated
 with the request and applied. The <code>Content-Encoding</code> header is set to the
 chosen compression algorithm.</p><div class="section">
-<h4 id="usage-22">Usage<a class="anchor" aria-label="anchor" href="#usage-22"></a></h4>
+<h4 id="usage-23">Usage<a class="anchor" aria-label="anchor" href="#usage-23"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">compress</span><span class="op">(</span></span>
 <span>  priority <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gzip"</span>, <span class="st">"deflate"</span>, <span class="st">"br"</span>, <span class="st">"identity"</span><span class="op">)</span>,</span>
 <span>  force <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -774,7 +815,7 @@ chosen compression algorithm.</p><div class="section">
 </div>
 
 <div class="section">
-<h4 id="arguments-22">Arguments<a class="anchor" aria-label="anchor" href="#arguments-22"></a></h4>
+<h4 id="arguments-23">Arguments<a class="anchor" aria-label="anchor" href="#arguments-23"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>priority</code></dt>
 <dd><p>A vector of compression types ranked by the servers
 priority</p></dd>
@@ -794,7 +835,7 @@ uncompressible</p></dd>
 number that goes into the <code>Content-Length</code> header. Note that the
 <code>Content-Length</code> header is set automatically by <code>httpuv</code> so this method
 should only be called if the response size is needed for other reasons.</p><div class="section">
-<h4 id="usage-23">Usage<a class="anchor" aria-label="anchor" href="#usage-23"></a></h4>
+<h4 id="usage-24">Usage<a class="anchor" aria-label="anchor" href="#usage-24"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">content_length</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -806,7 +847,7 @@ a Rook compliant server such as <code>httpuv</code>. Will set <code>Content-Type
 if missing and convert a non-raw body to a single character string. Will
 apply the formatter set by <code>set_formatter()</code> unless the body has already
 been formatted. Will add a Date header if none exist.</p><div class="section">
-<h4 id="usage-24">Usage<a class="anchor" aria-label="anchor" href="#usage-24"></a></h4>
+<h4 id="usage-25">Usage<a class="anchor" aria-label="anchor" href="#usage-25"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">as_list</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -815,20 +856,59 @@ been formatted. Will add a Date header if none exist.</p><div class="section">
 <h3 id="method-as-message-">Method <code>as_message()</code><a class="anchor" aria-label="anchor" href="#method-as-message-"></a></h3>
 <p>Prints a HTTP representation of the response to the output
 stream.</p><div class="section">
-<h4 id="usage-25">Usage<a class="anchor" aria-label="anchor" href="#usage-25"></a></h4>
+<h4 id="usage-26">Usage<a class="anchor" aria-label="anchor" href="#usage-26"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">as_message</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 
+</div><p></p><hr><a id="method-Response-encode_string"></a><div class="section">
+<h3 id="method-encode-string-">Method <code>encode_string()</code><a class="anchor" aria-label="anchor" href="#method-encode-string-"></a></h3>
+<p>base64-encode a string. If a key has been provided during
+initialisation the string is first encrypted and the final result is a
+combination of the encrypted text and the nonce, both base64 encoded and
+combined with a <code>"_"</code>.</p><div class="section">
+<h4 id="usage-27">Usage<a class="anchor" aria-label="anchor" href="#usage-27"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">encode_string</span><span class="op">(</span><span class="va">val</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-24">Arguments<a class="anchor" aria-label="anchor" href="#arguments-24"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>val</code></dt>
+<dd><p>A single string to encrypt</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-Response-decode_string"></a><div class="section">
+<h3 id="method-decode-string-">Method <code>decode_string()</code><a class="anchor" aria-label="anchor" href="#method-decode-string-"></a></h3>
+<p>base64-decodes a string. If a key has been provided during
+initialisation the input is first split by <code>"_"</code> and then the two parts
+are base64 decoded and decrypted. Otherwise the input is base64-decoded
+as-is. It will always hold that
+<code>val == decode_string(encode_string(val))</code>.</p><div class="section">
+<h4 id="usage-28">Usage<a class="anchor" aria-label="anchor" href="#usage-28"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">decode_string</span><span class="op">(</span><span class="va">val</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-25">Arguments<a class="anchor" aria-label="anchor" href="#arguments-25"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>val</code></dt>
+<dd><p>A single string to encrypt</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
 </div><p></p><hr><a id="method-Response-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-26">Usage<a class="anchor" aria-label="anchor" href="#usage-26"></a></h4>
+<h4 id="usage-29">Usage<a class="anchor" aria-label="anchor" href="#usage-29"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-23">Arguments<a class="anchor" aria-label="anchor" href="#arguments-23"></a></h4>
+<h4 id="arguments-26">Arguments<a class="anchor" aria-label="anchor" href="#arguments-26"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -883,8 +963,8 @@ stream.</p><div class="section">
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span>, <span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1147705 61.3    2197947 117.4  2197947 117.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2149830 16.5    8388608  64.0  3099524  23.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1153018 61.6    2206680 117.9  2206680 117.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2159637 16.5    8388608  64.0  3035600  23.2</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -52,6 +52,13 @@
 <li>The <code>Date</code> header is now always added if missing</li>
 <li>
 <code>Request$is()</code> is now vectorised and provides the prefered choice as an attribute in the return</li>
+<li>New condition signalling based on the HTTP Problems Spec. Request and response objects will now throw classed errors where they are encounters so that server implementations can catch these and handle them sensibly. This is in opposition to the prior setup where reqres would handle any errors internally leaving the server implementation in the blank</li>
+<li>Added <code>Response$clear_cookie()</code> for requesting the client to remove the cookie</li>
+<li>
+<code>Response$set_cookie()</code> now also accepts <code>same_site = "None"</code> if <code>secure = TRUE</code> is also given</li>
+<li>Added <code>Request$encode_string()</code> and <code>Request$decode_string()</code> with the possibility of encrypting a string as well with a <code>key</code> given during initialisation</li>
+<li>Added facilities for maintaining a session data store through an encrypted session cookie. The data store is made available through the <code>session</code> field in both <code>Request</code> and <code>Response</code> and the content will automatically be send along with the response as an encrypted cookie.</li>
+<li>Added <code><a href="../reference/random_key.html">random_key()</a></code> and <code><a href="../reference/session_cookie.html">session_cookie()</a></code> helpter functions to support the above</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.5" id="reqres-025">reqres 0.2.5<a class="anchor" aria-label="anchor" href="#reqres-025"></a></h2><p class="text-muted">CRAN release: 2022-08-19</p>

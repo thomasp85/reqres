@@ -129,6 +129,32 @@ string by default and needs to be populated using the <code>set_body()</code> me
 stream). <em>Immutable</em></p></dd>
 
 
+<dt><code>session</code></dt>
+<dd><p>The content of the session cookie. If session cookies has
+not been activated it will be an empty write-protected list. If session
+cookies are activated but the request did not contain one it will be an
+empty list. The content of this field will be send encrypted as part of
+the response according to the cookie settings in
+<code>$session_cookie_settings</code>. This field is reflected in the
+<code>Response$session</code> field and using either produces the same result</p></dd>
+
+
+<dt><code>has_session_cookie</code></dt>
+<dd><p>Query whether the request came with a session
+cookie <em>Immutable</em></p></dd>
+
+
+<dt><code>session_cookie_settings</code></dt>
+<dd><p>Get the settings for the session cookie as
+they were provided during initialisation
+cookie <em>Immutable</em></p></dd>
+
+
+<dt><code>has_key</code></dt>
+<dd><p>Query whether the request was initialised with an
+encryption key <em>Immutable</em></p></dd>
+
+
 <dt><code>cookies</code></dt>
 <dd><p>Access a named list of all cookies in the request. These
 have been URI decoded. <em>Immutable</em></p></dd>
@@ -245,12 +271,15 @@ it is accessible through this field. <em>Immutable</em></p></dd>
 <li><p><a href="#method-Request-parse"><code>Request$parse()</code></a></p></li>
 <li><p><a href="#method-Request-parse_raw"><code>Request$parse_raw()</code></a></p></li>
 <li><p><a href="#method-Request-as_message"><code>Request$as_message()</code></a></p></li>
+<li><p><a href="#method-Request-encode_string"><code>Request$encode_string()</code></a></p></li>
+<li><p><a href="#method-Request-decode_string"><code>Request$decode_string()</code></a></p></li>
+<li><p><a href="#method-Request-forward"><code>Request$forward()</code></a></p></li>
 <li><p><a href="#method-Request-clone"><code>Request$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-Request-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new request from a rook object</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/Request.html">Request</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rook</span>, trust <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/Request.html">Request</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rook</span>, trust <span class="op">=</span> <span class="cn">FALSE</span>, key <span class="op">=</span> <span class="cn">NULL</span>, session_cookie <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -260,7 +289,23 @@ it is accessible through this field. <em>Immutable</em></p></dd>
 
 
 <dt><code>trust</code></dt>
-<dd><p>Is this request trusted blindly. If <code>TRUE</code> <code>X-Forwarded-*</code> headers will be returned when querying host, ip, and protocol</p></dd>
+<dd><p>Is this request trusted blindly. If <code>TRUE</code> <code>X-Forwarded-*</code>
+headers will be returned when querying host, ip, and protocol</p></dd>
+
+
+<dt><code>key</code></dt>
+<dd><p>A 32-bit secret key as a hex encoded string or a raw vector to
+use for <code>$encode_string()</code> and <code>$decode_string()</code> and by extension to
+encrypt a session cookie. It must be given to turn on session cookie
+support. A valid key can be generated using <code><a href="random_key.html">random_key()</a></code>. NEVER STORE
+THE KEY IN PLAIN TEXT. Optimalle use the keyring package to store it or
+set it as an environment variable</p></dd>
+
+
+<dt><code>session_cookie</code></dt>
+<dd><p>Settings for the session cookie created using
+<code><a href="session_cookie.html">session_cookie()</a></code>. Will be ignored if <code>key</code> is not provided to ensure
+session cookies are properly encrypted</p></dd>
 
 
 </dl><p></p></div>
@@ -491,15 +536,103 @@ stream.</p><div class="section">
 </div>
 
 
-</div><p></p><hr><a id="method-Request-clone"></a><div class="section">
-<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
-<p>The objects of this class are cloneable with this method.</p><div class="section">
+</div><p></p><hr><a id="method-Request-encode_string"></a><div class="section">
+<h3 id="method-encode-string-">Method <code>encode_string()</code><a class="anchor" aria-label="anchor" href="#method-encode-string-"></a></h3>
+<p>base64-encode a string. If a key has been provided during
+initialisation the string is first encrypted and the final result is a
+combination of the encrypted text and the nonce, both base64 encoded and
+combined with a <code>"_"</code>.</p><div class="section">
 <h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">encode_string</span><span class="op">(</span><span class="va">val</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
 <h4 id="arguments-13">Arguments<a class="anchor" aria-label="anchor" href="#arguments-13"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>val</code></dt>
+<dd><p>A single string to encrypt</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-Request-decode_string"></a><div class="section">
+<h3 id="method-decode-string-">Method <code>decode_string()</code><a class="anchor" aria-label="anchor" href="#method-decode-string-"></a></h3>
+<p>base64-decodes a string. If a key has been provided during
+initialisation the input is first split by <code>"_"</code> and then the two parts
+are base64 decoded and decrypted. Otherwise the input is base64-decoded
+as-is. It will always hold that
+<code>val == decode_string(encode_string(val))</code>.</p><div class="section">
+<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">decode_string</span><span class="op">(</span><span class="va">val</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-14">Arguments<a class="anchor" aria-label="anchor" href="#arguments-14"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>val</code></dt>
+<dd><p>A single string to encrypt</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-Request-forward"></a><div class="section">
+<h3 id="method-forward-">Method <code>forward()</code><a class="anchor" aria-label="anchor" href="#method-forward-"></a></h3>
+<p>Forward a request to a new url, optionally setting different
+headers, queries, etc. Uses httr2 under the hood</p><div class="section">
+<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">forward</span><span class="op">(</span></span>
+<span>  <span class="va">url</span>,</span>
+<span>  query <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  headers <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  body <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-15">Arguments<a class="anchor" aria-label="anchor" href="#arguments-15"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>url</code></dt>
+<dd><p>The url to forward to</p></dd>
+
+
+<dt><code>query</code></dt>
+<dd><p>Optional querystring to append to <code>url</code>. If <code>NULL</code> the query
+string of the current request will be used</p></dd>
+
+
+<dt><code>method</code></dt>
+<dd><p>The HTTP method to use. If <code>NULL</code> the method of the current
+request will be used</p></dd>
+
+
+<dt><code>headers</code></dt>
+<dd><p>A list of headers to add to the headers of the current
+request. You can remove a header from the current request by setting it
+to <code>NULL</code> here</p></dd>
+
+
+<dt><code>body</code></dt>
+<dd><p>The body to send with the forward. If <code>NULL</code> the body of the
+current request will be used</p></dd>
+
+
+<dt><code>...</code></dt>
+<dd><p>Additional arguments passed to <code><a href="https://httr2.r-lib.org/reference/req_options.html" class="external-link">httr2::req_options()</a></code></p></dd>
+
+
+</dl><p></p></div>
+</div>
+
+</div><p></p><hr><a id="method-Request-clone"></a><div class="section">
+<h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
+<p>The objects of this class are cloneable with this method.</p><div class="section">
+<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-16">Arguments<a class="anchor" aria-label="anchor" href="#arguments-16"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -551,8 +684,8 @@ stream.</p><div class="section">
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1128814 60.3    2197947 117.4  2197947 117.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2107168 16.1    8388608  64.0  3099524  23.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1133670 60.6    2206680 117.9  2206680 117.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2115317 16.2    8388608  64.0  3035600  23.2</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
