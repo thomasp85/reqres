@@ -619,11 +619,16 @@ Request <- R6Class('Request',
     },
     #' @field origin The original object used to create the `Request` object. As
     #' `reqres` currently only works with rook this will always return the
-    #' original rook object. *Immutable*, though the content of the rook object
-    #' itself might be manipulated as it is an environment.
+    #' original rook object. Changing this will force the request to reparse
+    #' itself.
     #'
-    origin = function() {
-      private$ORIGIN
+    origin = function(value) {
+      if (missing(value)) return(private$ORIGIN)
+      if (!identical(private$ORIGIN, value)) {
+        cli::cli_abort("It is not allowed to replace the origin store")
+      }
+      private$ORIGIN <- value
+      private$reset()
     },
     #' @field response If a `Response` object has been created for this request
     #' it is accessible through this field. *Immutable*
@@ -854,6 +859,31 @@ Request <- R6Class('Request',
           list()
         }
       )
+    },
+    reset = function() {
+      private$METHOD <- tolower(private$ORIGIN$REQUEST_METHOD)
+      delayedAssign("HEADERS", private$get_headers(private$ORIGIN), assign.env = private)
+      if (is.null(private$ORIGIN$HTTP_HOST)) {
+        private$HOST <- paste(private$ORIGIN$SERVER_NAME, private$ORIGIN$SERVER_PORT, sep = ':')
+      } else {
+        private$HOST <- private$ORIGIN$HTTP_HOST
+      }
+      private$PROTOCOL <- private$ORIGIN$rook.url_scheme
+      private$ROOT <- private$ORIGIN$SCRIPT_NAME
+      private$PATH <- private$ORIGIN$PATH_INFO
+
+      if (private$QUERYSTRING != private$ORIGIN$QUERY_STRING) {
+        private$QUERYSTRING <- private$ORIGIN$QUERY_STRING
+        if (private$QUERYSTRING != '') {
+          private$QUERYSTRING <- paste0('?', sub('^\\?', '', private$QUERYSTRING))
+        }
+        private$IP <- rook$REMOTE_ADDR
+        delayedAssign("QUERY", private$parse_query(private$QUERYSTRING), assign.env = private)
+      }
+
+      delayedAssign("COOKIES", private$parse_cookies(), assign.env = private)
+
+      delayedAssign("SESSION", private$get_session_cookie(), assign.env = private)
     }
   )
 )

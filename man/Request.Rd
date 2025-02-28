@@ -163,8 +163,8 @@ using a secure connection, i.e. \code{protocol == 'https'}. \emph{Immutable}}
 
 \item{\code{origin}}{The original object used to create the \code{Request} object. As
 \code{reqres} currently only works with rook this will always return the
-original rook object. \emph{Immutable}, though the content of the rook object
-itself might be manipulated as it is an environment.}
+original rook object. Changing this will force the request to reparse
+itself.}
 
 \item{\code{response}}{If a \code{Response} object has been created for this request
 it is accessible through this field. \emph{Immutable}}
