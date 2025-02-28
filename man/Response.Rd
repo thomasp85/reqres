@@ -159,6 +159,8 @@ responding to.}
 
 \item{\code{is_formatted}}{Has the body been formatted}
 
+\item{\code{data_store}}{Access the environment that holds the response data store}
+
 \item{\code{session}}{The content of the session cookie. If session cookies has
 not been activated it will be an empty write-protected list. If session
 cookies are activated but the request did not contain one it will be an

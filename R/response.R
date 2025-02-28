@@ -701,6 +701,14 @@ Response <- R6Class('Response',
     is_formatted = function() {
       private$IS_FORMATTED
     },
+    #' @field data_store Access the environment that holds the response data store
+    data_store = function(value) {
+      if (missing(value)) return(private$DATA)
+      if (!identical(private$DATA, value)) {
+        cli::cli_abort("It is not allowed to replace the data store")
+      }
+      private$DATA <- value
+    },
     #' @field session The content of the session cookie. If session cookies has
     #' not been activated it will be an empty write-protected list. If session
     #' cookies are activated but the request did not contain one it will be an

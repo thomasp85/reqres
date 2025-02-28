@@ -33,8 +33,10 @@
   session cookie. The data store is made available through the `session` field
   in both `Request` and `Response` and the content will automatically be send
   along with the response as an encrypted cookie.
-* Added `random_key()` and `session_cookie()` helpter functions to support the
+* Added `random_key()` and `session_cookie()` helper functions to support the
   above
+* Added `Response$data_store` field to suppleant `Response$get_data()` and
+  friends. It provides direct acces to the response data store
 
 # reqres 0.2.5
 
