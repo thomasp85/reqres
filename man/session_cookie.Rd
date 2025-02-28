@@ -2,6 +2,7 @@
 % Please edit documentation in R/aaa.R
 \name{session_cookie}
 \alias{session_cookie}
+\alias{is_session_cookie_settings}
 \title{Collect settings for a session cookie}
 \usage{
 session_cookie(
@@ -12,6 +13,8 @@ session_cookie(
   secure = NULL,
   same_site = NULL
 )
+
+is_session_cookie_settings(x)
 }
 \arguments{
 \item{name}{The name of the cookie}
