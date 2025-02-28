@@ -240,8 +240,8 @@ using a secure connection, i.e. <code>protocol == 'https'</code>. <em>Immutable<
 <dt><code>origin</code></dt>
 <dd><p>The original object used to create the <code>Request</code> object. As
 <code>reqres</code> currently only works with rook this will always return the
-original rook object. <em>Immutable</em>, though the content of the rook object
-itself might be manipulated as it is an environment.</p></dd>
+original rook object. Changing this will force the request to reparse
+itself.</p></dd>
 
 
 <dt><code>response</code></dt>
@@ -684,8 +684,8 @@ current request will be used</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1133717 60.6    2206777 117.9  2206777 117.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2115355 16.2    8388608  64.0  3036310  23.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1133741 60.6    2205710 117.8  2205710 117.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2116043 16.2    8388608  64.0  3040966  23.3</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
