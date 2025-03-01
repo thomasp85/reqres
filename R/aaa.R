@@ -234,6 +234,7 @@ session_cookie <- function(name = "reqres", expires = NULL, max_age = NULL,
   ), class = "session_cookie_settings")
 }
 #' @rdname session_cookie
+#' @param x An object to test
 #' @export
 is_session_cookie_settings <- function(x) inherits(x, "session_cookie_settings")
 #' @export

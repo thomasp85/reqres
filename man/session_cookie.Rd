@@ -30,6 +30,8 @@ is_session_cookie_settings(x)
 \item{same_site}{Either \code{"Lax"}, \code{"Strict"}, or \code{"None"} indicating
 how the cookie can be send during cross-site requests. If this is set to
 \code{"None"} then \code{secure} \emph{must} also be set to \code{TRUE}}
+
+\item{x}{An object to test}
 }
 \value{
 A \code{session_cookie_settings} object that can be used during request
