@@ -2,7 +2,7 @@ problem_abort <- function(code) {
   force(code)
   function(detail, instance = NULL, ..., message = detail, call = caller_env()) {
     check_string(detail)
-    rlang::error_cnd(
+    err <- rlang::error_cnd(
       class = "reqres_problem",
       status = code,
       detail = cli::ansi_strip(cli::format_inline(detail, .envir = call)),
@@ -12,6 +12,7 @@ problem_abort <- function(code) {
       ...,
       use_cli_format = TRUE
     )
+    cnd_signal(err)
   }
 }
 
@@ -42,7 +43,7 @@ problem_abort <- function(code) {
 #'
 abort_http_problem <- function(code, detail, title = NULL, type = NULL, instance = NULL, ..., message = detail, call = caller_env()) {
   check_string(detail)
-  rlang::error_cnd(
+  err <- rlang::error_cnd(
     class = "reqres_problem",
     status = code,
     detail = cli::ansi_strip(cli::format_inline(detail, .envir = call)),
@@ -54,12 +55,13 @@ abort_http_problem <- function(code, detail, title = NULL, type = NULL, instance
     ...,
     use_cli_format = TRUE
   )
+  cnd_signal(err)
 }
 #' @rdname abort_http_problem
 #' @export
 #'
 abort_status <- function(code, message = status_phrase(code), ..., call = caller_env()) {
-  rlang::error_cnd(
+  err <- rlang::error_cnd(
     class = "reqres_problem",
     status = code,
     call = call,
@@ -67,6 +69,7 @@ abort_status <- function(code, message = status_phrase(code), ..., call = caller
     ...,
     use_cli_format = TRUE
   )
+  cnd_signal(err)
 }
 #' @rdname abort_http_problem
 #' @export
