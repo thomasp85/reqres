@@ -848,8 +848,8 @@ cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path
   }
   paste(opts, collapse = '; ')
 }
-cookie_clearer <- cookie("", expires = past_date)
-secure_cookie_clearer <- cookie("", expires = past_date, secure = TRUE)
+cookie_clearer <- cookie("", expires = as.POSIXct(0, origin = 0))
+secure_cookie_clearer <- cookie("", expires = as.POSIXct(0, origin = 0), secure = TRUE)
 gzip <- function(x) {
   f <- tempfile()
   con <- gzcon(file(f, open = 'wb'))
