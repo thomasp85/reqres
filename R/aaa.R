@@ -34,7 +34,7 @@ from_http_date <- function(time) {
   as.POSIXct(time, format = '%a, %d %b %Y %H:%M:%S', tz = 'GMT')
 }
 
-past_date <- to_http_date(as.POSIXct(0, origin = "1970-01-01 01:00:00 CET"))
+past_date <- to_http_date(as.POSIXct(0, origin = "1970-01-01 00:00:00 GMT"))
 
 #' Parse a query string
 #'
