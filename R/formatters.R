@@ -71,6 +71,7 @@ format_plain <- function(sep = '\n') {
 format_xml <- function(encoding = 'UTF-8', options = 'as_xml') {
   options <- union('as_xml', options)
   function(x) {
+    if (is_bare_string(x)) return(x)
     as.character(as_xml_document(list(listify(x))), encoding = encoding, options = options)
   }
 }
@@ -81,6 +82,7 @@ format_xml <- function(encoding = 'UTF-8', options = 'as_xml') {
 format_html <- function(encoding = 'UTF-8', options = 'as_html') {
   options <- union('as_html', options)
   function(x) {
+    if (is_bare_string(x)) return(x)
     as.character(as_xml_document(list(listify(x))), encoding = encoding, options = options)
   }
 }
