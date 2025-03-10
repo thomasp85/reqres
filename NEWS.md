@@ -37,6 +37,8 @@
   above
 * Added `Response$data_store` field to suppleant `Response$get_data()` and
   friends. It provides direct acces to the response data store
+* Fixed bug in `format_xml()` and `format_html()` that prevented standard lists
+  to be converted
 
 # reqres 0.2.5
 
