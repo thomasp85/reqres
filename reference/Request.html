@@ -155,6 +155,11 @@ cookie <em>Immutable</em></p></dd>
 encryption key <em>Immutable</em></p></dd>
 
 
+<dt><code>compression_limit</code></dt>
+<dd><p>Query the compression limit the request was
+initialized with <em>Immutable</em></p></dd>
+
+
 <dt><code>cookies</code></dt>
 <dd><p>Access a named list of all cookies in the request. These
 have been URI decoded. <em>Immutable</em></p></dd>
@@ -273,13 +278,20 @@ it is accessible through this field. <em>Immutable</em></p></dd>
 <li><p><a href="#method-Request-as_message"><code>Request$as_message()</code></a></p></li>
 <li><p><a href="#method-Request-encode_string"><code>Request$encode_string()</code></a></p></li>
 <li><p><a href="#method-Request-decode_string"><code>Request$decode_string()</code></a></p></li>
+<li><p><a href="#method-Request-clear"><code>Request$clear()</code></a></p></li>
 <li><p><a href="#method-Request-forward"><code>Request$forward()</code></a></p></li>
 <li><p><a href="#method-Request-clone"><code>Request$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-Request-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
 <p>Create a new request from a rook object</p><div class="section">
 <h4 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/Request.html">Request</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rook</span>, trust <span class="op">=</span> <span class="cn">FALSE</span>, key <span class="op">=</span> <span class="cn">NULL</span>, session_cookie <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va"><a href="../reference/Request.html">Request</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span></span>
+<span>  <span class="va">rook</span>,</span>
+<span>  trust <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  key <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  session_cookie <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  compression_limit <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -306,6 +318,11 @@ set it as an environment variable</p></dd>
 <dd><p>Settings for the session cookie created using
 <code><a href="session_cookie.html">session_cookie()</a></code>. Will be ignored if <code>key</code> is not provided to ensure
 session cookies are properly encrypted</p></dd>
+
+
+<dt><code>compression_limit</code></dt>
+<dd><p>The size threshold in bytes for trying to
+compress the response body (it is still dependant on content negotiation)</p></dd>
 
 
 </dl><p></p></div>
@@ -575,11 +592,22 @@ as-is. It will always hold that
 </dl><p></p></div>
 </div>
 
+</div><p></p><hr><a id="method-Request-clear"></a><div class="section">
+<h3 id="method-clear-">Method <code>clear()</code><a class="anchor" aria-label="anchor" href="#method-clear-"></a></h3>
+<p>Clears the content of the request and, if created, the
+related response. This method exists only to allow reuse of the request
+and response object to save a few milliseconds in latency. Use with
+caution and see e.g. how fiery maintains a poll of request objects</p><div class="section">
+<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">clear</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+
 </div><p></p><hr><a id="method-Request-forward"></a><div class="section">
 <h3 id="method-forward-">Method <code>forward()</code><a class="anchor" aria-label="anchor" href="#method-forward-"></a></h3>
 <p>Forward a request to a new url, optionally setting different
 headers, queries, etc. Uses httr2 under the hood</p><div class="section">
-<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
+<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">forward</span><span class="op">(</span></span>
 <span>  <span class="va">url</span>,</span>
 <span>  query <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -627,7 +655,7 @@ current request will be used</p></dd>
 </div><p></p><hr><a id="method-Request-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
+<h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -683,9 +711,9 @@ current request will be used</p></dd>
 <span class="r-in"><span><span class="co"># Cleaning up connections</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1134586 60.6    2207761  118  2207761 118.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2117340 16.2    8388608   64  3042536  23.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1137151 60.8    2210204 118.1  2210204 118.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2122276 16.2    8388608  64.0  3065218  23.4</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

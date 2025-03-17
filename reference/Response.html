@@ -288,6 +288,7 @@ encryption key <em>Immutable</em></p></dd>
 <li><p><a href="#method-Response-as_message"><code>Response$as_message()</code></a></p></li>
 <li><p><a href="#method-Response-encode_string"><code>Response$encode_string()</code></a></p></li>
 <li><p><a href="#method-Response-decode_string"><code>Response$decode_string()</code></a></p></li>
+<li><p><a href="#method-Response-reset"><code>Response$reset()</code></a></p></li>
 <li><p><a href="#method-Response-clone"><code>Response$clone()</code></a></p></li>
 </ul></div><p></p><hr><a id="method-Response-new"></a><div class="section">
 <h3 id="method-new-">Method <code>new()</code><a class="anchor" aria-label="anchor" href="#method-new-"></a></h3>
@@ -814,7 +815,8 @@ chosen compression algorithm.</p><div class="section">
 <h4 id="usage-23">Usage<a class="anchor" aria-label="anchor" href="#usage-23"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">compress</span><span class="op">(</span></span>
 <span>  priority <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gzip"</span>, <span class="st">"deflate"</span>, <span class="st">"br"</span>, <span class="st">"identity"</span><span class="op">)</span>,</span>
-<span>  force <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  force <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  limit <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -828,6 +830,12 @@ priority</p></dd>
 <dt><code>force</code></dt>
 <dd><p>Should compression be done even if the type is known to be
 uncompressible</p></dd>
+
+
+<dt><code>limit</code></dt>
+<dd><p>The size limit in bytes for performing compression. If
+<code>NULL</code> then the <code>compression_limit</code> setting from the initialization of
+the request is used</p></dd>
 
 
 </dl><p></p></div>
@@ -904,10 +912,20 @@ as-is. It will always hold that
 </dl><p></p></div>
 </div>
 
+</div><p></p><hr><a id="method-Response-reset"></a><div class="section">
+<h3 id="method-reset-">Method <code>reset()</code><a class="anchor" aria-label="anchor" href="#method-reset-"></a></h3>
+<p>Resets the content of the response. Is mainly used by the
+<code>clear()</code> method of the associated request, and should seldom be called
+directly</p><div class="section">
+<h4 id="usage-29">Usage<a class="anchor" aria-label="anchor" href="#usage-29"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">reset</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+
 </div><p></p><hr><a id="method-Response-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-29">Usage<a class="anchor" aria-label="anchor" href="#usage-29"></a></h4>
+<h4 id="usage-30">Usage<a class="anchor" aria-label="anchor" href="#usage-30"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Response</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -966,9 +984,9 @@ as-is. It will always hold that
 <span class="r-in"><span><span class="co"># Cleaning up connections</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span>, <span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1154012 61.7    2207761  118  2207761 118.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2161799 16.5    8388608   64  3042536  23.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1156651 61.8    2210204 118.1  2210204 118.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2166899 16.6    8388608  64.0  3065218  23.4</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

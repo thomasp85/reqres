@@ -61,6 +61,14 @@
 <li>Added <code><a href="../reference/random_key.html">random_key()</a></code> and <code><a href="../reference/session_cookie.html">session_cookie()</a></code> helper functions to support the above</li>
 <li>Added <code>Response$data_store</code> field to suppleant <code>Response$get_data()</code> and friends. It provides direct acces to the response data store</li>
 <li>Fixed bug in <code><a href="../reference/formatters.html">format_xml()</a></code> and <code><a href="../reference/formatters.html">format_html()</a></code> that prevented standard lists to be converted</li>
+<li>Responses now correctly sets the <code>Vary</code> header when performing content negotiation</li>
+<li>Add <code>compression_limit</code> setting to control when compression is tried</li>
+<li>
+<code>Request</code> and <code>Response</code> objects are no longer locked, as it decreases construction time. For debugging purpose you can still change this in the constructor class in your debug session</li>
+<li>
+<code><a href="../reference/http_date.html">to_http_date()</a></code> is now written in C as formatting POSIX values had an unacceptable overhead</li>
+<li>Added some interface functions to the Mime database</li>
+<li>Add functionality for resetting and reusing objects to avoid construction overhead</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.5" id="reqres-025">reqres 0.2.5<a class="anchor" aria-label="anchor" href="#reqres-025"></a></h2><p class="text-muted">CRAN release: 2022-08-19</p>
