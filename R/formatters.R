@@ -65,6 +65,7 @@ format_plain <- function(sep = '\n') {
 #' @rdname formatters
 #'
 #' @inheritParams xml2::write_xml
+#' @param root_name The name of the root element of the created xml
 #'
 #' @importFrom xml2 as_xml_document
 #' @export
@@ -87,7 +88,7 @@ format_html <- function(encoding = 'UTF-8', options = 'as_html') {
   options <- union('as_html', options)
   function(x) {
     if (is_bare_string(x)) return(x)
-    if (inherits(x, "shiny.tag")) return(as.chracter(x))
+    if (inherits(x, "shiny.tag")) return(as.character(x))
     x <- listify(x)
     if (!isTRUE(names(x) == "body")) {
       x <- list(body = x)

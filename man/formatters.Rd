@@ -27,7 +27,7 @@ format_json(
 
 format_plain(sep = "\\n")
 
-format_xml(encoding = "UTF-8", options = "as_xml")
+format_xml(root_name = "document", encoding = "UTF-8", options = "as_xml")
 
 format_html(encoding = "UTF-8", options = "as_html")
 
@@ -63,6 +63,8 @@ An exception is that objects of class \code{AsIs} (i.e. wrapped in \code{\link[=
 
 \item{sep}{The line separator. Plain text will be split into multiple strings
 based on this.}
+
+\item{root_name}{The name of the root element of the created xml}
 
 \item{encoding}{The character encoding to use in the document. The default
 encoding is \sQuote{UTF-8}. Available encodings are specified at
