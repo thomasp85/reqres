@@ -116,6 +116,7 @@
 #' gc()
 #'
 Response <- R6Class('Response',
+  lock_object = FALSE,
   public = list(
     # Methods
     #' @description Create a new response from a Request object
@@ -236,7 +237,7 @@ Response <- R6Class('Response',
     #'
     timestamp = function() {
       time <- Sys.time()
-      self$set_header('Date', to_http_date(time))
+      self$set_header('Date', current_time())
       invisible(self)
     },
     #' @description Sets the body to the file given by `file` and marks the
@@ -434,7 +435,13 @@ Response <- R6Class('Response',
         stop_input_type(formatters, "a named list")
       }
 
-      format <- self$request$accepts(names(formatters)) %||% default
+      if (isTRUE(names(formatters) == default)) {
+        # No need for content negotiation as default will always be used
+        format <- default
+      } else {
+        format <- self$request$accepts(names(formatters)) %||% default
+        self$append_header('Vary', 'Accept')
+      }
       if (is.null(format)) {
         if (autofail) {
           types <- self$request$format_types(names(formatters))
@@ -448,8 +455,6 @@ Response <- R6Class('Response',
         return(FALSE)
       }
 
-      private$IS_FORMATTED <- TRUE
-
       content <- tri(formatters[[format]](self$body))
       if (is_reqres_problem(content)) {
         cnd_signal(content)
@@ -457,6 +462,8 @@ Response <- R6Class('Response',
         if (autofail) abort_status(500L, "Error formatting the response body", parent = content)
         return(FALSE)
       }
+
+      private$IS_FORMATTED <- TRUE
       private$BODY <- content
       self$type <- format
       if (compress) self$compress()
@@ -477,7 +484,13 @@ Response <- R6Class('Response',
     #'
     set_formatter = function(..., autofail = TRUE, default = NULL) {
       formatters <- list2(...)
-      format <- self$request$accepts(names(formatters)) %||% default
+      if (isTRUE(names(formatters) == default)) {
+        # No need for content negotiation as default will always be used
+        format <- default
+      } else {
+        format <- self$request$accepts(names(formatters)) %||% default
+        self$append_header('Vary', 'Accept')
+      }
       if (is.null(format)) {
         if (autofail) {
           types <- self$request$format_types(names(formatters))
@@ -501,17 +514,22 @@ Response <- R6Class('Response',
     #' priority
     #' @param force Should compression be done even if the type is known to be
     #' uncompressible
+    #' @param limit The size limit in bytes for performing compression. If
+    #' `NULL` then the `compression_limit` setting from the initialization of
+    #' the request is used
     #'
-    compress = function(priority = c('gzip', 'deflate', 'br', 'identity'), force = FALSE) {
+    compress = function(priority = c('gzip', 'deflate', 'br', 'identity'), force = FALSE, limit = NULL) {
       if (!force) {
         type <- self$type
         if (!is.null(type) && isFALSE(mimes$compressible[mimes$name == type])) {
           return(FALSE)
         }
       }
+      if (!is_string(self$body)) return(FALSE)
+      limit <- limit %||% private$REQUEST$compression_limit
+      if (limit > nchar(self$body, "bytes")) return(FALSE)
       encoding <- self$request$accepts_encoding(priority)
       if (is.null(encoding)) return(FALSE)
-      if (!is_string(self$body)) return(FALSE)
       content <- switch(
         encoding,
         identity = self$body,
@@ -521,6 +539,7 @@ Response <- R6Class('Response',
       )
       private$BODY <- content
       self$set_header('Content-Encoding', encoding)
+      self$append_header('Vary', 'Accept-Encoding')
       return(TRUE)
     },
     #' @description Calculates the length (in bytes) of the body. This is the
@@ -848,8 +867,8 @@ cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path
   }
   paste(opts, collapse = '; ')
 }
-cookie_clearer <- cookie("", expires = as.POSIXct(0, origin = "1970-01-01 00:00:00 GMT"))
-secure_cookie_clearer <- cookie("", expires = as.POSIXct(0, origin = "1970-01-01 00:00:00 GMT"), secure = TRUE)
+on_load(cookie_clearer <- cookie("", expires = as.POSIXct(0, origin = "1970-01-01 00:00:00 GMT")))
+on_load(secure_cookie_clearer <- cookie("", expires = as.POSIXct(0, origin = "1970-01-01 00:00:00 GMT"), secure = TRUE))
 gzip <- function(x) {
   f <- tempfile()
   con <- gzcon(file(f, open = 'wb'))

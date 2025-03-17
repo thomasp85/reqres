@@ -43,3 +43,4 @@ Suggests:
 URL: https://reqres.data-imaginist.com, https://github.com/thomasp85/reqres#reqres
 BugReports: https://github.com/thomasp85/reqres/issues
 Config/testthat/edition: 3
+Config/build/compilation-database: true

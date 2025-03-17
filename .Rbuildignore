@@ -15,3 +15,5 @@
 ^\.github$
 ^CRAN-SUBMISSION$
 ^data-raw$
+^compile_commands\.json$
+^\.cache$

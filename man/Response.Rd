@@ -716,7 +716,8 @@ chosen compression algorithm.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Response$compress(
   priority = c("gzip", "deflate", "br", "identity"),
-  force = FALSE
+  force = FALSE,
+  limit = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -728,6 +729,10 @@ priority}
 
 \item{\code{force}}{Should compression be done even if the type is known to be
 uncompressible}
+
+\item{\code{limit}}{The size limit in bytes for performing compression. If
+\code{NULL} then the \code{compression_limit} setting from the initialization of
+the request is used}
 }
 \if{html}{\out{</div>}}
 }

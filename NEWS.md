@@ -39,6 +39,14 @@
   friends. It provides direct acces to the response data store
 * Fixed bug in `format_xml()` and `format_html()` that prevented standard lists
   to be converted
+* Responses now correctly sets the `Vary` header when performing content
+  negotiation
+* Add `compression_limit` setting to control when compression is tried
+* `Request` and `Response` objects are no longer locked, as it decreases
+  construction time. For debugging purpose you can still change this in the
+  constructor class in your debug session
+* `to_http_date()` is now written in C as formatting POSIX values had an
+  unacceptable overhead
 
 # reqres 0.2.5
 

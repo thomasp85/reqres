@@ -65,6 +65,7 @@
 #' gc()
 #'
 Request <- R6Class('Request',
+  lock_object = FALSE,
   public = list(
     # Methods
     #' @description Create a new request from a rook object
@@ -80,8 +81,10 @@ Request <- R6Class('Request',
     #' @param session_cookie Settings for the session cookie created using
     #' [session_cookie()]. Will be ignored if `key` is not provided to ensure
     #' session cookies are properly encrypted
+    #' @param compression_limit The size threshold in bytes for trying to
+    #' compress the response body (it is still dependant on content negotiation)
     #'
-    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL) {
+    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0) {
       self$trust <- trust
       private$ORIGIN <- rook
       private$METHOD <- tolower(rook$REQUEST_METHOD)
@@ -114,6 +117,8 @@ Request <- R6Class('Request',
       } else {
         private$HOST <- rook$HTTP_HOST
       }
+      check_number_decimal(compression_limit, min = 0, allow_infinite = TRUE)
+      private$COMPRESSION_LIMIT <- compression_limit
       private$PROTOCOL <- rook$rook.url_scheme
       private$ROOT <- rook$SCRIPT_NAME
       private$PATH <- rook$PATH_INFO
@@ -499,6 +504,12 @@ Request <- R6Class('Request',
     has_key = function() {
       !is.null(private$KEY)
     },
+    #' @field compression_limit Query the compression limit the request was
+    #' initialized with *Immutable*
+    #'
+    compression_limit = function() {
+      private$COMPRESSION_LIMIT
+    },
     #' @field cookies Access a named list of all cookies in the request. These
     #' have been URI decoded. *Immutable*
     #'
@@ -666,6 +677,7 @@ Request <- R6Class('Request',
     SESSION = NULL,
     SESSION_COOKIE_SETTINGS = NULL,
     HAS_SESSION_COOKIE = FALSE,
+    COMPRESSION_LIMIT = 0,
     RESPONSE = NULL,
 
     parse_cookies = function() {

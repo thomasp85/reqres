@@ -4,3 +4,7 @@
 .Ruserdata
 reqres.Rproj
 docs/
+compile_commands.json
+.cache
+src/*.o
+src/*.so

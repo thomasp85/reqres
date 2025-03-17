@@ -107,6 +107,9 @@ cookie \emph{Immutable}}
 \item{\code{has_key}}{Query whether the request was initialised with an
 encryption key \emph{Immutable}}
 
+\item{\code{compression_limit}}{Query the compression limit the request was
+initialized with \emph{Immutable}}
+
 \item{\code{cookies}}{Access a named list of all cookies in the request. These
 have been URI decoded. \emph{Immutable}}
 
@@ -200,7 +203,13 @@ it is accessible through this field. \emph{Immutable}}
 \subsection{Method \code{new()}}{
 Create a new request from a rook object
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Request$new(rook, trust = FALSE, key = NULL, session_cookie = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Request$new(
+  rook,
+  trust = FALSE,
+  key = NULL,
+  session_cookie = NULL,
+  compression_limit = 0
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -221,6 +230,9 @@ set it as an environment variable}
 \item{\code{session_cookie}}{Settings for the session cookie created using
 \code{\link[=session_cookie]{session_cookie()}}. Will be ignored if \code{key} is not provided to ensure
 session cookies are properly encrypted}
+
+\item{\code{compression_limit}}{The size threshold in bytes for trying to
+compress the response body (it is still dependant on content negotiation)}
 }
 \if{html}{\out{</div>}}
 }

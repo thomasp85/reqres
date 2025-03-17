@@ -19,22 +19,17 @@
 #' time
 #' from_http_date(time)
 to_http_date <- function(time, format = NULL) {
-  if (!inherits(time, "POSIXt")) {
-    time <- as.POSIXct(time, format = format)
-  }
-  format(
-    time,
-    tz = 'GMT',
-    format = '%a, %d %b %Y %H:%M:%S %Z'
-  )
+  time <- as.POSIXct(time, format = format)
+  .Call(fmt_http_time_c, as.integer(time), PACKAGE = "reqres")
+}
+current_time <- function() {
+  .Call(fmt_http_time_c, NULL, PACKAGE = "reqres")
 }
 #' @rdname http_date
 #' @export
 from_http_date <- function(time) {
   as.POSIXct(time, format = '%a, %d %b %Y %H:%M:%S', tz = 'GMT')
 }
-
-past_date <- to_http_date(as.POSIXct(0, origin = "1970-01-01 00:00:00 GMT"))
 
 #' Parse a query string
 #'
