@@ -77,6 +77,41 @@ query_parser <- function(query = NULL, delim = NULL) {
   final
 }
 
+#' Get the mime type associated with a file based on its file extension
+#'
+#' While file extensions are not universally guaranteed to be tied to the
+#' content of a file, they are often indicative of the content to the degree
+#' that they can be used if the content type is missing. `mime_type_from_file`
+#' gives access to the huge database of mime types and their file extensions
+#' that reqres contains. `mime_type_info()` provides the same information but
+#' rather than basing the search on a file, you provide the known mime type
+#' directly
+#'
+#' @param filename The name of the file to query
+#' @param type The mime type to get additional information on
+#'
+#' @return A data.frame with a row for each match and the columns:
+#' * *name* The mime type
+#' * *extensions* The extensions commonly associated with the mime type
+#' * *charset* The character set used for the type, if any
+#' * *compressible* Is the type known to be compressible
+#' * *source* The source of the mime type information
+#'
+#' @export
+#' @keywords internal
+mime_type_from_file <- function(filename) {
+  ext <- tolower(stringi::stri_match_first_regex(
+    filename,
+    "\\.([^\\.]+)$",
+    cg_missing = ""
+  )[,2])
+  mimes[mimes_ext$index[match(ext, mimes_ext$ext)], ]
+}
+#' @rdname mime_type_from_file
+#' @export
+mime_type_info <- function(type) {
+  mimes[match(type, mimes$name), ]
+}
 
 req_headers <- c(
   'Accept',

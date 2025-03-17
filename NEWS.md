@@ -47,6 +47,7 @@
   constructor class in your debug session
 * `to_http_date()` is now written in C as formatting POSIX values had an
   unacceptable overhead
+* Added some interface functions to the Mime database
 
 # reqres 0.2.5
 
