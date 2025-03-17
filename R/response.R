@@ -191,7 +191,7 @@ Response <- R6Class('Response',
     #'
     append_header = function(name, value) {
       if (self$has_header(name)) {
-        value <- c(self$get_header(name), as.character(value))
+        value <- unique(c(self$get_header(name), as.character(value)))
       }
       self$set_header(name, value)
       invisible(self)
@@ -275,7 +275,7 @@ Response <- R6Class('Response',
     #'
     status_with_text = function(code, clear_headers = FALSE) {
       if (clear_headers) {
-        rm(list = ls(private$HEADERS), envir = private$HEADERS)
+        private$HEADERS <- new.env(parent = emptyenv())
       }
       self$status <- code
       body <- status_phrase(code)
@@ -305,7 +305,7 @@ Response <- R6Class('Response',
     #'
     problem = function(code, detail, title = NULL, type = NULL, instance = NULL, clear_headers = TRUE) {
       if (clear_headers) {
-        rm(list = ls(private$HEADERS), envir = private$HEADERS)
+        private$HEADERS <- new.env(parent = emptyenv())
       }
       self$status <- code
       private$BODY <- list(
@@ -630,6 +630,19 @@ Response <- R6Class('Response',
     #' @param val A single string to encrypt
     decode_string = function(val) {
       private$REQUEST$decode_string(val)
+    },
+    #' @description Resets the content of the response. Is mainly used by the
+    #' `clear()` method of the associated request, and should seldom be called
+    #' directly
+    reset = function() {
+      private$STATUS = 404L
+      private$HEADERS = new.env(parent = emptyenv())
+      private$COOKIES = new.env(parent = emptyenv())
+      private$BODY = ''
+      private$DATA = new.env(parent = emptyenv())
+      private$FORMATTER <- NULL
+      private$IS_FORMATTED <- FALSE
+      self$type <- 'text/plain'
     }
   ),
   active = list(

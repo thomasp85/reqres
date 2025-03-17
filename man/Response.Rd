@@ -210,6 +210,7 @@ encryption key \emph{Immutable}}
 \item \href{#method-Response-as_message}{\code{Response$as_message()}}
 \item \href{#method-Response-encode_string}{\code{Response$encode_string()}}
 \item \href{#method-Response-decode_string}{\code{Response$decode_string()}}
+\item \href{#method-Response-reset}{\code{Response$reset()}}
 \item \href{#method-Response-clone}{\code{Response$clone()}}
 }
 }
@@ -815,6 +816,18 @@ as-is. It will always hold that
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Response-reset"></a>}}
+\if{latex}{\out{\hypertarget{method-Response-reset}{}}}
+\subsection{Method \code{reset()}}{
+Resets the content of the response. Is mainly used by the
+\code{clear()} method of the associated request, and should seldom be called
+directly
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Response$reset()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Response-clone"></a>}}

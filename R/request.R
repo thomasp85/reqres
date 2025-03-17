@@ -220,15 +220,15 @@ Request <- R6Class('Request',
     is = function(type) {
       accept <- self$get_header('Content-Type')
       if (is.null(accept)) return(NULL)
-      accept <- trimws(strsplit(accept, ';')[[1]])[1]
-      content <- private$format_mimes(accept)
+      accept <- trimws(stringi::stri_split_fixed(accept, ';', n = 2)[[1]])[1]
+      content <- stringi::stri_split_fixed(accept, "/", n = 2)[[1]]
       type <- ifelse(type == "*", "*/*", type)
       ext <- !grepl('/', type)
       type[ext] <- mimes$name[mimes_ext$index[match(sub('^[.]', '', type[ext]), mimes_ext$ext)]]
-      type <- strsplit(type, '/', TRUE)
+      type <- stringi::stri_split_fixed(type, '/', n = 2)
       main <- vapply(type, `[[`, character(1), 1L)
       sub <- vapply(type, `[[`, character(1), 2L)
-      match <- (main == content$main | main == "*") & (sub == content$sub | sub == "*")
+      match <- (main == content[1] | main == "*") & (sub == content[2] | sub == "*")
       priority <- order(main == "*", sub == "*", ext)
       attr(match, "pick") <- priority[which(match[priority])[1]]
       match
@@ -404,6 +404,13 @@ Request <- R6Class('Request',
         )
       }
       rawToChar(val)
+    },
+    #' @description Clears the content of the request and, if created, the
+    #' related response. This method exists only to allow reuse of the request
+    #' and response object to save a few milliseconds in latency. Use with
+    #' caution and see e.g. how fiery maintains a poll of request objects
+    clear = function() {
+      private$reset_hard()
     },
     #' @description Forward a request to a new url, optionally setting different
     #' headers, queries, etc. Uses httr2 under the hood
@@ -680,6 +687,30 @@ Request <- R6Class('Request',
     COMPRESSION_LIMIT = 0,
     RESPONSE = NULL,
 
+    reset_hard = function() {
+      private$TRUST <- FALSE
+      private$ORIGIN <- NULL
+      private$METHOD <- NULL
+      private$KEY <- NULL
+      private$HOST <- NULL
+      private$PROTOCOL <- NULL
+      private$ROOT <- NULL
+      private$PATH <- NULL
+      private$QUERYSTRING <- NULL
+      private$QUERYDELIM <- NULL
+      private$IP <- NULL
+      private$QUERY <- NULL
+      private$BODY <- NULL
+      private$HEADERS <- NULL
+      private$COOKIES <- NULL
+      private$SESSION <- NULL
+      private$SESSION_COOKIE_SETTINGS <- NULL
+      private$HAS_SESSION_COOKIE <- FALSE
+      private$COMPRESSION_LIMIT <- 0
+      if (!is.null(private$RESPONSE)) {
+        private$RESPONSE$reset()
+      }
+    },
     parse_cookies = function() {
       if (is.null(self$headers$Cookie)) return(list())
       cookies <- stri_trim_both(stri_split_regex(self$headers$Cookie, ";(?=\\s*[a-zA-Z0-9!#$%&'()*+-.\\/:<>?@\\[\\]^_`{|}~]{1,})")[[1]])

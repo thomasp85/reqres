@@ -193,6 +193,7 @@ it is accessible through this field. \emph{Immutable}}
 \item \href{#method-Request-as_message}{\code{Request$as_message()}}
 \item \href{#method-Request-encode_string}{\code{Request$encode_string()}}
 \item \href{#method-Request-decode_string}{\code{Request$decode_string()}}
+\item \href{#method-Request-clear}{\code{Request$clear()}}
 \item \href{#method-Request-forward}{\code{Request$forward()}}
 \item \href{#method-Request-clone}{\code{Request$clone()}}
 }
@@ -515,6 +516,19 @@ as-is. It will always hold that
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Request-clear"></a>}}
+\if{latex}{\out{\hypertarget{method-Request-clear}{}}}
+\subsection{Method \code{clear()}}{
+Clears the content of the request and, if created, the
+related response. This method exists only to allow reuse of the request
+and response object to save a few milliseconds in latency. Use with
+caution and see e.g. how fiery maintains a poll of request objects
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Request$clear()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Request-forward"></a>}}
