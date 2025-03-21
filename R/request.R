@@ -925,7 +925,7 @@ Request <- R6Class('Request',
         if (private$QUERYSTRING != '') {
           private$QUERYSTRING <- paste0('?', sub('^\\?', '', private$QUERYSTRING))
         }
-        private$IP <- rook$REMOTE_ADDR
+        private$IP <- private$ORIGIN$REMOTE_ADDR
         delayedAssign("QUERY", private$parse_query(private$QUERYSTRING), assign.env = private)
       }
 
