@@ -272,3 +272,10 @@ print.session_cookie_settings <- function(x, ...) {
   cli::cli_text("Settings for a session cookie named {.field {x$name}}")
   cli::cli_text("{.emph Attributes: {sub('; ', '', x$options)}}")
 }
+
+status_phrase <- function(code) {
+  status$message[match(code, status$code)]
+}
+status_link <- function(code) {
+  status$link[match(code, status$code)]
+}

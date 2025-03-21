@@ -309,7 +309,7 @@ Response <- R6Class('Response',
       }
       self$status <- code
       private$BODY <- list(
-        type = type %||% status$link[match(code, status$code)],
+        type = type %||% status_link(code),
         title = title %||% status_phrase(code),
         status = code,
         detail = detail
@@ -890,8 +890,4 @@ gzip <- function(x) {
   content <- readBin(f, raw(), file.info(f)$size)
   unlink(f)
   content
-}
-
-status_phrase <- function(code) {
-  status$message[match(code, status$code)]
 }
