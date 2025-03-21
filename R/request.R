@@ -280,18 +280,23 @@ Request <- R6Class('Request',
       }
 
       type <- self$get_header('Content-Type')
-      if (is.null(type)) return(FALSE)
+      if (is.null(type)) {
+        if (autofail) {
+          abort_bad_request("Missing Content-Type header")
+        }
+        return(FALSE)
+      }
 
       parser_match <- self$is(names(parsers))
 
       if (!any(parser_match)) {
         if (autofail) {
-          self$respond()$status_with_text(415L)
           if (self$method == "post") {
             self$response$set_header("Accept-Post", paste0(format_types(names(parsers)), collapse = ", "))
           } else if (self$method == "patch") {
             self$response$set_header("Accept-Patch", paste0(format_types(names(parsers)), collapse = ", "))
           }
+          abort_status(415L)
         }
         return(FALSE)
       }
