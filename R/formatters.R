@@ -90,8 +90,8 @@ format_html <- function(encoding = 'UTF-8', options = 'as_html') {
     if (is_bare_string(x)) return(x)
     if (inherits(x, "shiny.tag")) return(as.character(x))
     x <- listify(x)
-    if (!isTRUE(names(x) == "body")) {
-      x <- list(body = x)
+    if (!isTRUE(names(x) == "html")) {
+      x <- list(html = x)
     }
     as.character(as_xml_document(x), encoding = encoding, options = options)
   }
@@ -139,9 +139,8 @@ default_formatters <- list(
 
 # Format R objects to xml2 compliant lists
 listify <- function(x) {
-  if (length(x) == 1L) {
-    name <- attr(x, 'names', exact = TRUE) %||% class(x)[1]
-    return(structure(set_names(list(list(as.character(x))), name)))
+  if (length(x) == 1L && !is_list(x)) {
+    return(list(as.character(x)))
   }
   if (!is.list(x)) x <- as.list(x)
   if (is.null(attr(x, 'names', exact = TRUE))) names(x) <- vapply(x, function(x) class(x)[1], character(1))
