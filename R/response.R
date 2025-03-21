@@ -450,7 +450,7 @@ Response <- R6Class('Response',
             types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or", types[n])
           }
           detail <- paste0("Only ", types, " content type", if (n > 1) "s" else "", " supported.")
-          abort_not_acceptable(detail = )
+          abort_not_acceptable(detail = detail)
         }
         return(FALSE)
       }
