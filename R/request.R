@@ -668,6 +668,15 @@ Request <- R6Class('Request',
         cli::cli_abort('{.arg res} must be a Response responding to this request')
       }
       private$RESPONSE <- res
+    },
+    #' @field locked Set the `locked` status on the request. This flag does not
+    #' result in any different behaviour in the request but can be used by
+    #' frameworks to signal that the request should not be altered in some way
+    #' 
+    locked = function(value) {
+      if (missing(value)) return(private$LOCKED)
+      check_bool(value)
+      private$LOCKED <- value
     }
   ),
   private = list(
@@ -691,6 +700,7 @@ Request <- R6Class('Request',
     HAS_SESSION_COOKIE = FALSE,
     COMPRESSION_LIMIT = 0,
     RESPONSE = NULL,
+    LOCKED = FALSE,
 
     reset_hard = function() {
       private$TRUST <- FALSE

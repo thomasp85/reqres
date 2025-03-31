@@ -171,6 +171,10 @@ itself.}
 
 \item{\code{response}}{If a \code{Response} object has been created for this request
 it is accessible through this field. \emph{Immutable}}
+
+\item{\code{locked}}{Set the \code{locked} status on the request. This flag does not
+result in any different behaviour in the request but can be used by
+frameworks to signal that the request should not be altered in some way}
 }
 \if{html}{\out{</div>}}
 }
