@@ -254,6 +254,12 @@ itself.</p></dd>
 it is accessible through this field. <em>Immutable</em></p></dd>
 
 
+<dt><code>locked</code></dt>
+<dd><p>Set the <code>locked</code> status on the request. This flag does not
+result in any different behaviour in the request but can be used by
+frameworks to signal that the request should not be altered in some way</p></dd>
+
+
 </dl><p></p></div>
     </div>
     <div class="section level2">
@@ -712,8 +718,8 @@ current request will be used</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1137131 60.8    2210281 118.1  2210281 118.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2122278 16.2    8388608  64.0  3065300  23.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1137787 60.8    2214345 118.3  2214345 118.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2123826 16.3    8388608  64.0  3060475  23.4</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
