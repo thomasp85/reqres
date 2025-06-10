@@ -436,8 +436,10 @@ Request <- R6Class('Request',
         query <- paste0("?", query)
       }
       req <- httr2::request(paste0(url, query %||% private$QUERYSTRING))
+      cur_headers <- private$HEADERS
+      names(cur_headers) <- sub("_", "-", names(cur_headers))
       req <- httr2::req_headers(req,
-        !!!modifyList(private$HEADERS, headers %||% NULL)
+        !!!modifyList(cur_headers, headers %||% NULL)
       )
       req <- httr2::req_body_raw(req, body %||% private$BODY)
       req <- httr2::req_method(req, method %||% private$METHOD)
@@ -672,7 +674,7 @@ Request <- R6Class('Request',
     #' @field locked Set the `locked` status on the request. This flag does not
     #' result in any different behaviour in the request but can be used by
     #' frameworks to signal that the request should not be altered in some way
-    #' 
+    #'
     locked = function(value) {
       if (missing(value)) return(private$LOCKED)
       check_bool(value)
