@@ -539,7 +539,8 @@ caution and see e.g. how fiery maintains a poll of request objects
 \if{latex}{\out{\hypertarget{method-Request-forward}{}}}
 \subsection{Method \code{forward()}}{
 Forward a request to a new url, optionally setting different
-headers, queries, etc. Uses httr2 under the hood
+headers, queries, etc. Uses curl and mirai under the hood and returns a
+promise
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Request$forward(
   url,
@@ -547,6 +548,7 @@ headers, queries, etc. Uses httr2 under the hood
   method = NULL,
   headers = NULL,
   body = NULL,
+  return = NULL,
   ...
 )}\if{html}{\out{</div>}}
 }
@@ -569,7 +571,10 @@ to \code{NULL} here}
 \item{\code{body}}{The body to send with the forward. If \code{NULL} the body of the
 current request will be used}
 
-\item{\code{...}}{Additional arguments passed to \code{\link[httr2:req_options]{httr2::req_options()}}}
+\item{\code{return}}{A function that takes in the fulfilled response object and
+whose return value is returned by the promise}
+
+\item{\code{...}}{ignored}
 }
 \if{html}{\out{</div>}}
 }

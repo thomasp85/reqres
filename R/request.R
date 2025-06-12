@@ -418,7 +418,8 @@ Request <- R6Class('Request',
       private$reset_hard()
     },
     #' @description Forward a request to a new url, optionally setting different
-    #' headers, queries, etc. Uses httr2 under the hood
+    #' headers, queries, etc. Uses curl and mirai under the hood and returns a
+    #' promise
     #' @param url The url to forward to
     #' @param query Optional querystring to append to `url`. If `NULL` the query
     #' string of the current request will be used
@@ -429,33 +430,65 @@ Request <- R6Class('Request',
     #' to `NULL` here
     #' @param body The body to send with the forward. If `NULL` the body of the
     #' current request will be used
-    #' @param ... Additional arguments passed to [httr2::req_options()]
+    #' @param return A function that takes in the fulfilled response object and
+    #' whose return value is returned by the promise
+    #' @param ... ignored
     #'
-    forward = function(url, query = NULL, method = NULL, headers = NULL, body = NULL, ...) {
+    forward = function(url, query = NULL, method = NULL, headers = NULL, body = NULL, return = NULL, ...) {
+      return_fun <- return %||% identity
       if (!is.null(query) && substr(query, 1, 1) != "?") {
         query <- paste0("?", query)
       }
-      req <- httr2::request(paste0(url, query %||% private$QUERYSTRING))
-      cur_headers <- private$HEADERS
-      names(cur_headers) <- sub("_", "-", names(cur_headers))
-      req <- httr2::req_headers(req,
-        !!!modifyList(cur_headers, headers %||% NULL)
+      url <- paste0(url, query %||% private$QUERYSTRING)
+      opts <- list(
+        accept_encoding = NULL
       )
-      req <- httr2::req_body_raw(req, body %||% private$BODY)
-      req <- httr2::req_method(req, method %||% private$METHOD)
-      req <- httr2::req_options(req, ...)
-      req <- httr2::req_error(req, is_error = function(...) FALSE)
-      fwd_res <- httr2::req_perform(req, verbosity = 0)
-
-      res <- self$respond()
-      res$status <- httr2::resp_status(fwd_res)
-      res$body <- httr2::resp_body_raw(fwd_res)
-      fwd_headers <- httr2::resp_headers(fwd_res)
-      for (name in names(fwd_headers)) {
-        res$set_header(name, fwd_headers[[name]])
+      method <- toupper(method %||% private$METHOD)
+      if (method == "HEAD") {
+        opts$nobody <- TRUE
+      } else {
+        opts$customrequest <- method
       }
-      res$set_data("httr2_response", fwd_res)
-      invisible(res)
+      body <- body %||% private$get_body() %||% raw(0)
+      if (is.character(body)) {
+        body <- charToRaw(body)
+      }
+      if (length(body) != 0) {
+        opts$postfields <- body
+        opts$postfieldsize <- length(body)
+      }
+      header_elem <- grep("^HTTP_", ls(private$ORIGIN), value = TRUE)
+      cur_headers <- lapply(header_elem, function(x) private$ORIGIN[[x]])
+      names(cur_headers) <- tolower(gsub("_", "-", sub("^HTTP_", "", header_elem)))
+      if (!is.null(headers)) {
+        names(headers) <- tolower(names(headers))
+        headers <- modifyList(cur_headers, headers)
+      } else {
+        headers <- cur_headers
+      }
+
+      promise <- mirai::mirai(
+        curl_call,
+        list2env(list(opts = opts, headers = headers, url = url))
+      )
+      promises::then(
+        promise,
+        onFulfilled = function(response) {
+          res <- self$respond()
+          res$status <- response$status_code
+          res$body <- response$content
+          fwd_headers <- curl::parse_headers_list(response$headers)
+          fwd_headers <- fwd_headers[!tolower(names(fwd_headers)) %in% excluded_headers]
+          for (name in names(fwd_headers)) {
+            res$set_header(name, fwd_headers[[name]])
+          }
+          res$set_data("curl_response", response)
+          return_fun(res)
+        },
+        onRejected = function(error) {
+          cli::cli_abort("Failed to forward request", parent = error)
+        }
+      )
     }
   ),
   active = list(
@@ -976,3 +1009,17 @@ get_quality <- function(q) {
   q[is.na(q)] <- 1
   q
 }
+
+curl_call <- quote({
+  curl_handle <- curl::new_handle()
+  curl::handle_setopt(curl_handle, .list = opts)
+  curl::handle_setheaders(curl_handle, .list = headers)
+  curl::curl_fetch_memory(url, curl_handle)
+})
+
+excluded_headers <- c(
+  "connection",
+  "transfer-encoding",
+  "keep-alive",
+  "upgrade"
+)
