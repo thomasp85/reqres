@@ -612,7 +612,8 @@ caution and see e.g. how fiery maintains a poll of request objects</p><div class
 </div><p></p><hr><a id="method-Request-forward"></a><div class="section">
 <h3 id="method-forward-">Method <code>forward()</code><a class="anchor" aria-label="anchor" href="#method-forward-"></a></h3>
 <p>Forward a request to a new url, optionally setting different
-headers, queries, etc. Uses httr2 under the hood</p><div class="section">
+headers, queries, etc. Uses curl and mirai under the hood and returns a
+promise</p><div class="section">
 <h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">forward</span><span class="op">(</span></span>
 <span>  <span class="va">url</span>,</span>
@@ -620,6 +621,7 @@ headers, queries, etc. Uses httr2 under the hood</p><div class="section">
 <span>  method <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  headers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  body <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -651,8 +653,13 @@ to <code>NULL</code> here</p></dd>
 current request will be used</p></dd>
 
 
+<dt><code>return</code></dt>
+<dd><p>A function that takes in the fulfilled response object and
+whose return value is returned by the promise</p></dd>
+
+
 <dt><code>...</code></dt>
-<dd><p>Additional arguments passed to <code><a href="https://httr2.r-lib.org/reference/req_options.html" class="external-link">httr2::req_options()</a></code></p></dd>
+<dd><p>ignored</p></dd>
 
 
 </dl><p></p></div>
@@ -712,14 +719,14 @@ current request will be used</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Perform content negotiation for the response</span></span></span>
 <span class="r-in"><span><span class="va">req</span><span class="op">$</span><span class="fu">accepts</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'html'</span>, <span class="st">'json'</span>, <span class="st">'txt'</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "json"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "html"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Cleaning up connections</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1160550 62.0    2234037 119.4  2234037 119.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2169669 16.6    8388608  64.0  8388047  64.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1160521 62.0    2233704 119.3  2233704 119.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2169025 16.6    8388608  64.0  8388366  64.0</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
