@@ -51,7 +51,7 @@
 * Add functionality for resetting and reusing objects to avoid construction
   overhead
 * Added `Request$forward()` to asynchronously forward a request to another url
-  and populate the `Response` object with the response
+  and populate the `Response` object with the response 
 
 # reqres 0.2.5
 

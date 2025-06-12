@@ -92,7 +92,7 @@ test_that("Response knows how to handle session cookies", {
   req <- Request$new(rook, key = key, session_cookie = session_cookie)
   res <- req$respond()
 
-  set_cookie <- res$as_list()$headers[["Set-Cookie"]]
+  set_cookie <- res$as_list()$headers[["set-cookie"]]
 
   expect_true(grepl(paste0("^", session_cookie$name, "=.*; HttpOnly$"), set_cookie))
   cookie_val <- sub(paste0("^", session_cookie$name, "=(.*); HttpOnly$"), "\\1", set_cookie)
@@ -101,14 +101,14 @@ test_that("Response knows how to handle session cookies", {
 
   res$session$test2 <- "A"
 
-  set_cookie <- res$as_list()$headers[["Set-Cookie"]]
+  set_cookie <- res$as_list()$headers[["set-cookie"]]
   cookie_val <- sub(paste0("^", session_cookie$name, "=(.*); HttpOnly$"), "\\1", set_cookie)
 
   expect_equal(jsonlite::fromJSON(res$decode_string(url_decode(cookie_val))), res$session)
 
   res$session <- NULL
 
-  set_cookie <- res$as_list()$headers[["Set-Cookie"]]
+  set_cookie <- res$as_list()$headers[["set-cookie"]]
   expect_equal(set_cookie, paste0(session_cookie$name, "=; Expires=Thu, 01 Jan 1970 00:00:00 GMT"))
 
   rook$HTTP_COOKIE <- old_cookie

@@ -75,7 +75,7 @@ test_that('cookies can be get, set, and removed', {
   exp <- Sys.Date() + 1000
   res$set_cookie('test', 'this is a test', TRUE, expires = exp, http_only = TRUE, max_age = 1000, path = '/test', secure = TRUE, same_site = 'Lax')
   expect_true(res$has_cookie('test'))
-  expect_equal(res$as_list()$headers[['Set-Cookie']], paste0('test=this%20is%20a%20test; Expires=', to_http_date(exp), '; HttpOnly; Max-Age=1000; Path=/test; Secure; SameSite=Lax'))
+  expect_equal(res$as_list()$headers[['set-cookie']], paste0('test=this%20is%20a%20test; Expires=', to_http_date(exp), '; HttpOnly; Max-Age=1000; Path=/test; Secure; SameSite=Lax'))
   res$remove_cookie('test')
   expect_false(res$has_cookie('test'))
 })

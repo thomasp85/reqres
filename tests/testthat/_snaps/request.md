@@ -24,3 +24,11 @@
       Error:
       ! Response can only be assigned once
 
+# body can be parsed
+
+    Code
+      req$parse(xml = parse_xml())
+    Condition
+      Error in `req$parse()`:
+      Unsupported Media Type
+

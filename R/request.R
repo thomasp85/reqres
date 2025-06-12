@@ -168,7 +168,7 @@ Request <- R6Class('Request',
     #' @param types A vector of types
     #'
     accepts = function(types) {
-      accept <- private$format_mimes(self$headers$Accept)
+      accept <- private$format_mimes(self$headers$accept)
       if (is.null(accept)) return(types[1])
       full_types <- private$format_types(types)
       ind <- private$get_format_spec(full_types, accept)
@@ -180,7 +180,7 @@ Request <- R6Class('Request',
     #' @param charsets A vector of charsets
     #'
     accepts_charsets = function(charsets) {
-      accept <- private$format_charsets(self$headers$Accept_Charset)
+      accept <- private$format_charsets(self$headers$accept_charset)
       if (is.null(accept)) return(charsets[1])
       ind <- private$get_charset_spec(tolower(charsets), accept)
       if (is.null(ind)) return(NULL)
@@ -205,7 +205,7 @@ Request <- R6Class('Request',
     #' @param language A vector of languages
     #'
     accepts_language = function(language) {
-      accept <- private$format_languages(self$headers$Accept_Language)
+      accept <- private$format_languages(self$headers$accept_language)
       if (is.null(accept)) return(language[1])
       ind <- private$get_language_spec(tolower(language), accept)
       if (is.null(ind)) return(NULL)
@@ -258,9 +258,9 @@ Request <- R6Class('Request',
     #' See [parsers] for a list of pre-supplied parsers. Parsers are either
     #' supplied in a named list or as named arguments to the parse method. The
     #' names should correspond to mime types or known file extensions. If
-    #' `autofail = TRUE` the response will be set with the correct error code if
-    #' parsing fails. `parse()` returns `TRUE` if parsing was successful and
-    #' `FALSE` if not
+    #' `autofail = TRUE` the response will throw an appropriate abort code if
+    #' failing to parse the body. `parse()` returns `TRUE` if parsing was
+    #' successful and `FALSE` if not
     #' @param ... A named set of parser functions
     #' @param autofail Automatically populate the response if parsing fails
     #'
@@ -434,6 +434,9 @@ Request <- R6Class('Request',
     #' whose return value is returned by the promise
     #' @param ... ignored
     #'
+    #' @importFrom mirai mirai
+    #' @importFrom promises then
+    #'
     forward = function(url, query = NULL, method = NULL, headers = NULL, body = NULL, return = NULL, ...) {
       return_fun <- return %||% identity
       if (!is.null(query) && substr(query, 1, 1) != "?") {
@@ -576,8 +579,8 @@ Request <- R6Class('Request',
     #' instead. *Immutable*
     #'
     host = function() {
-      if (self$trust && !is.null(self$headers$X_Forwarded_Host)) {
-        self$headers$X_Forwarded_Host
+      if (self$trust && !is.null(self$headers$x_forwarded_host)) {
+        self$headers$x_forwarded_host
       } else {
         private$HOST
       }
@@ -587,8 +590,8 @@ Request <- R6Class('Request',
     #' `X-Forwarded-For` header. *Immutable*
     #'
     ip = function() {
-      if (self$trust && !is.null(self$headers$X_Forwarded_For)) {
-        self$headers$X_Forwarded_For[1]
+      if (self$trust && !is.null(self$headers$x_forwarded_for)) {
+        self$headers$x_forwarded_for[1]
       } else {
         private$IP
       }
@@ -598,8 +601,8 @@ Request <- R6Class('Request',
     #' vector. *Immutable*
     #'
     ips = function() {
-      if (self$trust && !is.null(self$headers$X_Forwarded_For)) {
-        self$headers$X_Forwarded_For
+      if (self$trust && !is.null(self$headers$x_forwarded_for)) {
+        self$headers$x_forwarded_for
       } else {
         character(0)
       }
@@ -609,8 +612,8 @@ Request <- R6Class('Request',
     #' *Immutable*
     #'
     protocol = function() {
-      if (self$trust && !is.null(self$headers$X_Forwarded_Proto)) {
-        self$headers$X_Forwarded_Proto
+      if (self$trust && !is.null(self$headers$x_forwarded_proto)) {
+        self$headers$x_forwarded_proto
       } else {
         private$PROTOCOL
       }
@@ -762,8 +765,8 @@ Request <- R6Class('Request',
       }
     },
     parse_cookies = function() {
-      if (is.null(self$headers$Cookie)) return(list())
-      cookies <- stri_trim_both(stri_split_regex(self$headers$Cookie, ";(?=\\s*[a-zA-Z0-9!#$%&'()*+-.\\/:<>?@\\[\\]^_`{|}~]{1,})")[[1]])
+      if (is.null(self$headers$cookie)) return(list())
+      cookies <- stri_trim_both(stri_split_regex(self$headers$cookie, ";(?=\\s*[a-zA-Z0-9!#$%&'()*+-.\\/:<>?@\\[\\]^_`{|}~]{1,})")[[1]])
       cookies <- unlist(stri_split_fixed(cookies, '=', n = 2))
       structure(
         as.list(url_decode(cookies[c(FALSE, TRUE)])),
