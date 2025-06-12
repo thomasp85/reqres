@@ -155,7 +155,7 @@ Response <- R6Class('Response',
     #'
     set_header = function(name, value) {
       check_string(name)
-      assign(as.character(name), as.character(value), envir = private$HEADERS)
+      assign(tolower(as.character(name)), as.character(value), envir = private$HEADERS)
       invisible(self)
     },
     #' @description Returns the header(s) given by `name`
@@ -163,7 +163,7 @@ Response <- R6Class('Response',
     #'
     get_header = function(name) {
       check_string(name)
-      private$HEADERS[[name]]
+      private$HEADERS[[tolower(name)]]
     },
     #' @description Removes all headers given by `name`
     #' @param name The name of the header to remove
@@ -173,7 +173,7 @@ Response <- R6Class('Response',
       if (!self$has_header(name)) {
         cli::cli_warn('No header named {.val {name}}')
       } else {
-        rm(list = name, envir = private$HEADERS)
+        rm(list = tolower(name), envir = private$HEADERS)
       }
       invisible(self)
     },
@@ -182,7 +182,7 @@ Response <- R6Class('Response',
     #'
     has_header = function(name) {
       check_string(name)
-      !is.null(private$HEADERS[[name]])
+      !is.null(private$HEADERS[[tolower(name)]])
     },
     #' @description Adds an additional header given by `name` with the value
     #' given by `value`. If the header does not exist yet it will be created.
@@ -780,8 +780,8 @@ Response <- R6Class('Response',
 
     format_headers = function() {
       headers <- as.list(private$HEADERS)
-      if (is.null(headers[['Content-Type']])) {
-        headers[['Content-Type']] <- if (is.raw(private$BODY)) {
+      if (is.null(headers[['content-type']])) {
+        headers[['content-type']] <- if (is.raw(private$BODY)) {
           'application/octet-stream'
         } else {
           'text/plain'
@@ -806,7 +806,7 @@ Response <- R6Class('Response',
       cookies <- c(paste0(names(cookies), unlist(cookies)), session_cookie)
       c(headers, structure(
         as.list(cookies),
-        names = rep('Set-Cookie', length(cookies))
+        names = rep('set-cookie', length(cookies))
       ))
     },
     format_body = function() {

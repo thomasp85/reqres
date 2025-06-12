@@ -175,7 +175,9 @@ split_headers <- function(headers) {
 }
 cat_headers <- function(headers) {
   if (length(headers) == 0) return()
-  names(headers) <- gsub('_', '-', names(headers))
+  names(headers) <- gsub("(^|-)([[:alpha:]])", "\\1\\U\\2",
+                         gsub('_', '-', names(headers)),
+                         perl = TRUE)
   headers <- lapply(headers, paste, collapse = ', ')
   for(i in names(headers)) {
     cat(i, ': ', headers[[i]], '\n', sep = '')

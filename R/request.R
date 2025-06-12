@@ -237,7 +237,7 @@ Request <- R6Class('Request',
     #' @param name The name of the header to get
     #'
     get_header = function(name) {
-      self$headers[[gsub('-', '_', name)]]
+      self$headers[[tolower(gsub('-', '_', name))]]
     },
     #' @description Creates a new `Response` object from the request
     #'
@@ -764,9 +764,7 @@ Request <- R6Class('Request',
           stringi::stri_sub_all(rook[[head]], splits[c(TRUE, FALSE)], splits[c(FALSE, TRUE)])[[1]]
         }
       })
-      names(ans) <- gsub("(^|_)([[:alpha:]])", "\\1\\U\\2",
-                         tolower(sub('^HTTP_', '', headers)),
-                         perl = TRUE)
+      names(ans) <- tolower(sub('^HTTP_', '', headers))
       ans
     },
     format_mimes = function(type) {
