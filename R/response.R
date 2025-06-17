@@ -317,7 +317,13 @@ Response <- R6Class('Response',
       if (!is.null(instance)) {
         private$BODY$instance <- instance
       }
-      self$format(json = format_json(auto_unbox = TRUE), xml = format_xml(), default = "json")
+      self$format(
+        json = format_json(auto_unbox = TRUE),
+        # We add this so that browser client doesn't end up defaulting to xml which initiates a download
+        html = format_json(auto_unbox = TRUE),
+        xml = format_xml(),
+        default = "json"
+      )
       if (self$type == "application/json") self$type <- "application/problem+json"
       if (self$type == "application/xml") self$type <- "application/problem+xml"
       invisible(self)
