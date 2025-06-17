@@ -164,8 +164,8 @@ res_headers <- c(
   'Warning'
 )
 split_headers <- function(headers) {
-  request <- names(headers) %in% req_headers
-  response <- names(headers) %in% res_headers
+  request <- names(headers) %in% tolower(req_headers)
+  response <- names(headers) %in% tolower(res_headers)
   entity <- !request & !response
   list(
     request = headers[request],
