@@ -450,10 +450,10 @@ Response <- R6Class('Response',
       }
       if (is.null(format)) {
         if (autofail) {
-          types <- self$request$format_types(names(formatters))
+          types <- format_types(names(formatters))$name
           n <- length(types)
           if (n > 1) {
-            types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or", types[n])
+            types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or ", types[n])
           }
           detail <- paste0("Only ", types, " content type", if (n > 1) "s" else "", " supported.")
           abort_not_acceptable(detail = detail)
@@ -499,10 +499,10 @@ Response <- R6Class('Response',
       }
       if (is.null(format)) {
         if (autofail) {
-          types <- self$request$format_types(names(formatters))
+          types <- format_types(names(formatters))$name
           n <- length(types)
           if (n > 1) {
-            types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or", types[n])
+            types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or ", types[n])
           }
           detail <- paste0("Only ", types, " content type", if (n > 1) "s" else "", " supported.")
           abort_not_acceptable(detail)

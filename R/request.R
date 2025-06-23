@@ -843,12 +843,7 @@ Request <- R6Class('Request',
       lang
     },
     format_types = function(formats) {
-      ext <- !grepl('/', formats)
-      format_ind <- rep(NA_integer_, length(formats))
-      formats[ext] <- sub('^[.]', '', formats[ext])
-      format_ind[ext] <- mimes_ext$index[match(formats[ext], mimes_ext$ext)]
-      format_ind[!ext] <- match(formats[!ext], mimes$name)
-      mimes[na.omit(format_ind), ]
+      format_types(formats)
     },
     get_format_spec = function(format, accepts) {
       f_split <- strsplit(format$name, '/')
@@ -1026,3 +1021,12 @@ excluded_headers <- c(
   "keep-alive",
   "upgrade"
 )
+
+format_types <- function(formats) {
+  ext <- !grepl('/', formats)
+  format_ind <- rep(NA_integer_, length(formats))
+  formats[ext] <- sub('^[.]', '', formats[ext])
+  format_ind[ext] <- mimes_ext$index[match(formats[ext], mimes_ext$ext)]
+  format_ind[!ext] <- match(formats[!ext], mimes$name)
+  mimes[na.omit(format_ind), ]
+}
