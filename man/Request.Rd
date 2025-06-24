@@ -213,7 +213,8 @@ Create a new request from a rook object
   trust = FALSE,
   key = NULL,
   session_cookie = NULL,
-  compression_limit = 0
+  compression_limit = 0,
+  query_delim = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -238,6 +239,8 @@ session cookies are properly encrypted}
 
 \item{\code{compression_limit}}{The size threshold in bytes for trying to
 compress the response body (it is still dependant on content negotiation)}
+
+\item{\code{query_delim}}{The delimiter to split array-type query arguments by}
 }
 \if{html}{\out{</div>}}
 }
@@ -432,9 +435,9 @@ on the \code{Content-Encoding} header prior to passing it on to the parser.
 See \link{parsers} for a list of pre-supplied parsers. Parsers are either
 supplied in a named list or as named arguments to the parse method. The
 names should correspond to mime types or known file extensions. If
-\code{autofail = TRUE} the response will be set with the correct error code if
-parsing fails. \code{parse()} returns \code{TRUE} if parsing was successful and
-\code{FALSE} if not
+\code{autofail = TRUE} the response will throw an appropriate abort code if
+failing to parse the body. \code{parse()} returns \code{TRUE} if parsing was
+successful and \code{FALSE} if not
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Request$parse(..., autofail = TRUE)}\if{html}{\out{</div>}}
 }

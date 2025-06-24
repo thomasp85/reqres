@@ -83,8 +83,9 @@ Request <- R6Class('Request',
     #' session cookies are properly encrypted
     #' @param compression_limit The size threshold in bytes for trying to
     #' compress the response body (it is still dependant on content negotiation)
+    #' @param query_delim The delimiter to split array-type query arguments by
     #'
-    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0) {
+    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0, query_delim = NULL) {
       self$trust <- trust
       private$ORIGIN <- rook
       private$METHOD <- tolower(rook$REQUEST_METHOD)
@@ -122,6 +123,8 @@ Request <- R6Class('Request',
       private$PROTOCOL <- rook$rook.url_scheme
       private$ROOT <- rook$SCRIPT_NAME
       private$PATH <- rook$PATH_INFO
+      check_string(query_delim, allow_null = TRUE)
+      private$QUERYDELIM <- query_delim
       private$QUERYSTRING <- rook$QUERY_STRING
       if (private$QUERYSTRING != '') {
         private$QUERYSTRING <- paste0('?', sub('^\\?', '', private$QUERYSTRING))
