@@ -23,7 +23,7 @@ a POST or PUT body with \code{Content-Type} set to
 }
 \examples{
 # Using delimiter to provide array
-query_parser("?name=Thomas\%20Lin\%20Pedersen&numbers=1 2 3", delim = " ")
+query_parser("?name=Thomas+Lin+Pedersen&numbers=1\%202\%203", delim = " ")
 
 # No delimiter (exploded form)
 query_parser("?name=Thomas\%20Lin\%20Pedersen&numbers=1&numbers=2&numbers=3")

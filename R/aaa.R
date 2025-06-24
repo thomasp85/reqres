@@ -48,14 +48,15 @@ from_http_date <- function(time) {
 #'
 #' @examples
 #' # Using delimiter to provide array
-#' query_parser("?name=Thomas%20Lin%20Pedersen&numbers=1 2 3", delim = " ")
+#' query_parser("?name=Thomas+Lin+Pedersen&numbers=1%202%203", delim = " ")
 #'
 #' # No delimiter (exploded form)
 #' query_parser("?name=Thomas%20Lin%20Pedersen&numbers=1&numbers=2&numbers=3")
 #'
 query_parser <- function(query = NULL, delim = NULL) {
-  check_string(query, allow_null = TRUE)
   if (is.null(query) || query == '') return(list())
+  if (isTRUE(delim == " ")) delim <- "%20"
+  check_string(query, allow_null = TRUE)
   query <- stringi::stri_replace_first_regex(query, '^\\?', '')
   query <- stringi::stri_split_fixed(query, '&')[[1]]
   query <- stringi::stri_split_fixed(query, '=')
