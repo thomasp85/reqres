@@ -296,7 +296,8 @@ frameworks to signal that the request should not be altered in some way</p></dd>
 <span>  trust <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  key <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  session_cookie <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  compression_limit <span class="op">=</span> <span class="fl">0</span></span>
+<span>  compression_limit <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  query_delim <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -329,6 +330,10 @@ session cookies are properly encrypted</p></dd>
 <dt><code>compression_limit</code></dt>
 <dd><p>The size threshold in bytes for trying to
 compress the response body (it is still dependant on content negotiation)</p></dd>
+
+
+<dt><code>query_delim</code></dt>
+<dd><p>The delimiter to split array-type query arguments by</p></dd>
 
 
 </dl><p></p></div>
@@ -511,9 +516,9 @@ on the <code>Content-Encoding</code> header prior to passing it on to the parser
 See <a href="parsers.html">parsers</a> for a list of pre-supplied parsers. Parsers are either
 supplied in a named list or as named arguments to the parse method. The
 names should correspond to mime types or known file extensions. If
-<code>autofail = TRUE</code> the response will be set with the correct error code if
-parsing fails. <code><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse()</a></code> returns <code>TRUE</code> if parsing was successful and
-<code>FALSE</code> if not</p><div class="section">
+<code>autofail = TRUE</code> the response will throw an appropriate abort code if
+failing to parse the body. <code><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse()</a></code> returns <code>TRUE</code> if parsing was
+successful and <code>FALSE</code> if not</p><div class="section">
 <h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">parse</span><span class="op">(</span><span class="va">...</span>, autofail <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -725,8 +730,8 @@ whose return value is returned by the promise</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1168899 62.5    2206445 117.9  2206445 117.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2176797 16.7    8388608  64.0  8388391  64.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1168985 62.5    2206651 117.9  2206651 117.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2176953 16.7    8388608  64.0  8388602  64.0</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
