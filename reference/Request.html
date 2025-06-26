@@ -260,6 +260,11 @@ result in any different behaviour in the request but can be used by
 frameworks to signal that the request should not be altered in some way</p></dd>
 
 
+<dt><code>response_headers</code></dt>
+<dd><p>The list of headers the response is prepopulated
+with <em>Immutable</em></p></dd>
+
+
 </dl><p></p></div>
     </div>
     <div class="section level2">
@@ -297,7 +302,8 @@ frameworks to signal that the request should not be altered in some way</p></dd>
 <span>  key <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  session_cookie <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  compression_limit <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  query_delim <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  query_delim <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  response_headers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -334,6 +340,12 @@ compress the response body (it is still dependant on content negotiation)</p></d
 
 <dt><code>query_delim</code></dt>
 <dd><p>The delimiter to split array-type query arguments by</p></dd>
+
+
+<dt><code>response_headers</code></dt>
+<dd><p>A list of headers the response should be
+prepopulated with. All names must be in lower case and all elements must
+be character vectors. This is not checked but assumed</p></dd>
 
 
 </dl><p></p></div>
@@ -730,8 +742,8 @@ whose return value is returned by the promise</p></dd>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1168985 62.5    2206651 117.9  2206651 117.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2176953 16.7    8388608  64.0  8388602  64.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1169072 62.5    2207111 117.9  2207111 117.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2176943 16.7    8388608  64.0  8388488  64.0</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
