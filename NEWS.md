@@ -51,7 +51,9 @@
 * Add functionality for resetting and reusing objects to avoid construction
   overhead
 * Added `Request$forward()` to asynchronously forward a request to another url
-  and populate the `Response` object with the response 
+  and populate the `Response` object with the response
+* `Request$new()` now takes a `response_headers` argument that can be set to a
+  list of headers the response should be prepopulated with
 
 # reqres 0.2.5
 

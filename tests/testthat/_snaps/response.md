@@ -6,30 +6,6 @@
       Error in `initialize()`:
       ! A response has already been created for this request. Access it using the response field
 
-# headers can be get, set, appended, and removed
-
-    Code
-      res$remove_header("Date")
-    Condition
-      Warning:
-      No header named "Date"
-
-# data can be get, set, and removed
-
-    Code
-      res$remove_data("test")
-    Condition
-      Warning:
-      No data named "test"
-
-# cookies can be get, set, and removed
-
-    Code
-      res$remove_cookie("test")
-    Condition
-      Warning:
-      No cookie named "test"
-
 # files are added correctly
 
     Code

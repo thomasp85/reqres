@@ -128,10 +128,10 @@ Response <- R6Class('Response',
       }
       private$REQUEST = request
       private$STATUS = 404L
-      private$HEADERS = new.env(parent = emptyenv())
-      private$COOKIES = new.env(parent = emptyenv())
+      private$HEADERS = request$response_headers
+      private$COOKIES = list()
       private$BODY = ''
-      private$DATA = new.env(parent = emptyenv())
+      private$DATA = list()
       self$type <- 'text/plain'
       request$response <- self
     },
@@ -155,7 +155,7 @@ Response <- R6Class('Response',
     #'
     set_header = function(name, value) {
       check_string(name)
-      assign(tolower(as.character(name)), as.character(value), envir = private$HEADERS)
+      private$HEADERS[[tolower(name)]] <- as.character(value)
       invisible(self)
     },
     #' @description Returns the header(s) given by `name`
@@ -170,11 +170,7 @@ Response <- R6Class('Response',
     #'
     remove_header = function(name) {
       check_string(name)
-      if (!self$has_header(name)) {
-        cli::cli_warn('No header named {.val {name}}')
-      } else {
-        rm(list = tolower(name), envir = private$HEADERS)
-      }
+      private$HEADERS[tolower(name)] <- NULL
       invisible(self)
     },
     #' @description Test for the existence of any header given by `name`
@@ -190,10 +186,9 @@ Response <- R6Class('Response',
     #' @param value The value to assign to the header
     #'
     append_header = function(name, value) {
-      if (self$has_header(name)) {
-        value <- unique(c(self$get_header(name), as.character(value)))
-      }
-      self$set_header(name, value)
+      check_string(name)
+      name <- tolower(name)
+      private$HEADERS[[name]] <- c(private$HEADERS[[name]], value)
       invisible(self)
     },
     #' @description Adds `value` to the internal data store and stores it with
@@ -203,7 +198,7 @@ Response <- R6Class('Response',
     #'
     set_data = function(key, value) {
       check_string(key)
-      assign(key, value, envir = private$DATA)
+      private$DATA[[key]] <- value
       invisible(self)
     },
     #' @description Retrieves the data stored under `key` in the internal data
@@ -220,24 +215,19 @@ Response <- R6Class('Response',
     #'
     remove_data = function(key) {
       check_string(key)
-      if (!self$has_data(key)) {
-        cli::cli_warn('No data named {.val {key}}')
-      } else {
-        rm(list = key, envir = private$DATA)
-      }
+      private$DATA[[key]] <- NULL
       invisible(self)
     },
     #' @description Queries whether the data store has an entry given by `key`
     #' @param key The identifier of the data you wish to look for
     #'
     has_data = function(key) {
-      !is.null(self$get_data(key))
+      !is.null(private$DATA[[key]])
     },
     #' @description Set the `Date` header to the current time
     #'
     timestamp = function() {
-      time <- Sys.time()
-      self$set_header('Date', current_time())
+      private$HEADERS[["date"]] <- current_time()
       invisible(self)
     },
     #' @description Sets the body to the file given by `file` and marks the
@@ -260,10 +250,10 @@ Response <- R6Class('Response',
     #' @param filename Optional filename as hint for the client
     #'
     as_download = function(filename = NULL) {
-      if (is.null(filename)) {
-        self$set_header('Content-Disposition', 'attachment')
+      private$HEADERS[["content-disposition"]] <- if (is.null(filename)) {
+        "attachment"
       } else {
-        self$set_header('Content-Disposition', paste0('attachment; filename="', filename, '"'))
+        paste0('attachment; filename="', filename, '"')
       }
       invisible(self)
     },
@@ -275,7 +265,7 @@ Response <- R6Class('Response',
     #'
     status_with_text = function(code, clear_headers = FALSE) {
       if (clear_headers) {
-        private$HEADERS <- new.env(parent = emptyenv())
+        private$HEADERS <- list()
       }
       self$status <- code
       body <- status_phrase(code)
@@ -305,7 +295,7 @@ Response <- R6Class('Response',
     #'
     problem = function(code, detail, title = NULL, type = NULL, instance = NULL, clear_headers = TRUE) {
       if (clear_headers) {
-        private$HEADERS <- new.env(parent = emptyenv())
+        private$HEADERS <- list()
       }
       self$status <- code
       private$BODY <- list(
@@ -353,8 +343,7 @@ Response <- R6Class('Response',
       } else {
         if (encode) value <- url_encode(value)
         if (grepl('(^__Secure-)|(^__Host-)', name)) secure <- TRUE
-        cookie <- cookie(value, expires, http_only, max_age, path, secure, same_site)
-        assign(as.character(name), cookie, envir = private$COOKIES)
+        private$COOKIES[[name]] <- cookie(value, expires, http_only, max_age, path, secure, same_site)
       }
       invisible(self)
     },
@@ -363,11 +352,7 @@ Response <- R6Class('Response',
     #'
     remove_cookie = function(name) {
       check_string(name)
-      if (!self$has_cookie(name)) {
-        cli::cli_warn('No cookie named {.val {name}}')
-      } else {
-        rm(list = name, envir = private$COOKIES)
-      }
+      private$COOKIES[[name]] <- NULL
       invisible(self)
     },
     #' @description Request the client to delete the given cookie
@@ -377,7 +362,7 @@ Response <- R6Class('Response',
       check_string(name)
       if (!is.null(private$REQUEST$cookies[[name]])) {
         secure <- grepl('(^__Secure-)|(^__Host-)', name)
-        assign(as.character(name), if (secure) secure_cookie_clearer else cookie_clearer, envir = private$COOKIES)
+        private$COOKIES[[name]] <- if (secure) secure_cookie_clearer else cookie_clearer
       }
       invisible(self)
     },
@@ -642,10 +627,10 @@ Response <- R6Class('Response',
     #' directly
     reset = function() {
       private$STATUS = 404L
-      private$HEADERS = new.env(parent = emptyenv())
-      private$COOKIES = new.env(parent = emptyenv())
+      private$HEADERS = list()
+      private$COOKIES = list()
       private$BODY = ''
-      private$DATA = new.env(parent = emptyenv())
+      private$DATA = list()
       private$FORMATTER <- NULL
       private$IS_FORMATTED <- FALSE
       self$type <- 'text/plain'

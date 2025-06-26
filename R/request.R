@@ -84,8 +84,11 @@ Request <- R6Class('Request',
     #' @param compression_limit The size threshold in bytes for trying to
     #' compress the response body (it is still dependant on content negotiation)
     #' @param query_delim The delimiter to split array-type query arguments by
+    #' @param response_headers A list of headers the response should be
+    #' prepopulated with. All names must be in lower case and all elements must
+    #' be character vectors. This is not checked but assumed
     #'
-    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0, query_delim = NULL) {
+    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0, query_delim = NULL, response_headers = list()) {
       self$trust <- trust
       private$ORIGIN <- rook
       private$METHOD <- tolower(rook$REQUEST_METHOD)
@@ -135,6 +138,15 @@ Request <- R6Class('Request',
       delayedAssign("COOKIES", private$parse_cookies(), assign.env = private)
 
       delayedAssign("SESSION", private$get_session_cookie(), assign.env = private)
+
+      if (!(is_bare_list(response_headers) && is_named2(response_headers))) {
+        stop_input_type(response_headers, "a named list")
+      }
+      private$RESPONSE_HEADERS <- response_headers
+      if (!is.null(private$RESPONSE)) {
+        # This is a bit dirty to reach into the private env of the response
+        private$RESPONSE$.__enclos_env__$private$HEADERS <- response_headers
+      }
     },
     #' @description Pretty printing of the object
     #' @param ... ignored
@@ -718,6 +730,12 @@ Request <- R6Class('Request',
       if (missing(value)) return(private$LOCKED)
       check_bool(value)
       private$LOCKED <- value
+    },
+    #' @field response_headers The list of headers the response is prepopulated
+    #' with *Immutable*
+    #'
+    response_headers = function() {
+      private$RESPONSE_HEADERS
     }
   ),
   private = list(
@@ -740,6 +758,7 @@ Request <- R6Class('Request',
     SESSION_COOKIE_SETTINGS = NULL,
     HAS_SESSION_COOKIE = FALSE,
     COMPRESSION_LIMIT = 0,
+    RESPONSE_HEADERS = NULL,
     RESPONSE = NULL,
     LOCKED = FALSE,
 
@@ -1031,5 +1050,5 @@ format_types <- function(formats) {
   formats[ext] <- sub('^[.]', '', formats[ext])
   format_ind[ext] <- mimes_ext$index[match(formats[ext], mimes_ext$ext)]
   format_ind[!ext] <- match(formats[!ext], mimes$name)
-  mimes[na.omit(format_ind), ]
+  mimes[format_ind[!is.na(format_ind)], ]
 }

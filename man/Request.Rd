@@ -175,6 +175,9 @@ it is accessible through this field. \emph{Immutable}}
 \item{\code{locked}}{Set the \code{locked} status on the request. This flag does not
 result in any different behaviour in the request but can be used by
 frameworks to signal that the request should not be altered in some way}
+
+\item{\code{response_headers}}{The list of headers the response is prepopulated
+with \emph{Immutable}}
 }
 \if{html}{\out{</div>}}
 }
@@ -214,7 +217,8 @@ Create a new request from a rook object
   key = NULL,
   session_cookie = NULL,
   compression_limit = 0,
-  query_delim = NULL
+  query_delim = NULL,
+  response_headers = list()
 )}\if{html}{\out{</div>}}
 }
 
@@ -241,6 +245,10 @@ session cookies are properly encrypted}
 compress the response body (it is still dependant on content negotiation)}
 
 \item{\code{query_delim}}{The delimiter to split array-type query arguments by}
+
+\item{\code{response_headers}}{A list of headers the response should be
+prepopulated with. All names must be in lower case and all elements must
+be character vectors. This is not checked but assumed}
 }
 \if{html}{\out{</div>}}
 }

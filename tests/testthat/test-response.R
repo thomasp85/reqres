@@ -41,7 +41,6 @@ test_that('headers can be get, set, appended, and removed', {
   res$remove_header('Date')
   expect_false(res$has_header('Date'))
   expect_null(res$get_header('Date'))
-  expect_snapshot(res$remove_header('Date'))
 
   res$append_header('Content-Encoding', 'gzip')
   expect_equal(res$get_header('Content-Encoding'), 'gzip')
@@ -62,7 +61,6 @@ test_that('data can be get, set, and removed', {
   res$remove_data('test')
   expect_false(res$has_data('test'))
   expect_null(res$get_data('test'))
-  expect_snapshot(res$remove_data('test'))
 })
 
 test_that('cookies can be get, set, and removed', {
@@ -70,7 +68,6 @@ test_that('cookies can be get, set, and removed', {
   res <- Response$new(req)
 
   expect_false(res$has_cookie('test'))
-  expect_snapshot(res$remove_cookie('test'))
 
   exp <- Sys.Date() + 1000
   res$set_cookie('test', 'this is a test', TRUE, expires = exp, http_only = TRUE, max_age = 1000, path = '/test', secure = TRUE, same_site = 'Lax')
