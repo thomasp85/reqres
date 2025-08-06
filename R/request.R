@@ -254,6 +254,12 @@ Request <- R6Class('Request',
     get_header = function(name) {
       self$headers[[tolower(gsub('-', '_', name))]]
     },
+    #' @description Test for the existence of any header given by `name`
+    #' @param name The name of the header to look for
+    #'
+    has_header = function(name) {
+      !is.null(self$headers[[tolower(gsub('-', '_', name))]])
+    },
     #' @description Creates a new `Response` object from the request
     #'
     respond = function() {
