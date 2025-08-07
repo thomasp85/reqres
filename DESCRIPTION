@@ -41,7 +41,8 @@ Suggests:
     fiery,
     testthat (>= 3.0.0),
     covr,
-    keyring
+    keyring,
+    shiny
 URL: https://reqres.data-imaginist.com, https://github.com/thomasp85/reqres#reqres
 BugReports: https://github.com/thomasp85/reqres/issues
 Config/testthat/edition: 3
