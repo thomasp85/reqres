@@ -3,7 +3,7 @@ problem_abort <- function(code) {
   function(detail, instance = NULL, ..., message = detail, call = caller_env()) {
     check_string(detail)
     if (!inherits(detail, "AsIs")) detail <- cli::format_inline(detail, .envir = call)
-    if (!inherits(message, "AsIs")) message <- vapply(message, cli::format_inline, character(1), .envir = call)
+    if (!inherits(message, "AsIs")) message <- vapply(message, cli::format_inline, character(1), .envir = call, USE.NAMES = FALSE)
     err <- rlang::error_cnd(
       class = "reqres_problem",
       status = code,
@@ -46,7 +46,7 @@ problem_abort <- function(code) {
 abort_http_problem <- function(code, detail, title = NULL, type = NULL, instance = NULL, ..., message = detail, call = caller_env()) {
   check_string(detail)
   if (!inherits(detail, "AsIs")) detail <- cli::format_inline(detail, .envir = call)
-  if (!inherits(message, "AsIs")) message <- vapply(message, cli::format_inline, character(1), .envir = call)
+  if (!inherits(message, "AsIs")) message <- vapply(message, cli::format_inline, character(1), .envir = call, USE.NAMES = FALSE)
   err <- rlang::error_cnd(
     class = "reqres_problem",
     status = code,
@@ -69,7 +69,7 @@ abort_status <- function(code, message = status_phrase(code), ..., call = caller
     class = "reqres_problem",
     status = code,
     call = call,
-    message = vapply(message, cli::format_inline, character(1), .envir = call),
+    message = vapply(message, cli::format_inline, character(1), .envir = call, USE.NAMES = FALSE),
     ...,
     use_cli_format = TRUE
   )

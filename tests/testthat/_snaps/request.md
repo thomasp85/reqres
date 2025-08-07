@@ -30,5 +30,13 @@
       req$parse(xml = parse_xml())
     Condition
       Error in `req$parse()`:
-      Unsupported Media Type
+      ! Unsupported Media Type
+
+# as.Request and is.Request work correctly
+
+    Code
+      as.Request(non_rook_env)
+    Condition
+      Error in `as.Request()`:
+      ! `x` must be a Rook object
 

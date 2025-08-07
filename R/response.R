@@ -314,8 +314,8 @@ Response <- R6Class('Response',
         xml = format_xml(),
         default = "json"
       )
-      if (self$type == "application/json") self$type <- "application/problem+json"
-      if (self$type == "application/xml") self$type <- "application/problem+xml"
+      if (isTRUE(self$type == "application/json")) self$type <- "application/problem+json"
+      if (isTRUE(self$type == "application/xml")) self$type <- "application/problem+xml"
       invisible(self)
     },
     #' @description Sets a cookie on the response. See

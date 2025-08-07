@@ -148,3 +148,235 @@ test_that("encode and decode works", {
 
   expect_true(encoded != encoded_key)
 })
+
+test_that("has_header works correctly", {
+  headers <- list(
+    Content_Type = 'application/json',
+    Accept = 'application/json'
+  )
+  rook <- fiery::fake_request(
+    url = 'http://127.0.0.1:80/test',
+    content = '{"name":"test"}',
+    headers = headers
+  )
+
+  req <- Request$new(rook)
+
+  expect_true(req$has_header("Content-Type"))
+  expect_true(req$has_header("Accept"))
+  expect_false(req$has_header("X-Custom-Header"))
+})
+
+test_that("accepts_charsets works correctly", {
+  rook <- fiery::fake_request(
+    url = 'http://127.0.0.1:80/test',
+    headers = list(
+      Accept_Charset = 'utf-8, iso-8859-1;q=0.5'
+    )
+  )
+
+  req <- Request$new(rook)
+
+  expect_equal(req$accepts_charsets(c("utf-8", "iso-8859-1")), "utf-8")
+  expect_equal(req$accepts_charsets(c("iso-8859-1", "ascii")), "iso-8859-1")
+  expect_null(req$accepts_charsets(character(0)))
+})
+
+test_that("accepts_language works correctly", {
+
+  rook <- fiery::fake_request(
+    url = 'http://127.0.0.1:80/test',
+    headers = list(
+      Accept_Language = 'en-US, fr-FR;q=0.8, de;q=0.5'
+    )
+  )
+
+  req <- Request$new(rook)
+
+  expect_equal(req$accepts_language(c("en-US", "fr-FR")), "en-US")
+  expect_equal(req$accepts_language(c("fr-FR", "de")), "fr-FR")
+  expect_equal(req$accepts_language(c("en", "fr")), "en") # Matches main language part
+  expect_null(req$accepts_language(c("es", "it"))) # No match
+})
+
+test_that("encode_string and decode_string work correctly without key", {
+  rook <- fiery::fake_request('http://example.com')
+  req <- Request$new(rook)
+
+  test_string <- "This is a test string"
+  encoded <- req$encode_string(test_string)
+  decoded <- req$decode_string(encoded)
+
+  expect_equal(decoded, test_string)
+  expect_true(nchar(encoded) > 0)
+  expect_false(encoded == test_string)
+
+  # Test empty string handling
+  expect_equal(req$encode_string(""), "")
+  expect_equal(req$decode_string(""), "")
+})
+
+test_that("encode_string and decode_string work with key", {
+  skip_if_not_installed("sodium")
+
+  # Generate a random key for testing
+  key <- sodium::bin2hex(sodium::random(32))
+
+  rook <- fiery::fake_request('http://example.com')
+  req <- Request$new(rook, key = key)
+
+  test_string <- "This is a test string"
+  encoded <- req$encode_string(test_string)
+  decoded <- req$decode_string(encoded)
+
+  expect_equal(decoded, test_string)
+  expect_true(grepl("_", encoded)) # Should contain the delimiter for nonce
+})
+
+test_that("query_delim setter works correctly", {
+  rook <- fiery::fake_request(
+    url = 'http://example.com/test?items=1,2,3'
+  )
+
+  req <- Request$new(rook)
+  expect_null(req$query_delim)
+  expect_equal(req$query$items, "1,2,3")
+
+  # Set delimiter and verify query is re-parsed
+  req$query_delim <- ","
+  expect_equal(req$query$items, c("1", "2", "3"))
+
+  # Change delimiter
+  req$query_delim <- "|"
+  expect_equal(req$query$items, "1,2,3") # Back to original since delimiter doesn't match
+})
+
+test_that("clear works correctly", {
+  rook <- fiery::fake_request(
+    url = 'http://127.0.0.1:80/test?id=123',
+    content = '{"name":"test"}',
+    headers = list(Content_Type = "application/json")
+  )
+
+  req <- Request$new(rook)
+
+  # Modify some properties
+  req$parse(json = parse_json())
+  expect_equal(req$body$name, "test")
+
+  # Reset the request
+  req$clear()
+
+  # Verify the reset worked
+  expect_null(req$body)
+
+  req$initialize(rook)
+  # Verify that we can parse again
+  req$parse(json = parse_json())
+  expect_equal(req$body$name, "test")
+})
+
+test_that("as.Request and is.Request work correctly", {
+  rook <- fiery::fake_request('http://example.com')
+
+  # Test coercion from rook environment
+  req1 <- as.Request(rook)
+  expect_true(is.Request(req1))
+
+  # Test that coercion from Request is identity
+  req2 <- as.Request(req1)
+  expect_identical(req1, req2)
+
+  # Test non-Request object
+  expect_false(is.Request(list()))
+
+  # Test error on non-Rook environment
+  non_rook_env <- new.env()
+  expect_snapshot(as.Request(non_rook_env), error = TRUE)
+})
+
+test_that("as_message prints request details correctly", {
+  headers <- list(
+    Content_Type = 'application/json',
+    Accept = 'application/json'
+  )
+  rook <- fiery::fake_request(
+    url = 'http://127.0.0.1:80/test?id=123',
+    content = '{"name":"test"}',
+    headers = headers
+  )
+
+  req <- Request$new(rook)
+
+  # Capture output from as_message
+  output <- capture.output(req$as_message())
+
+  # Check for expected elements in the output
+  expect_match(output[1], "GET /test?id=123 HTTP/1.1", fixed = TRUE)
+  expect_match(paste(output, collapse = "\n"), "Content-Type: application/json", fixed = TRUE)
+  expect_match(paste(output, collapse = "\n"), "Accept: application/json", fixed = TRUE)
+})
+
+test_that("parse_raw handles compressed content", {
+  json_content <- '{"name":"test"}'
+
+  # Create request with gzip compression
+  gzip_content <- gzip(charToRaw(json_content))
+  rook_gzip <- fiery::fake_request(
+    url = 'http://127.0.0.1:80/test',
+    content = gzip_content,
+    headers = list(
+      Content_Type = 'application/json',
+      Content_Encoding = 'gzip'
+    )
+  )
+
+  req_gzip <- Request$new(rook_gzip)
+  expect_true(req_gzip$parse_raw())
+  expect_equal(rawToChar(req_gzip$body), json_content)
+
+  # Create request with deflate compression
+  deflate_content <- memCompress(charToRaw(json_content))
+  rook_deflate <- fiery::fake_request(
+    url = 'http://127.0.0.1:80/test',
+    content = deflate_content,
+    headers = list(
+      Content_Type = 'application/json',
+      Content_Encoding = 'deflate'
+    )
+  )
+
+  req_deflate <- Request$new(rook_deflate)
+  expect_true(req_deflate$parse_raw())
+  expect_equal(rawToChar(req_deflate$body), json_content)
+})
+
+test_that("get_charset_spec works correctly", {
+  # Create a request object
+  rook <- fiery::fake_request('http://example.com')
+  req <- Request$new(rook)
+
+  # Access the private function using the ::: operator
+  # Note: In a real test, you'd need to expose this function or test it indirectly
+  # Here we're showing the test as if you had access to the private function
+
+  # Create a mock accept charsets data frame
+  accepts <- data.frame(
+    full = c("utf-8;q=1.0", "iso-8859-1;q=0.8", "*;q=0.5"),
+    main = c("utf-8", "iso-8859-1", "*"),
+    q = c(1.0, 0.8, 0.5),
+    stringsAsFactors = FALSE
+  )
+
+  # Test exact match
+  result <- get_charset_spec(c("utf-8", "iso-8859-1"), accepts)
+  expect_equal(result, 1)  # utf-8 should be preferred
+
+  # Test wildcard match
+  result <- get_charset_spec("utf-16", accepts)
+  expect_equal(result, 1)  # Should match * with index 1 (first in the input)
+
+  # Test no match
+  result <- get_charset_spec(character(0), accepts)
+  expect_null(result)
+})

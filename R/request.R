@@ -114,8 +114,8 @@ Request <- R6Class('Request',
         session_cookie <- NULL
       }
       private$SESSION_COOKIE_SETTINGS <- session_cookie
-      private$HAS_SESSION_COOKIE <- !is.null(session_cookie) && isTRUE(grepl(paste0(" ", session_cookie$name, "="), rook$HTTP_COOKIE, fixed = TRUE))
-      delayedAssign("HEADERS", private$get_headers(rook), assign.env = private)
+      private$HAS_SESSION_COOKIE <- !is.null(session_cookie) && isTRUE(grepl(paste0("(^|; )", session_cookie$name, "="), rook$HTTP_COOKIE))
+      delayedAssign("HEADERS", get_headers(rook), assign.env = private)
       if (is.null(rook$HTTP_HOST)) {
         private$HOST <- paste(rook$SERVER_NAME, rook$SERVER_PORT, sep = ':')
       } else {
@@ -183,10 +183,10 @@ Request <- R6Class('Request',
     #' @param types A vector of types
     #'
     accepts = function(types) {
-      accept <- private$format_mimes(self$headers$accept)
+      accept <- format_mimes(self$headers$accept)
       if (is.null(accept)) return(types[1])
-      full_types <- private$format_types(types)
-      ind <- private$get_format_spec(full_types, accept)
+      full_types <- format_types(types)
+      ind <- get_format_spec(full_types, accept)
       if (is.null(ind)) return(NULL)
       types[ind]
     },
@@ -195,9 +195,9 @@ Request <- R6Class('Request',
     #' @param charsets A vector of charsets
     #'
     accepts_charsets = function(charsets) {
-      accept <- private$format_charsets(self$headers$accept_charset)
+      accept <- format_charsets(self$headers$accept_charset)
       if (is.null(accept)) return(charsets[1])
-      ind <- private$get_charset_spec(tolower(charsets), accept)
+      ind <- get_charset_spec(tolower(charsets), accept)
       if (is.null(ind)) return(NULL)
       charsets[ind]
     },
@@ -210,8 +210,8 @@ Request <- R6Class('Request',
     accepts_encoding = function(encoding) {
       acc_enc <- self$get_header('Accept-Encoding')
       if (is.null(acc_enc)) acc_enc <- 'identity'
-      accept <- private$format_encodings(acc_enc)
-      ind <- private$get_encoding_spec(tolower(encoding), accept)
+      accept <- format_encodings(acc_enc)
+      ind <- get_encoding_spec(tolower(encoding), accept)
       if (is.null(ind)) return('identity')
       encoding[ind]
     },
@@ -220,9 +220,9 @@ Request <- R6Class('Request',
     #' @param language A vector of languages
     #'
     accepts_language = function(language) {
-      accept <- private$format_languages(self$headers$accept_language)
+      accept <- format_languages(self$headers$accept_language)
       if (is.null(accept)) return(language[1])
-      ind <- private$get_language_spec(tolower(language), accept)
+      ind <- get_language_spec(tolower(language), accept)
       if (is.null(ind)) return(NULL)
       language[ind]
     },
@@ -395,7 +395,7 @@ Request <- R6Class('Request',
     #' @importFrom base64enc base64encode
     encode_string = function(val) {
       check_string(val)
-      if (length(val) == 0) return("")
+      if (length(val) == 0 || val == "") return("")
       val <- charToRaw(val)
       if (is.null(private$KEY)) {
         base64encode(val)
@@ -414,7 +414,7 @@ Request <- R6Class('Request',
     #'
     #' @importFrom base64enc base64decode
     decode_string = function(val) {
-      if (length(val) == 0) return(NULL)
+      if (length(val) == 0 || val == "") return("")
       if (is.null(private$KEY)) {
         val <- base64decode(val)
       } else {
@@ -804,133 +804,6 @@ Request <- R6Class('Request',
     parse_query = function(query) {
       query_parser(query, private$QUERYDELIM)
     },
-    get_headers = function(rook) {
-      vars <- ls(rook)
-      headers <- vars[grepl('^HTTP_', vars)]
-      ans <- lapply(headers, function(head) {
-        # FIXME: This doesn't detect if the escape has been escaped
-        literals <- stringi::stri_locate_all_regex(rook[[head]], "(?<!\\\\)\".*?[^\\\\]\"", omit_no_match = TRUE)[[1]]
-        if (length(literals) == 0) {
-          stringi::stri_split_regex(rook[[head]], "(?<!Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s?")[[1]]
-        } else {
-          splits <- stringi::stri_locate_all_regex(rook[[head]], "(?<!Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s?", omit_no_match = TRUE)[[1]]
-          if (length(splits) == 0) {
-            return(rook[[head]])
-          }
-          split_ind <- rep(seq_len(nrow(splits)), each = nrow(literals))
-          splits2 <- splits[split_ind, ]
-          inside <- splits2[,1] > literals[,1] & splits2[,2] < literals[,2]
-          splits <- splits[-split_ind[inside],, drop = FALSE]
-          if (length(splits) == 0) {
-            return(rook[[head]])
-          }
-          splits <- c(0, t(splits) + c(-1, 1), stringi::stri_length(rook[[head]]))
-          stringi::stri_sub_all(rook[[head]], splits[c(TRUE, FALSE)], splits[c(FALSE, TRUE)])[[1]]
-        }
-      })
-      names(ans) <- tolower(sub('^HTTP_', '', headers))
-      ans
-    },
-    format_mimes = function(type) {
-      if (is.null(type) || length(type) == 0) return(NULL)
-      type <- stri_match_first_regex(tolower(type), '^\\s*([^\\s\\/;]+)\\/([^;\\s]+)\\s*(?:;(.*))?$')
-      type <- as.data.frame(type, stringsAsFactors = FALSE)
-      names(type) <- c('full', 'main', 'sub', 'q')
-      type$q <- get_quality(type$q)
-      type
-    },
-    format_charsets = function(charsets) {
-      if (is.null(charsets) || length(charsets) == 0) return(NULL)
-      charsets <- stri_match_first_regex(tolower(charsets), '^\\s*([^\\s;]+)\\s*(?:;(.*))?$')
-      charsets <- as.data.frame(charsets, stringsAsFactors = FALSE)
-      names(charsets) <- c('full', 'main', 'q')
-      charsets$q <- get_quality(charsets$q)
-      charsets
-    },
-    format_encodings = function(encodings) {
-      if (is.null(encodings) || length(encodings) == 0) return(NULL)
-      encodings <- stri_match_first_regex(tolower(encodings), '^\\s*([^\\s;]+)\\s*(?:;(.*))?$')
-      encodings <- as.data.frame(encodings, stringsAsFactors = FALSE)
-      names(encodings) <- c('full', 'main', 'q')
-      encodings$q <- get_quality(encodings$q)
-      if (!'identity' %in% encodings$main) {
-        encodings  <- rbind(
-          encodings,
-          data.frame(full = 'identity;q=0', main = 'identity', q = min(encodings$q), stringsAsFactors = FALSE)
-        )
-      }
-      encodings
-    },
-    format_languages = function(lang) {
-      if (is.null(lang) || length(lang) == 0) return(NULL)
-      lang <- stri_match_first_regex(tolower(lang), '^\\s*([^\\s\\-;]+)(?:-([^\\s;]+))?\\s*(?:;(.*))?$')
-      lang <- as.data.frame(lang, stringsAsFactors = FALSE)
-      names(lang) <- c('full', 'main', 'sub', 'q')
-      lang$q <- get_quality(lang$q)
-      lang$complete <- paste0(lang$main, ifelse(is.na(lang$sub), '', paste0('-', lang$sub)))
-      lang
-    },
-    format_types = function(formats) {
-      format_types(formats)
-    },
-    get_format_spec = function(format, accepts) {
-      f_split <- strsplit(format$name, '/')
-      spec <- do.call(rbind, lapply(f_split, function(n) {
-        spec <- ifelse(n[1] == accepts$main, 4, ifelse(accepts$main == '*', 0, NA))
-        spec <- spec + ifelse(n[2] == accepts$sub, 2, ifelse(accepts$sub == '*', 0, NA))
-        win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
-        if (is.na(spec[win])) {
-          c(NA, NA)
-        } else {
-          c(spec[win], win)
-        }
-      }))
-      if (all(is.na(spec[, 1]))) return(NULL)
-      order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(f_split), decreasing = TRUE)[1]
-    },
-    get_charset_spec = function(charset, accepts) {
-      spec <- do.call(rbind, lapply(charset, function(n) {
-        spec <- ifelse(n == accepts$main, 1, ifelse(accepts$main == '*', 0, NA))
-        win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
-        if (is.na(spec[win])) {
-          c(NA, NA)
-        } else {
-          c(spec[win], win)
-        }
-      }))
-      if (all(is.na(spec[, 1]))) return(NULL)
-      order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(charset), decreasing = TRUE)[1]
-    },
-    get_encoding_spec = function(encoding, accepts) {
-      spec <- do.call(rbind, lapply(encoding, function(n) {
-        spec <- ifelse(n == accepts$main, 1, ifelse(accepts$main == '*', 0, NA))
-        win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
-        if (is.na(spec[win])) {
-          c(NA, NA)
-        } else {
-          c(spec[win], win)
-        }
-      }))
-      if (all(is.na(spec[, 1]))) return(NULL)
-      order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(encoding), decreasing = TRUE)[1]
-    },
-    get_language_spec = function(lang, accepts) {
-      l_split <- strsplit(lang, '-')
-      spec <- do.call(rbind, lapply(seq_along(lang), function(i) {
-        spec <- ifelse(lang[i] == accepts$complete, 4, NA)
-        spec <- ifelse(is.na(spec) & lang[i] == accepts$main, 2, NA)
-        spec <- ifelse(is.na(spec) & l_split[[i]][1] == accepts$complete, 1, NA)
-        spec <- ifelse(is.na(spec) & accepts$complete == '*', 0, NA)
-        win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
-        if (is.na(spec[win])) {
-          c(NA, NA)
-        } else {
-          c(spec[win], win)
-        }
-      }))
-      if (all(is.na(spec[, 1]))) return(NULL)
-      order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(lang), decreasing = TRUE)[1]
-    },
     unpack = function(raw) {
       compression <- self$get_header('Content-Encoding')
       if (is.null(compression)) return(raw)
@@ -979,7 +852,7 @@ Request <- R6Class('Request',
     },
     reset = function() {
       private$METHOD <- tolower(private$ORIGIN$REQUEST_METHOD)
-      delayedAssign("HEADERS", private$get_headers(private$ORIGIN), assign.env = private)
+      delayedAssign("HEADERS", get_headers(private$ORIGIN), assign.env = private)
       if (is.null(private$ORIGIN$HTTP_HOST)) {
         private$HOST <- paste(private$ORIGIN$SERVER_NAME, private$ORIGIN$SERVER_PORT, sep = ':')
       } else {
@@ -1050,6 +923,72 @@ excluded_headers <- c(
   "upgrade"
 )
 
+get_headers <- function(rook) {
+  vars <- ls(rook)
+  headers <- vars[grepl('^HTTP_', vars)]
+  ans <- lapply(headers, function(head) {
+    # FIXME: This doesn't detect if the escape has been escaped
+    literals <- stringi::stri_locate_all_regex(rook[[head]], "(?<!\\\\)\".*?[^\\\\]\"", omit_no_match = TRUE)[[1]]
+    if (length(literals) == 0) {
+      stringi::stri_split_regex(rook[[head]], "(?<!Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s?")[[1]]
+    } else {
+      splits <- stringi::stri_locate_all_regex(rook[[head]], "(?<!Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s?", omit_no_match = TRUE)[[1]]
+      if (length(splits) == 0) {
+        return(rook[[head]])
+      }
+      split_ind <- rep(seq_len(nrow(splits)), each = nrow(literals))
+      splits2 <- splits[split_ind, ]
+      inside <- splits2[,1] > literals[,1] & splits2[,2] < literals[,2]
+      splits <- splits[-split_ind[inside],, drop = FALSE]
+      if (length(splits) == 0) {
+        return(rook[[head]])
+      }
+      splits <- c(0, t(splits) + c(-1, 1), stringi::stri_length(rook[[head]]))
+      stringi::stri_sub_all(rook[[head]], splits[c(TRUE, FALSE)], splits[c(FALSE, TRUE)])[[1]]
+    }
+  })
+  names(ans) <- tolower(sub('^HTTP_', '', headers))
+  ans
+}
+format_mimes <- function(type) {
+  if (is.null(type) || length(type) == 0) return(NULL)
+  type <- stri_match_first_regex(tolower(type), '^\\s*([^\\s\\/;]+)\\/([^;\\s]+)\\s*(?:;(.*))?$')
+  type <- as.data.frame(type, stringsAsFactors = FALSE)
+  names(type) <- c('full', 'main', 'sub', 'q')
+  type$q <- get_quality(type$q)
+  type
+}
+format_charsets <- function(charsets) {
+  if (is.null(charsets) || length(charsets) == 0) return(NULL)
+  charsets <- stri_match_first_regex(tolower(charsets), '^\\s*([^\\s;]+)\\s*(?:;(.*))?$')
+  charsets <- as.data.frame(charsets, stringsAsFactors = FALSE)
+  names(charsets) <- c('full', 'main', 'q')
+  charsets$q <- get_quality(charsets$q)
+  charsets
+}
+format_encodings <- function(encodings) {
+  if (is.null(encodings) || length(encodings) == 0) return(NULL)
+  encodings <- stri_match_first_regex(tolower(encodings), '^\\s*([^\\s;]+)\\s*(?:;(.*))?$')
+  encodings <- as.data.frame(encodings, stringsAsFactors = FALSE)
+  names(encodings) <- c('full', 'main', 'q')
+  encodings$q <- get_quality(encodings$q)
+  if (!'identity' %in% encodings$main) {
+    encodings  <- rbind(
+      encodings,
+      data.frame(full = 'identity;q=0', main = 'identity', q = min(encodings$q), stringsAsFactors = FALSE)
+    )
+  }
+  encodings
+}
+format_languages <- function(lang) {
+  if (is.null(lang) || length(lang) == 0) return(NULL)
+  lang <- stri_match_first_regex(tolower(lang), '^\\s*([^\\s\\-;]+)(?:-([^\\s;]+))?\\s*(?:;(.*))?$')
+  lang <- as.data.frame(lang, stringsAsFactors = FALSE)
+  names(lang) <- c('full', 'main', 'sub', 'q')
+  lang$q <- get_quality(lang$q)
+  lang$complete <- paste0(lang$main, ifelse(is.na(lang$sub), '', paste0('-', lang$sub)))
+  lang
+}
 format_types <- function(formats) {
   ext <- !grepl('/', formats)
   format_ind <- rep(NA_integer_, length(formats))
@@ -1057,4 +996,62 @@ format_types <- function(formats) {
   format_ind[ext] <- mimes_ext$index[match(formats[ext], mimes_ext$ext)]
   format_ind[!ext] <- match(formats[!ext], mimes$name)
   mimes[format_ind[!is.na(format_ind)], ]
+}
+get_format_spec <- function(format, accepts) {
+  f_split <- strsplit(format$name, '/')
+  spec <- do.call(rbind, lapply(f_split, function(n) {
+    spec <- ifelse(n[1] == accepts$main, 4, ifelse(accepts$main == '*', 0, NA))
+    spec <- spec + ifelse(n[2] == accepts$sub, 2, ifelse(accepts$sub == '*', 0, NA))
+    win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
+    if (is.na(spec[win])) {
+      c(NA, NA)
+    } else {
+      c(spec[win], win)
+    }
+  }))
+  if (all(is.na(spec[, 1]))) return(NULL)
+  order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(f_split), decreasing = TRUE)[1]
+}
+get_charset_spec <- function(charset, accepts) {
+  spec <- do.call(rbind, lapply(charset, function(n) {
+    spec <- ifelse(n == accepts$main, 1, ifelse(accepts$main == '*', 0, NA))
+    win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
+    if (is.na(spec[win])) {
+      c(NA, NA)
+    } else {
+      c(spec[win], win)
+    }
+  }))
+  if (all(is.na(spec[, 1]))) return(NULL)
+  order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(charset), decreasing = TRUE)[1]
+}
+get_encoding_spec <- function(encoding, accepts) {
+  spec <- do.call(rbind, lapply(encoding, function(n) {
+    spec <- ifelse(n == accepts$main, 1, ifelse(accepts$main == '*', 0, NA))
+    win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
+    if (is.na(spec[win])) {
+      c(NA, NA)
+    } else {
+      c(spec[win], win)
+    }
+  }))
+  if (all(is.na(spec[, 1]))) return(NULL)
+  order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(encoding), decreasing = TRUE)[1]
+}
+get_language_spec <- function(lang, accepts) {
+  l_split <- strsplit(lang, '-')
+  spec <- do.call(rbind, lapply(seq_along(lang), function(i) {
+    spec <- ifelse(lang[i] == accepts$complete, 4, NA)
+    spec <- ifelse(is.na(spec) & lang[i] == accepts$main, 2, spec)
+    spec <- ifelse(is.na(spec) & l_split[[i]][1] == accepts$complete, 1, spec)
+    spec <- ifelse(is.na(spec) & accepts$complete == '*', 0, spec)
+    win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
+    if (is.na(spec[win])) {
+      c(NA, NA)
+    } else {
+      c(spec[win], win)
+    }
+  }))
+  if (all(is.na(spec[, 1]))) return(NULL)
+  order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(lang), decreasing = TRUE)[1]
 }
