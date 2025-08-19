@@ -194,6 +194,7 @@ with \emph{Immutable}}
 \item \href{#method-Request-accepts_language}{\code{Request$accepts_language()}}
 \item \href{#method-Request-is}{\code{Request$is()}}
 \item \href{#method-Request-get_header}{\code{Request$get_header()}}
+\item \href{#method-Request-has_header}{\code{Request$has_header()}}
 \item \href{#method-Request-respond}{\code{Request$respond()}}
 \item \href{#method-Request-parse}{\code{Request$parse()}}
 \item \href{#method-Request-parse_raw}{\code{Request$parse_raw()}}
@@ -415,6 +416,23 @@ Get the header of the specified name.
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{name}}{The name of the header to get}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Request-has_header"></a>}}
+\if{latex}{\out{\hypertarget{method-Request-has_header}{}}}
+\subsection{Method \code{has_header()}}{
+Test for the existence of any header given by \code{name}
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Request$has_header(name)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{name}}{The name of the header to look for}
 }
 \if{html}{\out{</div>}}
 }

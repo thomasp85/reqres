@@ -81,21 +81,19 @@ rook <- fiery::fake_request(
 # A Request object can now be created
 req <- Request$new(rook)
 req
-#> A HTTP request
-#> ==============
+#> ── An HTTP request ─────────────────────────────────────────────────────────────
 #> Trusted: No
-#>  Method: get
-#>     URL: http://www.example.com:80/summary?id=2347&user=Thomas+Lin+Pedersen
+#> Method: get
+#> URL: http://www.example.com:80/summary?id=2347&user=Thomas+Lin+Pedersen
 
 # ... along with a response
 res <- req$respond()
 res
-#> A HTTP response
-#> ===============
-#>         Status: 404 - Not Found
-#>   Content type: text/plain
-#> 
-#> In response to: http://www.example.com:80/summary?id=2347&user=Thomas+Lin+Pedersen
+#> ── An HTTP response ────────────────────────────────────────────────────────────
+#> Status: 404 - Not Found
+#> Content type: text/plain
+#> → Responding to:
+#> http://www.example.com:80/summary?id=2347&user=Thomas+Lin+Pedersen
 ```
 
 ### Request
@@ -108,7 +106,7 @@ req$host
 #> [1] "www.example.com:80"
 req$query
 #> $id
-#> [1] 2347
+#> [1] "2347"
 #> 
 #> $user
 #> [1] "Thomas Lin Pedersen"
@@ -122,6 +120,8 @@ provided content type.
 ``` r
 req$is('json')
 #> [1] TRUE
+#> attr(,"pick")
+#> [1] 1
 req$parse(json = parse_json())
 #> [1] TRUE
 req$body
@@ -158,19 +158,20 @@ req$body
 ```
 
 In the case that none of the provided parsers fits the content type, the
-response will automatically get updated with the correct error code
+response will automatically throw an exception that can be converted
+into the right response
 
 ``` r
 req$set_body(NULL)
 req$parse(txt = parse_plain())
-#> [1] FALSE
+#> Error in `req$parse()`:
+#> ! Unsupported Media Type
 res
-#> A HTTP response
-#> ===============
-#>         Status: 415 - Unsupported Media Type
-#>   Content type: text/plain
-#> 
-#> In response to: http://www.example.com:80/summary?id=2347&user=Thomas+Lin+Pedersen
+#> ── An HTTP response ────────────────────────────────────────────────────────────
+#> Status: 404 - Not Found
+#> Content type: text/plain
+#> → Responding to:
+#> http://www.example.com:80/summary?id=2347&user=Thomas+Lin+Pedersen
 ```
 
 To facilitate all this `reqres` comes with a mapping of standard mime
@@ -180,6 +181,11 @@ method
 ``` r
 req$set_body(NULL)
 req$parse(default_parsers)
+#> Warning: Request$parse(list(...)) was deprecated in reqres 0.3.
+#> ℹ Please use Request$parse(!!!list(...)) instead.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+#> generated.
 #> [1] TRUE
 req$body
 #> $name
@@ -201,7 +207,7 @@ easily set headers, cookies, etc.
 ``` r
 res$set_header('Date', to_http_date(Sys.time()))
 res$get_header('Date')
-#> [1] "Wed, 29 Jan 2025 14:16:46 GMT"
+#> [1] "Tue, 19 Aug 2025 07:39:38 GMT"
 res$set_cookie('user', req$query$id, max_age = 9000L)
 res$has_cookie('user')
 #> [1] TRUE
@@ -226,7 +232,7 @@ res$attach(system.file('NEWS.md', package = 'reqres'))
 res$get_header('Content-Type')
 #> [1] "text/markdown"
 res$get_header('Content-Disposition')
-#> [1] "attachment; filename=NEWS.md"
+#> [1] "attachment; filename=\"NEWS.md\""
 ```
 
 Often we need to provide a payload in the form of a body. This can be
@@ -293,6 +299,11 @@ the `Request$format()` method.
 ``` r
 res$body <- head(mtcars)
 res$format(default_formatters, compress = FALSE)
+#> Warning: Response$format(list(...)) was deprecated in reqres 0.3.
+#> ℹ Please use Response$format(!!!list(...)) instead.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+#> generated.
 #> [1] TRUE
 res$body
 #> [{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.62,"qsec":16.46,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4"},{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.875,"qsec":17.02,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4 Wag"},{"mpg":22.8,"cyl":4,"disp":108,"hp":93,"drat":3.85,"wt":2.32,"qsec":18.61,"vs":1,"am":1,"gear":4,"carb":1,"_row":"Datsun 710"},{"mpg":21.4,"cyl":6,"disp":258,"hp":110,"drat":3.08,"wt":3.215,"qsec":19.44,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Hornet 4 Drive"},{"mpg":18.7,"cyl":8,"disp":360,"hp":175,"drat":3.15,"wt":3.44,"qsec":17.02,"vs":0,"am":0,"gear":3,"carb":2,"_row":"Hornet Sportabout"},{"mpg":18.1,"cyl":6,"disp":225,"hp":105,"drat":2.76,"wt":3.46,"qsec":20.22,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Valiant"}]

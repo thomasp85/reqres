@@ -121,9 +121,10 @@ req$body
 ```
 
 In the case that none of the provided parsers fits the content type, the
-response will automatically get updated with the correct error code
+response will automatically throw an exception that can be converted into the 
+right response
 
-```{r}
+```{r, error=TRUE}
 req$set_body(NULL)
 req$parse(txt = parse_plain())
 res
