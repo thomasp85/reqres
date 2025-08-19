@@ -16,7 +16,7 @@ Description: In order to facilitate parsing of http requests and creating
     with 'httpuv' based web servers.
 License: MIT + file LICENSE
 Encoding: UTF-8
-Depends: 
+Depends:
     R (>= 3.5)
 Imports:
     R6,
@@ -43,7 +43,7 @@ Suggests:
     covr,
     keyring,
     shiny
-URL: https://reqres.data-imaginist.com, https://github.com/thomasp85/reqres#reqres
+URL: https://reqres.data-imaginist.com, https://github.com/thomasp85/reqres
 BugReports: https://github.com/thomasp85/reqres/issues
 Config/testthat/edition: 3
 Config/build/compilation-database: true
