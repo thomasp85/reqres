@@ -147,6 +147,8 @@ Request <- R6Class('Request',
         # This is a bit dirty to reach into the private env of the response
         private$RESPONSE$.__enclos_env__$private$HEADERS <- response_headers
       }
+
+      rook$.__reqres_Request__ <- self
     },
     #' @description Pretty printing of the object
     #' @param ... ignored
@@ -894,6 +896,9 @@ as.Request.Request <- function(x, ...) x
 as.Request.environment <- function(x, ...) {
   if (is.null(x[['rook.version']])) {
     cli::cli_abort('{.arg x} must be a Rook object')
+  }
+  if (is.Request(x$.__reqres_Request__)) {
+    return(x$.__reqres_Request__)
   }
   Request$new(x, ...)
 }
