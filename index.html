@@ -103,21 +103,19 @@
 <span><span class="co"># A Request object can now be created</span></span>
 <span><span class="va">req</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Request.html">Request</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">rook</span><span class="op">)</span></span>
 <span><span class="va">req</span></span>
-<span><span class="co">#&gt; A HTTP request</span></span>
-<span><span class="co">#&gt; ==============</span></span>
+<span><span class="co">#&gt; ── An HTTP request ─────────────────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; Trusted: No</span></span>
-<span><span class="co">#&gt;  Method: get</span></span>
-<span><span class="co">#&gt;     URL: http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></span>
+<span><span class="co">#&gt; Method: get</span></span>
+<span><span class="co">#&gt; URL: http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></span>
 <span></span>
 <span><span class="co"># ... along with a response</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">req</span><span class="op">$</span><span class="fu">respond</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">res</span></span>
-<span><span class="co">#&gt; A HTTP response</span></span>
-<span><span class="co">#&gt; ===============</span></span>
-<span><span class="co">#&gt;         Status: 404 - Not Found</span></span>
-<span><span class="co">#&gt;   Content type: text/plain</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; In response to: http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></span></code></pre></div>
+<span><span class="co">#&gt; ── An HTTP response ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Status: 404 - Not Found</span></span>
+<span><span class="co">#&gt; Content type: text/plain</span></span>
+<span><span class="co">#&gt; → Responding to:</span></span>
+<span><span class="co">#&gt; http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="request">Request<a class="anchor" aria-label="anchor" href="#request"></a>
 </h3>
@@ -127,7 +125,7 @@
 <span><span class="co">#&gt; [1] "www.example.com:80"</span></span>
 <span><span class="va">req</span><span class="op">$</span><span class="va">query</span></span>
 <span><span class="co">#&gt; $id</span></span>
-<span><span class="co">#&gt; [1] 2347</span></span>
+<span><span class="co">#&gt; [1] "2347"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $user</span></span>
 <span><span class="co">#&gt; [1] "Thomas Lin Pedersen"</span></span>
@@ -137,6 +135,8 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">req</span><span class="op">$</span><span class="fu">is</span><span class="op">(</span><span class="st">'json'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; attr(,"pick")</span></span>
+<span><span class="co">#&gt; [1] 1</span></span>
 <span><span class="va">req</span><span class="op">$</span><span class="fu">parse</span><span class="op">(</span>json <span class="op">=</span> <span class="fu"><a href="reference/parsers.html">parse_json</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="va">req</span><span class="op">$</span><span class="va">body</span></span>
@@ -166,22 +166,27 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $homepage</span></span>
 <span><span class="co">#&gt; [1] "www.data-imaginist.com"   "www.github.com/thomasp85"</span></span></code></pre></div>
-<p>In the case that none of the provided parsers fits the content type, the response will automatically get updated with the correct error code</p>
+<p>In the case that none of the provided parsers fits the content type, the response will automatically throw an exception that can be converted into the right response</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">req</span><span class="op">$</span><span class="fu">set_body</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="va">req</span><span class="op">$</span><span class="fu">parse</span><span class="op">(</span>txt <span class="op">=</span> <span class="fu"><a href="reference/parsers.html">parse_plain</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; Error in `req$parse()`:</span></span>
+<span><span class="co">#&gt; ! Unsupported Media Type</span></span>
 <span><span class="va">res</span></span>
-<span><span class="co">#&gt; A HTTP response</span></span>
-<span><span class="co">#&gt; ===============</span></span>
-<span><span class="co">#&gt;         Status: 415 - Unsupported Media Type</span></span>
-<span><span class="co">#&gt;   Content type: text/plain</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; In response to: http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></span></code></pre></div>
+<span><span class="co">#&gt; ── An HTTP response ────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Status: 404 - Not Found</span></span>
+<span><span class="co">#&gt; Content type: text/plain</span></span>
+<span><span class="co">#&gt; → Responding to:</span></span>
+<span><span class="co">#&gt; http://www.example.com:80/summary?id=2347&amp;user=Thomas+Lin+Pedersen</span></span></code></pre></div>
 <p>To facilitate all this <code>reqres</code> comes with a mapping of standard mime types to the provided parsers. This can simply be supplied to the parse method</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">req</span><span class="op">$</span><span class="fu">set_body</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="va">req</span><span class="op">$</span><span class="fu">parse</span><span class="op">(</span><span class="va">default_parsers</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Request$parse(list(...)) was deprecated in reqres 0.3.</span></span>
+<span><span class="co">#&gt; ℹ Please use Request$parse(!!!list(...)) instead.</span></span>
+<span><span class="co">#&gt; This warning is displayed once every 8 hours.</span></span>
+<span><span class="co">#&gt; Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span>
+<span><span class="co">#&gt; generated.</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="va">req</span><span class="op">$</span><span class="va">body</span></span>
 <span><span class="co">#&gt; $name</span></span>
@@ -200,7 +205,7 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="fu">set_header</span><span class="op">(</span><span class="st">'Date'</span>, <span class="fu"><a href="reference/http_date.html">to_http_date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="fu">get_header</span><span class="op">(</span><span class="st">'Date'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Wed, 29 Jan 2025 14:16:46 GMT"</span></span>
+<span><span class="co">#&gt; [1] "Tue, 19 Aug 2025 07:39:38 GMT"</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="fu">set_cookie</span><span class="op">(</span><span class="st">'user'</span>, <span class="va">req</span><span class="op">$</span><span class="va">query</span><span class="op">$</span><span class="va">id</span>, max_age <span class="op">=</span> <span class="fl">9000L</span><span class="op">)</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="fu">has_cookie</span><span class="op">(</span><span class="st">'user'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
@@ -216,7 +221,7 @@
 <span><span class="va">res</span><span class="op">$</span><span class="fu">get_header</span><span class="op">(</span><span class="st">'Content-Type'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "text/markdown"</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="fu">get_header</span><span class="op">(</span><span class="st">'Content-Disposition'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "attachment; filename=NEWS.md"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "attachment; filename=\"NEWS.md\""</span></span></code></pre></div>
 <p>Often we need to provide a payload in the form of a body. This can be any type of R object until the response is handed off to the server, where it should be either a string or a raw vector.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="fu">remove_header</span><span class="op">(</span><span class="st">'Content-Disposition'</span><span class="op">)</span></span>
@@ -265,6 +270,11 @@
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">body</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="fu">format</span><span class="op">(</span><span class="va">default_formatters</span>, compress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Response$format(list(...)) was deprecated in reqres 0.3.</span></span>
+<span><span class="co">#&gt; ℹ Please use Response$format(!!!list(...)) instead.</span></span>
+<span><span class="co">#&gt; This warning is displayed once every 8 hours.</span></span>
+<span><span class="co">#&gt; Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span>
+<span><span class="co">#&gt; generated.</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="va">body</span></span>
 <span><span class="co">#&gt; [{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.62,"qsec":16.46,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4"},{"mpg":21,"cyl":6,"disp":160,"hp":110,"drat":3.9,"wt":2.875,"qsec":17.02,"vs":0,"am":1,"gear":4,"carb":4,"_row":"Mazda RX4 Wag"},{"mpg":22.8,"cyl":4,"disp":108,"hp":93,"drat":3.85,"wt":2.32,"qsec":18.61,"vs":1,"am":1,"gear":4,"carb":1,"_row":"Datsun 710"},{"mpg":21.4,"cyl":6,"disp":258,"hp":110,"drat":3.08,"wt":3.215,"qsec":19.44,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Hornet 4 Drive"},{"mpg":18.7,"cyl":8,"disp":360,"hp":175,"drat":3.15,"wt":3.44,"qsec":17.02,"vs":0,"am":0,"gear":3,"carb":2,"_row":"Hornet Sportabout"},{"mpg":18.1,"cyl":6,"disp":225,"hp":105,"drat":2.76,"wt":3.46,"qsec":20.22,"vs":1,"am":0,"gear":3,"carb":1,"_row":"Valiant"}]</span></span></code></pre></div>

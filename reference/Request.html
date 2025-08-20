@@ -283,6 +283,7 @@ with <em>Immutable</em></p></dd>
 <li><p><a href="#method-Request-accepts_language"><code>Request$accepts_language()</code></a></p></li>
 <li><p><a href="#method-Request-is"><code>Request$is()</code></a></p></li>
 <li><p><a href="#method-Request-get_header"><code>Request$get_header()</code></a></p></li>
+<li><p><a href="#method-Request-has_header"><code>Request$has_header()</code></a></p></li>
 <li><p><a href="#method-Request-respond"><code>Request$respond()</code></a></p></li>
 <li><p><a href="#method-Request-parse"><code>Request$parse()</code></a></p></li>
 <li><p><a href="#method-Request-parse_raw"><code>Request$parse_raw()</code></a></p></li>
@@ -508,10 +509,26 @@ qualified MIME types, a file extension, or a mime type with wildcards</p></dd>
 </dl><p></p></div>
 </div>
 
+</div><p></p><hr><a id="method-Request-has_header"></a><div class="section">
+<h3 id="method-has-header-">Method <code>has_header()</code><a class="anchor" aria-label="anchor" href="#method-has-header-"></a></h3>
+<p>Test for the existence of any header given by <code>name</code></p><div class="section">
+<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">has_header</span><span class="op">(</span><span class="va">name</span><span class="op">)</span></span></code></pre></div><p></p></div>
+</div>
+
+<div class="section">
+<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>name</code></dt>
+<dd><p>The name of the header to look for</p></dd>
+
+
+</dl><p></p></div>
+</div>
+
 </div><p></p><hr><a id="method-Request-respond"></a><div class="section">
 <h3 id="method-respond-">Method <code>respond()</code><a class="anchor" aria-label="anchor" href="#method-respond-"></a></h3>
 <p>Creates a new <code>Response</code> object from the request</p><div class="section">
-<h4 id="usage-10">Usage<a class="anchor" aria-label="anchor" href="#usage-10"></a></h4>
+<h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">respond</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -531,12 +548,12 @@ names should correspond to mime types or known file extensions. If
 <code>autofail = TRUE</code> the response will throw an appropriate abort code if
 failing to parse the body. <code><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse()</a></code> returns <code>TRUE</code> if parsing was
 successful and <code>FALSE</code> if not</p><div class="section">
-<h4 id="usage-11">Usage<a class="anchor" aria-label="anchor" href="#usage-11"></a></h4>
+<h4 id="usage-12">Usage<a class="anchor" aria-label="anchor" href="#usage-12"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">parse</span><span class="op">(</span><span class="va">...</span>, autofail <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-11">Arguments<a class="anchor" aria-label="anchor" href="#arguments-11"></a></h4>
+<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>...</code></dt>
 <dd><p>A named set of parser functions</p></dd>
 
@@ -554,12 +571,12 @@ successful and <code>FALSE</code> if not</p><div class="section">
 attempt to decompress the body and set the <code>body</code> field to the resulting
 raw vector. It is then up to the server to decide how to handle the
 payload. It returns <code>TRUE</code> if successful and <code>FALSE</code> otherwise.</p><div class="section">
-<h4 id="usage-12">Usage<a class="anchor" aria-label="anchor" href="#usage-12"></a></h4>
+<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">parse_raw</span><span class="op">(</span>autofail <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-12">Arguments<a class="anchor" aria-label="anchor" href="#arguments-12"></a></h4>
+<h4 id="arguments-13">Arguments<a class="anchor" aria-label="anchor" href="#arguments-13"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>autofail</code></dt>
 <dd><p>Automatically populate the response if parsing fails</p></dd>
 
@@ -571,7 +588,7 @@ payload. It returns <code>TRUE</code> if successful and <code>FALSE</code> other
 <h3 id="method-as-message-">Method <code>as_message()</code><a class="anchor" aria-label="anchor" href="#method-as-message-"></a></h3>
 <p>Prints a HTTP representation of the request to the output
 stream.</p><div class="section">
-<h4 id="usage-13">Usage<a class="anchor" aria-label="anchor" href="#usage-13"></a></h4>
+<h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">as_message</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -582,12 +599,12 @@ stream.</p><div class="section">
 initialisation the string is first encrypted and the final result is a
 combination of the encrypted text and the nonce, both base64 encoded and
 combined with a <code>"_"</code>.</p><div class="section">
-<h4 id="usage-14">Usage<a class="anchor" aria-label="anchor" href="#usage-14"></a></h4>
+<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">encode_string</span><span class="op">(</span><span class="va">val</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-13">Arguments<a class="anchor" aria-label="anchor" href="#arguments-13"></a></h4>
+<h4 id="arguments-14">Arguments<a class="anchor" aria-label="anchor" href="#arguments-14"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>val</code></dt>
 <dd><p>A single string to encrypt</p></dd>
 
@@ -602,12 +619,12 @@ initialisation the input is first split by <code>"_"</code> and then the two par
 are base64 decoded and decrypted. Otherwise the input is base64-decoded
 as-is. It will always hold that
 <code>val == decode_string(encode_string(val))</code>.</p><div class="section">
-<h4 id="usage-15">Usage<a class="anchor" aria-label="anchor" href="#usage-15"></a></h4>
+<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">decode_string</span><span class="op">(</span><span class="va">val</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-14">Arguments<a class="anchor" aria-label="anchor" href="#arguments-14"></a></h4>
+<h4 id="arguments-15">Arguments<a class="anchor" aria-label="anchor" href="#arguments-15"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>val</code></dt>
 <dd><p>A single string to encrypt</p></dd>
 
@@ -621,7 +638,7 @@ as-is. It will always hold that
 related response. This method exists only to allow reuse of the request
 and response object to save a few milliseconds in latency. Use with
 caution and see e.g. how fiery maintains a poll of request objects</p><div class="section">
-<h4 id="usage-16">Usage<a class="anchor" aria-label="anchor" href="#usage-16"></a></h4>
+<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">clear</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -631,7 +648,7 @@ caution and see e.g. how fiery maintains a poll of request objects</p><div class
 <p>Forward a request to a new url, optionally setting different
 headers, queries, etc. Uses curl and mirai under the hood and returns a
 promise</p><div class="section">
-<h4 id="usage-17">Usage<a class="anchor" aria-label="anchor" href="#usage-17"></a></h4>
+<h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">forward</span><span class="op">(</span></span>
 <span>  <span class="va">url</span>,</span>
 <span>  query <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -644,7 +661,7 @@ promise</p><div class="section">
 </div>
 
 <div class="section">
-<h4 id="arguments-15">Arguments<a class="anchor" aria-label="anchor" href="#arguments-15"></a></h4>
+<h4 id="arguments-16">Arguments<a class="anchor" aria-label="anchor" href="#arguments-16"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>url</code></dt>
 <dd><p>The url to forward to</p></dd>
 
@@ -685,12 +702,12 @@ whose return value is returned by the promise</p></dd>
 </div><p></p><hr><a id="method-Request-clone"></a><div class="section">
 <h3 id="method-clone-">Method <code>clone()</code><a class="anchor" aria-label="anchor" href="#method-clone-"></a></h3>
 <p>The objects of this class are cloneable with this method.</p><div class="section">
-<h4 id="usage-18">Usage<a class="anchor" aria-label="anchor" href="#usage-18"></a></h4>
+<h4 id="usage-19">Usage<a class="anchor" aria-label="anchor" href="#usage-19"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">Request</span><span class="op">$</span><span class="fu">clone</span><span class="op">(</span>deep <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
-<h4 id="arguments-16">Arguments<a class="anchor" aria-label="anchor" href="#arguments-16"></a></h4>
+<h4 id="arguments-17">Arguments<a class="anchor" aria-label="anchor" href="#arguments-17"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 
@@ -741,9 +758,9 @@ whose return value is returned by the promise</p></dd>
 <span class="r-in"><span><span class="co"># Cleaning up connections</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1167913 62.4    2206121 117.9  2206121 117.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2173991 16.6    8388608  64.0  8387218  64.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger (Mb) max used (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1168213 62.4    2208407  118  2208407  118</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2174344 16.6    8388608   64  8387929   64</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
