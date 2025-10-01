@@ -89,6 +89,11 @@ Request <- R6Class('Request',
     #' be character vectors. This is not checked but assumed
     #'
     initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0, query_delim = NULL, response_headers = list()) {
+      # otel support
+      tracer <- get_tracer()
+      otel_is_enabled <- tracer$is_enabled()
+      start_time <- if (otel_is_enabled) Sys.time()
+
       self$trust <- trust
       private$ORIGIN <- rook
       private$METHOD <- tolower(rook$REQUEST_METHOD)
@@ -149,6 +154,8 @@ Request <- R6Class('Request',
       }
 
       rook$.__reqres_Request__ <- self
+
+      private$OSPAN <- if (otel_is_enabled) request_ospan(self, start_time, tracer)
     },
     #' @description Pretty printing of the object
     #' @param ... ignored
@@ -744,6 +751,17 @@ Request <- R6Class('Request',
     #'
     response_headers = function() {
       private$RESPONSE_HEADERS
+    },
+    #' @field otel_span An OpenTelemetry span to use as parent for any
+    #' instrumentation happening during the handling of the request. If otel is
+    #' not enabled then this will be NULL. The span is populated according to
+    #' the HTTP Server semantics <https://opentelemetry.io/docs/specs/semconv/http/http-spans/#http-server>,
+    #' except for the `http.route` attribute, which must be set by the server
+    #' implementation, along with a proper name for the span
+    #' (`{method}_{route}`). The span is automatically closed when the response
+    #' is converted to a list, unless asked not to. *Immutable*
+    otel_span = function() {
+      private$OSPAN
     }
   ),
   private = list(
@@ -769,6 +787,7 @@ Request <- R6Class('Request',
     RESPONSE_HEADERS = NULL,
     RESPONSE = NULL,
     LOCKED = FALSE,
+    OSPAN = NULL,
 
     reset_hard = function() {
       private$TRUST <- FALSE
@@ -790,6 +809,7 @@ Request <- R6Class('Request',
       private$SESSION_COOKIE_SETTINGS <- NULL
       private$HAS_SESSION_COOKIE <- FALSE
       private$COMPRESSION_LIMIT <- 0
+      private$OSPAN <- NULL
       if (!is.null(private$RESPONSE)) {
         private$RESPONSE$reset()
       }
