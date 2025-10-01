@@ -1,4 +1,4 @@
-otel_tracer_name <- "thomasp85.reqres"
+otel_tracer_name <- "r.package.reqres"
 
 get_tracer <- local({
   tracer <- NULL
