@@ -87,12 +87,16 @@ Request <- R6Class('Request',
     #' @param response_headers A list of headers the response should be
     #' prepopulated with. All names must be in lower case and all elements must
     #' be character vectors. This is not checked but assumed
+    #' @param with_otel A boolean to indicate if otel instrumentation should be
+    #' initiated with the creation of this request. Set to `FALSE` to avoid a
+    #' span being started as well as metrics being recorded for this request.
     #'
-    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0, query_delim = NULL, response_headers = list()) {
+    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0, query_delim = NULL, response_headers = list(), with_otel = TRUE) {
       private$START <- Sys.time()
+
       # otel support
-      tracer <- get_tracer()
-      otel_is_enabled <- tracer$is_enabled()
+      check_bool(with_otel)
+      private$WITH_OTEL <- with_otel
 
       self$trust <- trust
       private$ORIGIN <- rook
@@ -155,8 +159,9 @@ Request <- R6Class('Request',
 
       rook$.__reqres_Request__ <- self
 
-      private$OSPAN <- if (otel_is_enabled) request_ospan(self, private$START, tracer)
-      push_active_request(self)
+      tracer <- get_tracer()
+      private$OSPAN <- if (with_otel && tracer$is_enabled()) request_ospan(self, private$START, tracer)
+      if (with_otel) push_active_request(self)
     },
     #' @description Pretty printing of the object
     #' @param ... ignored
@@ -447,7 +452,7 @@ Request <- R6Class('Request',
     #' caution and see e.g. how fiery maintains a poll of request objects
     clear = function() {
       # otel
-      if (get_meter()$is_enabled()) {
+      if (private$WITH_OTEL && get_meter()$is_enabled()) {
         attr <- metric_attributes(self, private$RESPONSE)
         record_request_body(request, attr)
         record_response_body(request, response, attr)
@@ -817,6 +822,7 @@ Request <- R6Class('Request',
     RESPONSE_HEADERS = NULL,
     RESPONSE = NULL,
     LOCKED = FALSE,
+    WITH_OTEL = TRUE,
     OSPAN = NULL,
     START = NULL,
 
@@ -840,8 +846,11 @@ Request <- R6Class('Request',
       private$SESSION_COOKIE_SETTINGS <- NULL
       private$HAS_SESSION_COOKIE <- FALSE
       private$COMPRESSION_LIMIT <- 0
-      private$START <- NULL
+      private$RESPONSE_HEADERS <- NULL
+      private$LOCKED <- FALSE
+      private$WITH_OTEL <- TRUE
       private$OSPAN <- NULL
+      private$START <- NULL
       if (!is.null(private$RESPONSE)) {
         private$RESPONSE$reset()
       }
