@@ -89,10 +89,10 @@ Request <- R6Class('Request',
     #' be character vectors. This is not checked but assumed
     #'
     initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0, query_delim = NULL, response_headers = list()) {
+      private$START <- Sys.time()
       # otel support
       tracer <- get_tracer()
       otel_is_enabled <- tracer$is_enabled()
-      start_time <- if (otel_is_enabled) Sys.time()
 
       self$trust <- trust
       private$ORIGIN <- rook
@@ -155,7 +155,8 @@ Request <- R6Class('Request',
 
       rook$.__reqres_Request__ <- self
 
-      private$OSPAN <- if (otel_is_enabled) request_ospan(self, start_time, tracer)
+      private$OSPAN <- if (otel_is_enabled) request_ospan(self, private$START, tracer)
+      push_active_request(self)
     },
     #' @description Pretty printing of the object
     #' @param ... ignored
@@ -445,6 +446,31 @@ Request <- R6Class('Request',
     #' and response object to save a few milliseconds in latency. Use with
     #' caution and see e.g. how fiery maintains a poll of request objects
     clear = function() {
+      # otel
+      if (get_meter()$is_enabled()) {
+        attr <- metric_attributes(self, private$RESPONSE)
+        record_request_body(request, attr)
+        record_response_body(request, response, attr)
+        pop_active_request(request, attr)
+        record_duration(request, attr)
+      }
+      if (!is.null(private$OSPAN)) {
+        span <- private$OSPAN
+        status <- private$RESPONSE$status
+        span$set_attribute("http.response.status_code", status)
+        if (status >= 500) {
+          span$set_status("error")
+          span$set_attribute("error.type", as.character(status))
+        }
+        for (header in names(private$RESPONSE$headers)) {
+          span$set_attribute(
+            paste0("http.response.header.", gsub("_", "-", header)),
+            private$RESPONSE$headers[[header]]
+          )
+        }
+        otel::end_span(span)
+      }
+      # end otel
       private$reset_hard()
     },
     #' @description Forward a request to a new url, optionally setting different
@@ -762,6 +788,10 @@ Request <- R6Class('Request',
     #' is converted to a list, unless asked not to. *Immutable*
     otel_span = function() {
       private$OSPAN
+    },
+    #' @field duration The time passed since the request was created
+    duration = function() {
+      as.numeric(Sys.time() - private$START)
     }
   ),
   private = list(
@@ -788,6 +818,7 @@ Request <- R6Class('Request',
     RESPONSE = NULL,
     LOCKED = FALSE,
     OSPAN = NULL,
+    START = NULL,
 
     reset_hard = function() {
       private$TRUST <- FALSE
@@ -809,6 +840,7 @@ Request <- R6Class('Request',
       private$SESSION_COOKIE_SETTINGS <- NULL
       private$HAS_SESSION_COOKIE <- FALSE
       private$COMPRESSION_LIMIT <- 0
+      private$START <- NULL
       private$OSPAN <- NULL
       if (!is.null(private$RESPONSE)) {
         private$RESPONSE$reset()

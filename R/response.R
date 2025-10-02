@@ -554,28 +554,7 @@ Response <- R6Class('Response',
     #' apply the formatter set by `set_formatter()` unless the body has already
     #' been formatted. Will add a Date header if none exist.
     #'
-    #' @param end_span Should the otel span be ended by this operation. Set to
-    #' `FALSE` if you call this function prior to its terminal use.
-    #'
-    as_list = function(end_span = TRUE) {
-      if (end_span) {
-        span <- private$REQUEST$otel
-        if (!is.null(span)) {
-          on.exit({
-            span$set_attribute("http.response.status_code", private$STATUS)
-            if (private$STATUS >= 500) {
-              span$set_status("error")
-            }
-            for (header in names(private$HEADERS)) {
-              span$set_attribute(
-                paste0("http.response.header.", gsub("_", "-", header)),
-                private$HEADERS[[header]]
-              )
-            }
-            otel::end_span(span)
-          }, add = TRUE)
-        }
-      }
+    as_list = function() {
       if (!self$is_formatted && !is.null(self$formatter)) {
         private$IS_FORMATTED <- TRUE
         content <- tri(self$formatter(self$body))
