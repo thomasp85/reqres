@@ -89,7 +89,10 @@ Request <- R6Class('Request',
     #' be character vectors. This is not checked but assumed
     #' @param with_otel A boolean to indicate if otel instrumentation should be
     #' initiated with the creation of this request. Set to `FALSE` to avoid a
-    #' span being started as well as metrics being recorded for this request.
+    #' span being started as well as metrics being recorded for this request. If
+    #' `TRUE` you should call `request$clear()` as the last act of your request
+    #' handling to ensure that the span is closed and that the duration metric
+    #' is correctly reported.
     #'
     initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0, query_delim = NULL, response_headers = list(), with_otel = TRUE) {
       private$START <- Sys.time()
@@ -793,6 +796,10 @@ Request <- R6Class('Request',
     #' is converted to a list, unless asked not to. *Immutable*
     otel_span = function() {
       private$OSPAN
+    },
+    #' @field start_time The time point the Request was created
+    start_time = function() {
+      private$START
     },
     #' @field duration The time passed since the request was created
     duration = function() {
