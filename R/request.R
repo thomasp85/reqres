@@ -87,8 +87,20 @@ Request <- R6Class('Request',
     #' @param response_headers A list of headers the response should be
     #' prepopulated with. All names must be in lower case and all elements must
     #' be character vectors. This is not checked but assumed
+    #' @param with_otel A boolean to indicate if otel instrumentation should be
+    #' initiated with the creation of this request. Set to `FALSE` to avoid a
+    #' span being started as well as metrics being recorded for this request. If
+    #' `TRUE` you should call `request$clear()` as the last act of your request
+    #' handling to ensure that the span is closed and that the duration metric
+    #' is correctly reported.
     #'
-    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0, query_delim = NULL, response_headers = list()) {
+    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0, query_delim = NULL, response_headers = list(), with_otel = TRUE) {
+      private$START <- Sys.time()
+
+      # otel support
+      check_bool(with_otel)
+      private$WITH_OTEL <- with_otel
+
       self$trust <- trust
       private$ORIGIN <- rook
       private$METHOD <- tolower(rook$REQUEST_METHOD)
@@ -149,6 +161,10 @@ Request <- R6Class('Request',
       }
 
       rook$.__reqres_Request__ <- self
+
+      tracer <- get_tracer()
+      private$OSPAN <- if (with_otel && tracer$is_enabled()) request_ospan(self, private$START, tracer)
+      if (with_otel) push_active_request(self)
     },
     #' @description Pretty printing of the object
     #' @param ... ignored
@@ -438,6 +454,31 @@ Request <- R6Class('Request',
     #' and response object to save a few milliseconds in latency. Use with
     #' caution and see e.g. how fiery maintains a poll of request objects
     clear = function() {
+      # otel
+      if (private$WITH_OTEL && get_meter()$is_enabled()) {
+        attr <- metric_attributes(self, private$RESPONSE)
+        record_request_body(self, attr)
+        record_response_body(self, private$RESPONSE, attr)
+        pop_active_request(self, attr)
+        record_duration(self, attr)
+      }
+      if (!is.null(private$OSPAN)) {
+        span <- private$OSPAN
+        status <- private$RESPONSE$status
+        span$set_attribute("http.response.status_code", status)
+        if (status >= 500) {
+          span$set_status("error")
+          span$set_attribute("error.type", as.character(status))
+        }
+        for (header in names(private$RESPONSE$headers)) {
+          span$set_attribute(
+            paste0("http.response.header.", gsub("_", "-", header)),
+            private$RESPONSE$headers[[header]]
+          )
+        }
+        otel::end_span(span)
+      }
+      # end otel
       private$reset_hard()
     },
     #' @description Forward a request to a new url, optionally setting different
@@ -744,6 +785,25 @@ Request <- R6Class('Request',
     #'
     response_headers = function() {
       private$RESPONSE_HEADERS
+    },
+    #' @field otel_span An OpenTelemetry span to use as parent for any
+    #' instrumentation happening during the handling of the request. If otel is
+    #' not enabled then this will be NULL. The span is populated according to
+    #' the HTTP Server semantics <https://opentelemetry.io/docs/specs/semconv/http/http-spans/#http-server>,
+    #' except for the `http.route` attribute, which must be set by the server
+    #' implementation, along with a proper name for the span
+    #' (`{method}_{route}`). The span is automatically closed when the response
+    #' is converted to a list, unless asked not to. *Immutable*
+    otel_span = function() {
+      private$OSPAN
+    },
+    #' @field start_time The time point the Request was created
+    start_time = function() {
+      private$START
+    },
+    #' @field duration The time passed since the request was created
+    duration = function() {
+      as.numeric(Sys.time() - private$START)
     }
   ),
   private = list(
@@ -769,6 +829,9 @@ Request <- R6Class('Request',
     RESPONSE_HEADERS = NULL,
     RESPONSE = NULL,
     LOCKED = FALSE,
+    WITH_OTEL = FALSE,
+    OSPAN = NULL,
+    START = NULL,
 
     reset_hard = function() {
       private$TRUST <- FALSE
@@ -790,6 +853,11 @@ Request <- R6Class('Request',
       private$SESSION_COOKIE_SETTINGS <- NULL
       private$HAS_SESSION_COOKIE <- FALSE
       private$COMPRESSION_LIMIT <- 0
+      private$RESPONSE_HEADERS <- NULL
+      private$LOCKED <- FALSE
+      private$WITH_OTEL <- FALSE
+      private$OSPAN <- NULL
+      private$START <- NULL
       if (!is.null(private$RESPONSE)) {
         private$RESPONSE$reset()
       }
