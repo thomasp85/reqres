@@ -178,6 +178,19 @@ frameworks to signal that the request should not be altered in some way}
 
 \item{\code{response_headers}}{The list of headers the response is prepopulated
 with \emph{Immutable}}
+
+\item{\code{otel_span}}{An OpenTelemetry span to use as parent for any
+instrumentation happening during the handling of the request. If otel is
+not enabled then this will be NULL. The span is populated according to
+the HTTP Server semantics \url{https://opentelemetry.io/docs/specs/semconv/http/http-spans/#http-server},
+except for the \code{http.route} attribute, which must be set by the server
+implementation, along with a proper name for the span
+(\verb{\{method\}_\{route\}}). The span is automatically closed when the response
+is converted to a list, unless asked not to. \emph{Immutable}}
+
+\item{\code{start_time}}{The time point the Request was created}
+
+\item{\code{duration}}{The time passed since the request was created}
 }
 \if{html}{\out{</div>}}
 }
@@ -219,7 +232,8 @@ Create a new request from a rook object
   session_cookie = NULL,
   compression_limit = 0,
   query_delim = NULL,
-  response_headers = list()
+  response_headers = list(),
+  with_otel = TRUE
 )}\if{html}{\out{</div>}}
 }
 
@@ -250,6 +264,13 @@ compress the response body (it is still dependant on content negotiation)}
 \item{\code{response_headers}}{A list of headers the response should be
 prepopulated with. All names must be in lower case and all elements must
 be character vectors. This is not checked but assumed}
+
+\item{\code{with_otel}}{A boolean to indicate if otel instrumentation should be
+initiated with the creation of this request. Set to \code{FALSE} to avoid a
+span being started as well as metrics being recorded for this request. If
+\code{TRUE} you should call \code{request$clear()} as the last act of your request
+handling to ensure that the span is closed and that the duration metric
+is correctly reported.}
 }
 \if{html}{\out{</div>}}
 }
