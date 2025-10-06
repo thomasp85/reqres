@@ -2,7 +2,8 @@
 
 * Add support for otel OpenTelemetry by creating a span along with a request and
   close it once done. spans created during the handling of the request should
-  use this span as a parent
+  use this span as a parent. Further, support the metrics defined in the HTTP
+  semantics
 
 # reqres 1.0.0
 
