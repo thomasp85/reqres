@@ -95,7 +95,7 @@ record_request_body <- function(request, attributes) {
   if (meter$is_enabled()) {
     otel::histogram_record(
       "http.server.request.body.size",
-      value = request$headers$content_length,
+      value = as.numeric(request$headers$content_length %||% 0),
       attributes = attributes,
       context = request$otel,
       meter = meter
