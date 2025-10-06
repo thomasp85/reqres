@@ -457,10 +457,10 @@ Request <- R6Class('Request',
       # otel
       if (private$WITH_OTEL && get_meter()$is_enabled()) {
         attr <- metric_attributes(self, private$RESPONSE)
-        record_request_body(request, attr)
-        record_response_body(request, response, attr)
-        pop_active_request(request, attr)
-        record_duration(request, attr)
+        record_request_body(self, attr)
+        record_response_body(self, private$RESPONSE, attr)
+        pop_active_request(self, attr)
+        record_duration(self, attr)
       }
       if (!is.null(private$OSPAN)) {
         span <- private$OSPAN
