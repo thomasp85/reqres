@@ -829,7 +829,7 @@ Request <- R6Class('Request',
     RESPONSE_HEADERS = NULL,
     RESPONSE = NULL,
     LOCKED = FALSE,
-    WITH_OTEL = TRUE,
+    WITH_OTEL = FALSE,
     OSPAN = NULL,
     START = NULL,
 
@@ -855,7 +855,7 @@ Request <- R6Class('Request',
       private$COMPRESSION_LIMIT <- 0
       private$RESPONSE_HEADERS <- NULL
       private$LOCKED <- FALSE
-      private$WITH_OTEL <- TRUE
+      private$WITH_OTEL <- FALSE
       private$OSPAN <- NULL
       private$START <- NULL
       if (!is.null(private$RESPONSE)) {
