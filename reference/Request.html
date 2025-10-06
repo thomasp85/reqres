@@ -265,6 +265,25 @@ frameworks to signal that the request should not be altered in some way</p></dd>
 with <em>Immutable</em></p></dd>
 
 
+<dt><code>otel_span</code></dt>
+<dd><p>An OpenTelemetry span to use as parent for any
+instrumentation happening during the handling of the request. If otel is
+not enabled then this will be NULL. The span is populated according to
+the HTTP Server semantics <a href="https://opentelemetry.io/docs/specs/semconv/http/http-spans/#http-server" class="external-link">https://opentelemetry.io/docs/specs/semconv/http/http-spans/#http-server</a>,
+except for the <code>http.route</code> attribute, which must be set by the server
+implementation, along with a proper name for the span
+(<code>{method}_{route}</code>). The span is automatically closed when the response
+is converted to a list, unless asked not to. <em>Immutable</em></p></dd>
+
+
+<dt><code>start_time</code></dt>
+<dd><p>The time point the Request was created</p></dd>
+
+
+<dt><code>duration</code></dt>
+<dd><p>The time passed since the request was created</p></dd>
+
+
 </dl><p></p></div>
     </div>
     <div class="section level2">
@@ -304,7 +323,8 @@ with <em>Immutable</em></p></dd>
 <span>  session_cookie <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  compression_limit <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  query_delim <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  response_headers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  response_headers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  with_otel <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
@@ -347,6 +367,15 @@ compress the response body (it is still dependant on content negotiation)</p></d
 <dd><p>A list of headers the response should be
 prepopulated with. All names must be in lower case and all elements must
 be character vectors. This is not checked but assumed</p></dd>
+
+
+<dt><code>with_otel</code></dt>
+<dd><p>A boolean to indicate if otel instrumentation should be
+initiated with the creation of this request. Set to <code>FALSE</code> to avoid a
+span being started as well as metrics being recorded for this request. If
+<code>TRUE</code> you should call <code>request$clear()</code> as the last act of your request
+handling to ensure that the span is closed and that the duration metric
+is correctly reported.</p></dd>
 
 
 </dl><p></p></div>
@@ -758,9 +787,9 @@ whose return value is returned by the promise</p></dd>
 <span class="r-in"><span><span class="co"># Cleaning up connections</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">fake_rook</span>, <span class="va">req</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger (Mb) max used (Mb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1168216 62.4    2208550  118  2208550  118</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2174348 16.6    8388608   64  8387951   64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           used (Mb) gc trigger  (Mb) max used  (Mb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Ncells 1165880 62.3    2223105 118.8  2223105 118.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Vcells 2165051 16.6    8388608  64.0  8388606  64.0</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
