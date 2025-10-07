@@ -1105,6 +1105,9 @@ Request <- R6Class(
         private$get_session_cookie(),
         assign.env = private
       )
+    },
+    finalize = function() {
+      self$clear()
     }
   )
 )
