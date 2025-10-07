@@ -69,13 +69,19 @@ test_that("parse_multiform works correctly", {
   # Simple multipart form data with boundary
   boundary <- "boundary123"
   form_data <- paste0(
-    "--", boundary, "\r\n",
+    "--",
+    boundary,
+    "\r\n",
     "Content-Disposition: form-data; name=\"field1\"\r\n\r\n",
     "value1\r\n",
-    "--", boundary, "\r\n",
+    "--",
+    boundary,
+    "\r\n",
     "Content-Disposition: form-data; name=\"field2\"\r\n\r\n",
     "value2\r\n",
-    "--", boundary, "--\r\n"
+    "--",
+    boundary,
+    "--\r\n"
   )
 
   raw_form <- charToRaw(form_data)

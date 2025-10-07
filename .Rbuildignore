@@ -17,3 +17,5 @@
 ^data-raw$
 ^compile_commands\.json$
 ^\.cache$
+^[\.]?air\.toml$
+^\.vscode$

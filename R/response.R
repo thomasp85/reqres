@@ -115,7 +115,8 @@
 #' rm(fake_rook, req, res)
 #' gc()
 #'
-Response <- R6Class('Response',
+Response <- R6Class(
+  'Response',
   lock_object = FALSE,
   public = list(
     # Methods
@@ -124,7 +125,9 @@ Response <- R6Class('Response',
     #'
     initialize = function(request) {
       if (!is.null(request$response)) {
-        cli::cli_abort('A response has already been created for this request. Access it using the {.field response} field')
+        cli::cli_abort(
+          'A response has already been created for this request. Access it using the {.field response} field'
+        )
       }
       private$REQUEST = request
       private$STATUS = 404L
@@ -144,7 +147,9 @@ Response <- R6Class('Response',
         "Status" = '{self$status} - {status_phrase(self$status)}',
         "Content type" = self$type
       ))
-      cli::cli_text(cli::style_italic('{cli::symbol$arrow_right} Responding to: {private$REQUEST$url}'))
+      cli::cli_text(cli::style_italic(
+        '{cli::symbol$arrow_right} Responding to: {private$REQUEST$url}'
+      ))
       invisible(self)
     },
     #' @description Sets the header given by `name`. `value` will be converted
@@ -241,7 +246,9 @@ Response <- R6Class('Response',
     attach = function(file, filename = basename(file), type = NULL) {
       self$file <- file
       check_string(filename)
-      if (!is.null(type)) self$type <- type
+      if (!is.null(type)) {
+        self$type <- type
+      }
       self$as_download(filename)
       invisible(self)
     },
@@ -269,7 +276,9 @@ Response <- R6Class('Response',
       }
       self$status <- code
       body <- status_phrase(code)
-      if (is.na(body)) body <- as.character(code)
+      if (is.na(body)) {
+        body <- as.character(code)
+      }
       private$BODY <- body
       self$type <- 'txt'
       private$IS_FORMATTED <- TRUE
@@ -293,7 +302,14 @@ Response <- R6Class('Response',
     #' problem that can be used for further debugging. Can be omitted.
     #' @param clear_headers Should all currently set headers be cleared
     #'
-    problem = function(code, detail, title = NULL, type = NULL, instance = NULL, clear_headers = TRUE) {
+    problem = function(
+      code,
+      detail,
+      title = NULL,
+      type = NULL,
+      instance = NULL,
+      clear_headers = TRUE
+    ) {
       if (clear_headers) {
         private$HEADERS <- list()
       }
@@ -314,8 +330,12 @@ Response <- R6Class('Response',
         xml = format_xml(),
         default = "json"
       )
-      if (isTRUE(self$type == "application/json")) self$type <- "application/problem+json"
-      if (isTRUE(self$type == "application/xml")) self$type <- "application/problem+xml"
+      if (isTRUE(self$type == "application/json")) {
+        self$type <- "application/problem+json"
+      }
+      if (isTRUE(self$type == "application/xml")) {
+        self$type <- "application/problem+xml"
+      }
       invisible(self)
     },
     #' @description Sets a cookie on the response. See
@@ -332,18 +352,42 @@ Response <- R6Class('Response',
     #' @param same_site Either `"Lax"`, `"Strict"`, or `"None"` indicating
     #' how the cookie can be send during cross-site requests. If this is set to
     #' `"None"` then `secure` *must* also be set to `TRUE`
-    set_cookie = function(name, value, encode = TRUE, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
+    set_cookie = function(
+      name,
+      value,
+      encode = TRUE,
+      expires = NULL,
+      http_only = NULL,
+      max_age = NULL,
+      path = NULL,
+      secure = NULL,
+      same_site = NULL
+    ) {
       check_string(name)
       if (length(value) != 1) {
         cli::cli_abort("{.arg value} must be scalar")
       }
       ascii <- iconv(c(name, value), to = 'ASCII')
       if (anyNA(ascii)) {
-        cli::cli_warn('Cookie name and value must only use valid ASCII characters. Cookie {.field {name}} not set')
+        cli::cli_warn(
+          'Cookie name and value must only use valid ASCII characters. Cookie {.field {name}} not set'
+        )
       } else {
-        if (encode) value <- url_encode(value)
-        if (grepl('(^__Secure-)|(^__Host-)', name)) secure <- TRUE
-        private$COOKIES[[name]] <- cookie(value, expires, http_only, max_age, path, secure, same_site)
+        if (encode) {
+          value <- url_encode(value)
+        }
+        if (grepl('(^__Secure-)|(^__Host-)', name)) {
+          secure <- TRUE
+        }
+        private$COOKIES[[name]] <- cookie(
+          value,
+          expires,
+          http_only,
+          max_age,
+          path,
+          secure,
+          same_site
+        )
       }
       invisible(self)
     },
@@ -362,7 +406,11 @@ Response <- R6Class('Response',
       check_string(name)
       if (!is.null(private$REQUEST$cookies[[name]])) {
         secure <- grepl('(^__Secure-)|(^__Host-)', name)
-        private$COOKIES[[name]] <- if (secure) secure_cookie_clearer else cookie_clearer
+        private$COOKIES[[name]] <- if (secure) {
+          secure_cookie_clearer
+        } else {
+          cookie_clearer
+        }
       }
       invisible(self)
     },
@@ -380,7 +428,11 @@ Response <- R6Class('Response',
     set_links = function(...) {
       links <- list2(...)
       if (is.list(links[[1]])) {
-        lifecycle::deprecate_soft("0.3", I("Response$set_links(list(...))"), I("Response$set_links(!!!list(...))"))
+        lifecycle::deprecate_soft(
+          "0.3",
+          I("Response$set_links(list(...))"),
+          I("Response$set_links(!!!list(...))")
+        )
         links <- modifyList(links[[1]], list2(...)[-1])
       }
       if (!is_named2(links)) {
@@ -409,18 +461,29 @@ Response <- R6Class('Response',
     #'
     format = function(..., autofail = TRUE, compress = TRUE, default = NULL) {
       if (self$is_formatted) {
-        cli::cli_warn("The response has already been formatted. Will not format again")
+        cli::cli_warn(
+          "The response has already been formatted. Will not format again"
+        )
         return(FALSE)
       }
-      if (!private$has_body()) return(TRUE)
+      if (!private$has_body()) {
+        return(TRUE)
+      }
 
       formatters <- list2(...)
       if (is.list(formatters[[1]])) {
-        lifecycle::deprecate_soft("0.3", I("Response$format(list(...))"), I("Response$format(!!!list(...))"))
+        lifecycle::deprecate_soft(
+          "0.3",
+          I("Response$format(list(...))"),
+          I("Response$format(!!!list(...))")
+        )
         first_formatters <- names(formatters)[-1]
         formatters <- modifyList(formatters[[1]], list2(...)[-1])
         first_formatters <- names(formatters) %in% first_formatters
-        formatters <- c(formatters[first_formatters], formatters[!first_formatters])
+        formatters <- c(
+          formatters[first_formatters],
+          formatters[!first_formatters]
+        )
       }
       if (!is_named2(formatters)) {
         stop_input_type(formatters, "a named list")
@@ -438,9 +501,19 @@ Response <- R6Class('Response',
           types <- format_types(names(formatters))$name
           n <- length(types)
           if (n > 1) {
-            types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or ", types[n])
+            types <- paste0(
+              paste0(types[-n], collapse = ", "),
+              if (n == 2) " or " else ", or ",
+              types[n]
+            )
           }
-          detail <- paste0("Only ", types, " content type", if (n > 1) "s" else "", " supported.")
+          detail <- paste0(
+            "Only ",
+            types,
+            " content type",
+            if (n > 1) "s" else "",
+            " supported."
+          )
           abort_not_acceptable(detail = detail)
         }
         return(FALSE)
@@ -450,14 +523,22 @@ Response <- R6Class('Response',
       if (is_reqres_problem(content)) {
         cnd_signal(content)
       } else if (is_condition(content)) {
-        if (autofail) abort_status(500L, "Error formatting the response body", parent = content)
+        if (autofail) {
+          abort_status(
+            500L,
+            "Error formatting the response body",
+            parent = content
+          )
+        }
         return(FALSE)
       }
 
       private$IS_FORMATTED <- TRUE
       private$BODY <- content
       self$type <- format
-      if (compress) self$compress()
+      if (compress) {
+        self$compress()
+      }
       return(TRUE)
     },
     #' @description Based on the formatters passed in through `...` content
@@ -487,9 +568,19 @@ Response <- R6Class('Response',
           types <- format_types(names(formatters))$name
           n <- length(types)
           if (n > 1) {
-            types <- paste0(paste0(types[-n], collapse = ", "), if (n == 2) " or " else ", or ", types[n])
+            types <- paste0(
+              paste0(types[-n], collapse = ", "),
+              if (n == 2) " or " else ", or ",
+              types[n]
+            )
           }
-          detail <- paste0("Only ", types, " content type", if (n > 1) "s" else "", " supported.")
+          detail <- paste0(
+            "Only ",
+            types,
+            " content type",
+            if (n > 1) "s" else "",
+            " supported."
+          )
           abort_not_acceptable(detail)
         }
         return(FALSE)
@@ -509,18 +600,28 @@ Response <- R6Class('Response',
     #' `NULL` then the `compression_limit` setting from the initialization of
     #' the request is used
     #'
-    compress = function(priority = c('gzip', 'deflate', 'br', 'identity'), force = FALSE, limit = NULL) {
+    compress = function(
+      priority = c('gzip', 'deflate', 'br', 'identity'),
+      force = FALSE,
+      limit = NULL
+    ) {
       if (!force) {
         type <- self$type
         if (!is.null(type) && isFALSE(mimes$compressible[mimes$name == type])) {
           return(FALSE)
         }
       }
-      if (!is_string(self$body)) return(FALSE)
+      if (!is_string(self$body)) {
+        return(FALSE)
+      }
       limit <- limit %||% private$REQUEST$compression_limit
-      if (limit > nchar(self$body, "bytes")) return(FALSE)
+      if (limit > nchar(self$body, "bytes")) {
+        return(FALSE)
+      }
       encoding <- self$request$accepts_encoding(priority)
-      if (is.null(encoding)) return(FALSE)
+      if (is.null(encoding)) {
+        return(FALSE)
+      }
       content <- switch(
         encoding,
         identity = self$body,
@@ -561,13 +662,19 @@ Response <- R6Class('Response',
         if (is_reqres_problem(content)) {
           cnd_signal(content)
         } else if (is_condition(content)) {
-          abort_status(500L, "Error formatting the response body", parent = content)
+          abort_status(
+            500L,
+            "Error formatting the response body",
+            parent = content
+          )
         } else {
           private$BODY <- content
           self$compress()
         }
       }
-      if (!self$has_header("Date")) self$timestamp()
+      if (!self$has_header("Date")) {
+        self$timestamp()
+      }
       list(
         status = private$STATUS,
         headers = private$format_headers(),
@@ -579,7 +686,15 @@ Response <- R6Class('Response',
     #'
     as_message = function() {
       response <- self$as_list()
-      cat(toupper(self$request$protocol), '/1.1 ', response$status, ' ', status_phrase(response$status), '\n', sep = '')
+      cat(
+        toupper(self$request$protocol),
+        '/1.1 ',
+        response$status,
+        ' ',
+        status_phrase(response$status),
+        '\n',
+        sep = ''
+      )
       headers <- split_headers(response$headers)
       cat_headers(headers$response)
       cat('Content-Length: ', self$content_length(), '\n', sep = '')
@@ -587,11 +702,20 @@ Response <- R6Class('Response',
 
       if (is.raw(response$body)) {
         body <- rawToChar(response$body, multiple = TRUE)
-        body <- paste0(paste(head(body, 77), collapse = ''), if (length(body) > 77) '...' else '')
+        body <- paste0(
+          paste(head(body, 77), collapse = ''),
+          if (length(body) > 77) '...' else ''
+        )
       } else if (has_name(response$body, 'file')) {
         f <- file(response$body, 'rb')
-        body <- rawToChar(readBin(f, raw(), n = 180, endian = 'little'), multiple = TRUE)
-        body <- paste0(paste(head(body, 77), collapse = ''), if (length(body) > 77) '...' else '')
+        body <- rawToChar(
+          readBin(f, raw(), n = 180, endian = 'little'),
+          multiple = TRUE
+        )
+        body <- paste0(
+          paste(head(body, 77), collapse = ''),
+          if (length(body) > 77) '...' else ''
+        )
       } else {
         body <- response$body
         body <- paste0(substr(body, 1, 77), if (nchar(body) > 77) '...' else '')
@@ -641,7 +765,9 @@ Response <- R6Class('Response',
     #' initialised with `404L`
     #'
     status = function(code) {
-      if (missing(code)) return(private$STATUS)
+      if (missing(code)) {
+        return(private$STATUS)
+      }
       if (is_integerish(code, 1L, TRUE)) {
         if (code < 100L || code > 599L) {
           cli::cli_abort('Response code ({.val {code}}) out of range')
@@ -663,7 +789,9 @@ Response <- R6Class('Response',
     #' headers.
     #'
     body = function(content) {
-      if (missing(content)) return(private$BODY)
+      if (missing(content)) {
+        return(private$BODY)
+      }
       private$BODY <- content
       private$IS_FORMATTED <- FALSE
     },
@@ -695,7 +823,9 @@ Response <- R6Class('Response',
     #' on a file extension or mime-type.
     #'
     type = function(type) {
-      if (missing(type)) return(self$get_header('Content-Type'))
+      if (missing(type)) {
+        return(self$get_header('Content-Type'))
+      }
       if (!grepl('/', type)) {
         content_index <- mimes_ext$index[match(tolower(type), mimes_ext$ext)]
         type <- if (!is.na(content_index)) {
@@ -726,7 +856,9 @@ Response <- R6Class('Response',
     },
     #' @field data_store Access the environment that holds the response data store
     data_store = function(value) {
-      if (missing(value)) return(private$DATA)
+      if (missing(value)) {
+        return(private$DATA)
+      }
       if (!identical(private$DATA, value)) {
         cli::cli_abort("It is not allowed to replace the data store")
       }
@@ -741,7 +873,9 @@ Response <- R6Class('Response',
     #' `Request$session` field and using either produces the same result
     #'
     session = function(value) {
-      if (missing(value)) return(private$REQUEST$session)
+      if (missing(value)) {
+        return(private$REQUEST$session)
+      }
       private$REQUEST$session <- value
     },
     #' @field session_cookie_settings Get the settings for the session cookie as
@@ -795,23 +929,30 @@ Response <- R6Class('Response',
       }
       cookies <- as.list(private$COOKIES)
       cookies <- c(paste0(names(cookies), unlist(cookies)), session_cookie)
-      c(headers, structure(
-        as.list(cookies),
-        names = rep('set-cookie', length(cookies))
-      ))
+      c(
+        headers,
+        structure(
+          as.list(cookies),
+          names = rep('set-cookie', length(cookies))
+        )
+      )
     },
     format_body = function() {
       if (is.raw(private$BODY)) {
         private$BODY
-      } else if (length(private$BODY) == 1L &&
-                 'file' %in% names(private$BODY)) {
+      } else if (
+        length(private$BODY) == 1L &&
+          'file' %in% names(private$BODY)
+      ) {
         private$BODY
       } else {
         paste(as.character(private$BODY), collapse = '\n')
       }
     },
     has_body = function() {
-      !is.null(private$BODY) && length(private$BODY) != 0 && !identical(private$BODY, '')
+      !is.null(private$BODY) &&
+        length(private$BODY) != 0 &&
+        !identical(private$BODY, '')
     }
   )
 )
@@ -835,7 +976,15 @@ as.list.Response <- function(x, ...) {
 #' @export
 is.Response <- function(x) inherits(x, 'Response')
 
-cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path = NULL, secure = NULL, same_site = NULL) {
+cookie <- function(
+  value,
+  expires = NULL,
+  http_only = NULL,
+  max_age = NULL,
+  path = NULL,
+  secure = NULL,
+  same_site = NULL
+) {
   opts <- paste0('=', value)
   if (!is.null(expires)) {
     if (length(expires) != 1) {
@@ -862,17 +1011,32 @@ cookie <- function(value, expires = NULL, http_only = NULL, max_age = NULL, path
   if (!is.null(same_site)) {
     check_string(same_site)
     if (!same_site %in% c('Lax', 'Strict', 'None')) {
-      cli::cli_abort("{.arg same_site} must be {.or {.val {c('Lax', 'Strict', 'None')}}}")
+      cli::cli_abort(
+        "{.arg same_site} must be {.or {.val {c('Lax', 'Strict', 'None')}}}"
+      )
     }
     if (same_site == "None" && !isTRUE(secure)) {
-      cli::cli_abort("If {.arg same_site = \"None\"} then {.arg secure = TRUE} must also be used")
+      cli::cli_abort(
+        "If {.arg same_site = \"None\"} then {.arg secure = TRUE} must also be used"
+      )
     }
     opts <- c(opts, paste0('SameSite=', same_site))
   }
   paste(opts, collapse = '; ')
 }
-on_load(cookie_clearer <- cookie("", expires = as.POSIXct(0, origin = "1970-01-01 00:00:00 GMT")))
-on_load(secure_cookie_clearer <- cookie("", expires = as.POSIXct(0, origin = "1970-01-01 00:00:00 GMT"), secure = TRUE))
+on_load(
+  cookie_clearer <- cookie(
+    "",
+    expires = as.POSIXct(0, origin = "1970-01-01 00:00:00 GMT")
+  )
+)
+on_load(
+  secure_cookie_clearer <- cookie(
+    "",
+    expires = as.POSIXct(0, origin = "1970-01-01 00:00:00 GMT"),
+    secure = TRUE
+  )
+)
 gzip <- function(x) {
   f <- tempfile()
   con <- gzcon(file(f, open = 'wb'))

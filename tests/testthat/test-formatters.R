@@ -95,7 +95,11 @@ test_that("format_xml works correctly", {
   nested_output <- xml_formatter(nested_list)
   expect_match(nested_output, "<person>", fixed = TRUE)
   expect_match(nested_output, "<name>John</name>", fixed = TRUE)
-  expect_match(nested_output, "<hobbies><character>reading</character><character>hiking</character></hobbies>", fixed = TRUE)
+  expect_match(
+    nested_output,
+    "<hobbies><character>reading</character><character>hiking</character></hobbies>",
+    fixed = TRUE
+  )
 
   # Test with plain string
   expect_equal(xml_formatter("raw text"), "raw text")
@@ -150,7 +154,7 @@ test_that("format_table works correctly", {
   # Test with custom options
   csv_formatter <- format_table(sep = ",", row.names = FALSE)
   csv_output <- csv_formatter(df)
-  expect_false(grepl('"1"', csv_output))  # No row names
+  expect_false(grepl('"1"', csv_output)) # No row names
   expect_match(csv_output, '"name","age"', fixed = TRUE)
   expect_match(csv_output, '"John",30', fixed = TRUE)
 })
@@ -164,7 +168,10 @@ test_that("listify handles different object types correctly", {
   char_vec <- c("a", "b", "c")
   char_result <- listify(char_vec)
   expect_length(char_result, 3)
-  expect_equal(char_result, list(character = list("a"), character = list("b"), character = list("c")))
+  expect_equal(
+    char_result,
+    list(character = list("a"), character = list("b"), character = list("c"))
+  )
 
   # Test with named list
   named_list <- list(name = "John", age = 30)

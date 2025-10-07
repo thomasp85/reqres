@@ -40,15 +40,38 @@ NULL
 #'
 #' @importFrom jsonlite toJSON
 #' @export
-format_json <- function(dataframe = 'rows', matrix = 'rowmajor', Date = 'ISO8601',
-                        POSIXt = 'string', factor = 'string', complex = 'string',
-                        raw = 'base64', null = 'list', na = 'null',
-                        auto_unbox = FALSE, digits = 4, pretty = FALSE, force = FALSE) {
+format_json <- function(
+  dataframe = 'rows',
+  matrix = 'rowmajor',
+  Date = 'ISO8601',
+  POSIXt = 'string',
+  factor = 'string',
+  complex = 'string',
+  raw = 'base64',
+  null = 'list',
+  na = 'null',
+  auto_unbox = FALSE,
+  digits = 4,
+  pretty = FALSE,
+  force = FALSE
+) {
   function(x) {
-    toJSON(x,dataframe = dataframe, matrix = matrix, Date = Date,
-           POSIXt = POSIXt, factor = factor, complex = complex,
-           raw = raw, null = null, na = na, auto_unbox = auto_unbox,
-           digits = digits, pretty = pretty, force = force)
+    toJSON(
+      x,
+      dataframe = dataframe,
+      matrix = matrix,
+      Date = Date,
+      POSIXt = POSIXt,
+      factor = factor,
+      complex = complex,
+      raw = raw,
+      null = null,
+      na = na,
+      auto_unbox = auto_unbox,
+      digits = digits,
+      pretty = pretty,
+      force = force
+    )
   }
 }
 #' @rdname formatters
@@ -69,10 +92,16 @@ format_plain <- function(sep = '\n') {
 #'
 #' @importFrom xml2 as_xml_document
 #' @export
-format_xml <- function(root_name = "document", encoding = 'UTF-8', options = 'as_xml') {
+format_xml <- function(
+  root_name = "document",
+  encoding = 'UTF-8',
+  options = 'as_xml'
+) {
   options <- union('as_xml', options)
   function(x) {
-    if (is_bare_string(x)) return(x)
+    if (is_bare_string(x)) {
+      return(x)
+    }
     x <- listify(x)
     if (!isTRUE(names(x) == root_name)) {
       x <- list2(!!root_name := x)
@@ -87,8 +116,12 @@ format_xml <- function(root_name = "document", encoding = 'UTF-8', options = 'as
 format_html <- function(encoding = 'UTF-8', options = 'as_html') {
   options <- union('as_html', options)
   function(x) {
-    if (is_bare_string(x)) return(x)
-    if (inherits(x, "shiny.tag")) return(as.character(x))
+    if (is_bare_string(x)) {
+      return(x)
+    }
+    if (inherits(x, "shiny.tag")) {
+      return(as.character(x))
+    }
     x <- listify(x)
     if (!isTRUE(names(x) == "html")) {
       x <- list(html = x)
@@ -142,7 +175,11 @@ listify <- function(x) {
   if (length(x) == 1L && !is_list(x)) {
     return(list(as.character(x)))
   }
-  if (!is.list(x)) x <- as.list(x)
-  if (is.null(attr(x, 'names', exact = TRUE))) names(x) <- vapply(x, function(x) class(x)[1], character(1))
+  if (!is.list(x)) {
+    x <- as.list(x)
+  }
+  if (is.null(attr(x, 'names', exact = TRUE))) {
+    names(x) <- vapply(x, function(x) class(x)[1], character(1))
+  }
   lapply(x, listify)
 }

@@ -54,8 +54,12 @@ from_http_date <- function(time) {
 #' query_parser("?name=Thomas%20Lin%20Pedersen&numbers=1&numbers=2&numbers=3")
 #'
 query_parser <- function(query = NULL, delim = NULL) {
-  if (is.null(query) || query == '') return(list())
-  if (isTRUE(delim == " ")) delim <- "%20"
+  if (is.null(query) || query == '') {
+    return(list())
+  }
+  if (isTRUE(delim == " ")) {
+    delim <- "%20"
+  }
   check_string(query, allow_null = TRUE)
   query <- stringi::stri_replace_first_regex(query, '^\\?', '')
   query <- stringi::stri_split_fixed(query, '&')[[1]]
@@ -105,7 +109,7 @@ mime_type_from_file <- function(filename) {
     filename,
     "\\.([^\\.]+)$",
     cg_missing = ""
-  )[,2])
+  )[, 2])
   mimes[mimes_ext$index[match(ext, mimes_ext$ext)], ]
 }
 #' @rdname mime_type_from_file
@@ -175,12 +179,17 @@ split_headers <- function(headers) {
   )
 }
 cat_headers <- function(headers) {
-  if (length(headers) == 0) return(invisible())
-  names(headers) <- gsub("(^|-)([[:alpha:]])", "\\1\\U\\2",
-                         gsub('_', '-', names(headers)),
-                         perl = TRUE)
+  if (length(headers) == 0) {
+    return(invisible())
+  }
+  names(headers) <- gsub(
+    "(^|-)([[:alpha:]])",
+    "\\1\\U\\2",
+    gsub('_', '-', names(headers)),
+    perl = TRUE
+  )
   headers <- lapply(headers, paste, collapse = ', ')
-  for(i in names(headers)) {
+  for (i in names(headers)) {
     cat(i, ': ', headers[[i]], '\n', sep = '')
   }
   invisible()
@@ -258,14 +267,31 @@ random_key <- function() {
 #' # A key must be provided for session_cookie to be used
 #' Request$new(rook, key = random_key(), session_cookie = session_cookie)
 #'
-session_cookie <- function(name = "reqres", expires = NULL, max_age = NULL,
-                           path = NULL, secure = NULL, same_site = NULL) {
+session_cookie <- function(
+  name = "reqres",
+  expires = NULL,
+  max_age = NULL,
+  path = NULL,
+  secure = NULL,
+  same_site = NULL
+) {
   check_string(name)
-  opts <- cookie("", expires = expires, http_only = TRUE, max_age = max_age, path = path, secure = secure, same_site = same_site)
-  structure(list(
-    name = name,
-    options = sub("^=", "", opts)
-  ), class = "session_cookie_settings")
+  opts <- cookie(
+    "",
+    expires = expires,
+    http_only = TRUE,
+    max_age = max_age,
+    path = path,
+    secure = secure,
+    same_site = same_site
+  )
+  structure(
+    list(
+      name = name,
+      options = sub("^=", "", opts)
+    ),
+    class = "session_cookie_settings"
+  )
 }
 #' @rdname session_cookie
 #' @param x An object to test

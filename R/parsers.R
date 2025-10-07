@@ -37,8 +37,12 @@ NULL
 #'
 #' @importFrom jsonlite fromJSON
 #' @export
-parse_json <- function(simplifyVector = TRUE, simplifyDataFrame = simplifyVector,
-                       simplifyMatrix = simplifyVector, flatten = FALSE) {
+parse_json <- function(
+  simplifyVector = TRUE,
+  simplifyDataFrame = simplifyVector,
+  simplifyMatrix = simplifyVector,
+  flatten = FALSE
+) {
   function(raw, directives) {
     fromJSON(
       rawToChar(raw),
@@ -68,16 +72,31 @@ parse_plain <- function(sep = '\n') {
 #' @export
 parse_xml <- function(encoding = '', options = 'NOBLANKS', base_url = '') {
   function(raw, directives = list()) {
-    xml2::as_list(read_xml(raw, encoding = encoding, options = options, base_url = base_url))
+    xml2::as_list(read_xml(
+      raw,
+      encoding = encoding,
+      options = options,
+      base_url = base_url
+    ))
   }
 }
 #' @rdname parsers
 #'
 #' @importFrom xml2 read_xml
 #' @export
-parse_html <- function(encoding = '', options = c('RECOVER', 'NOERROR', 'NOBLANKS'), base_url = '') {
+parse_html <- function(
+  encoding = '',
+  options = c('RECOVER', 'NOERROR', 'NOBLANKS'),
+  base_url = ''
+) {
   function(raw, directives = list()) {
-    xml2::as_list(read_xml(raw, as_html = TRUE, encoding = encoding, options = options, base_url = base_url))
+    xml2::as_list(read_xml(
+      raw,
+      as_html = TRUE,
+      encoding = encoding,
+      options = options,
+      base_url = base_url
+    ))
   }
 }
 #' @rdname parsers
@@ -141,5 +160,9 @@ default_parsers <- list(
   `multipart/form-data` = parse_multiform(),
   `application/x-www-form-urlencoded` = parse_queryform(),
   `text/csv` = parse_table(sep = ',', header = TRUE, stringsAsFactors = FALSE),
-  `text/tab-separated-values` = parse_table(sep = '\t', header = TRUE, stringsAsFactors = FALSE)
+  `text/tab-separated-values` = parse_table(
+    sep = '\t',
+    header = TRUE,
+    stringsAsFactors = FALSE
+  )
 )

@@ -60,7 +60,10 @@ test_that("mime_type_from_file returns correct mime types", {
   expect_equal(mime_type_from_file("style.css")$name, "text/css")
 
   # Test case insensitivity
-  expect_equal(mime_type_from_file("IMAGE.JPG")$name, mime_type_from_file("image.jpg")$name)
+  expect_equal(
+    mime_type_from_file("IMAGE.JPG")$name,
+    mime_type_from_file("image.jpg")$name
+  )
 
   # Test file with multiple extensions
   expect_equal(mime_type_from_file("archive.tar.gz")$name, "application/gzip")
@@ -125,7 +128,11 @@ test_that("print.session_cookie_settings works correctly", {
   # Capture the print output
   output <- capture.output(print(cookie_settings), type = "message")
 
-  expect_match(output[1], "Settings for a session cookie named test_session", fixed = TRUE)
+  expect_match(
+    output[1],
+    "Settings for a session cookie named test_session",
+    fixed = TRUE
+  )
   expect_match(output[2], "Attributes:", fixed = TRUE)
 
   # Test with additional options
@@ -137,5 +144,9 @@ test_that("print.session_cookie_settings works correctly", {
   )
 
   output2 <- capture.output(print(cookie_settings2), type = "message")
-  expect_match(output2[1], "Settings for a session cookie named another_session", fixed = TRUE)
+  expect_match(
+    output2[1],
+    "Settings for a session cookie named another_session",
+    fixed = TRUE
+  )
 })

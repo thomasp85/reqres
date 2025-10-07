@@ -32,7 +32,10 @@ test_that('request gets created correctly', {
   expect_equal(req$protocol, 'http')
   expect_equal(req$root, '')
   expect_equal(req$path, '/summary')
-  expect_equal(req$url, 'http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen')
+  expect_equal(
+    req$url,
+    'http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen'
+  )
   expect_equal(req$query, list(id = "2347", user = 'Thomas Lin Pedersen'))
   expect_false(req$xhr)
   expect_false(req$secure)
@@ -58,7 +61,10 @@ test_that('header parsing works', {
   req <- Request$new(rook)
   expect_equal(req$get_header('Content-Type'), headers$Content_Type)
   expect_equal(req$get_header('Date'), headers$Date)
-  expect_equal(req$get_header('X-Custom-Message'), c("\"Testing string literals, with comma\"", "no-literal"))
+  expect_equal(
+    req$get_header('X-Custom-Message'),
+    c("\"Testing string literals, with comma\"", "no-literal")
+  )
 })
 
 test_that('response can be generated', {
@@ -183,7 +189,6 @@ test_that("accepts_charsets works correctly", {
 })
 
 test_that("accepts_language works correctly", {
-
   rook <- fiery::fake_request(
     url = 'http://127.0.0.1:80/test',
     headers = list(
@@ -313,8 +318,16 @@ test_that("as_message prints request details correctly", {
 
   # Check for expected elements in the output
   expect_match(output[1], "GET /test?id=123 HTTP/1.1", fixed = TRUE)
-  expect_match(paste(output, collapse = "\n"), "Content-Type: application/json", fixed = TRUE)
-  expect_match(paste(output, collapse = "\n"), "Accept: application/json", fixed = TRUE)
+  expect_match(
+    paste(output, collapse = "\n"),
+    "Content-Type: application/json",
+    fixed = TRUE
+  )
+  expect_match(
+    paste(output, collapse = "\n"),
+    "Accept: application/json",
+    fixed = TRUE
+  )
 })
 
 test_that("parse_raw handles compressed content", {
@@ -370,11 +383,11 @@ test_that("get_charset_spec works correctly", {
 
   # Test exact match
   result <- get_charset_spec(c("utf-8", "iso-8859-1"), accepts)
-  expect_equal(result, 1)  # utf-8 should be preferred
+  expect_equal(result, 1) # utf-8 should be preferred
 
   # Test wildcard match
   result <- get_charset_spec("utf-16", accepts)
-  expect_equal(result, 1)  # Should match * with index 1 (first in the input)
+  expect_equal(result, 1) # Should match * with index 1 (first in the input)
 
   # Test no match
   result <- get_charset_spec(character(0), accepts)

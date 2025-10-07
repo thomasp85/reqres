@@ -70,9 +70,26 @@ test_that('cookies can be get, set, and removed', {
   expect_false(res$has_cookie('test'))
 
   exp <- Sys.Date() + 1000
-  res$set_cookie('test', 'this is a test', TRUE, expires = exp, http_only = TRUE, max_age = 1000, path = '/test', secure = TRUE, same_site = 'Lax')
+  res$set_cookie(
+    'test',
+    'this is a test',
+    TRUE,
+    expires = exp,
+    http_only = TRUE,
+    max_age = 1000,
+    path = '/test',
+    secure = TRUE,
+    same_site = 'Lax'
+  )
   expect_true(res$has_cookie('test'))
-  expect_equal(res$as_list()$headers[['set-cookie']], paste0('test=this%20is%20a%20test; Expires=', to_http_date(exp), '; HttpOnly; Max-Age=1000; Path=/test; Secure; SameSite=Lax'))
+  expect_equal(
+    res$as_list()$headers[['set-cookie']],
+    paste0(
+      'test=this%20is%20a%20test; Expires=',
+      to_http_date(exp),
+      '; HttpOnly; Max-Age=1000; Path=/test; Secure; SameSite=Lax'
+    )
+  )
   res$remove_cookie('test')
   expect_false(res$has_cookie('test'))
 })
@@ -102,7 +119,10 @@ test_that('files are added correctly', {
   expect_equal(res$type, 'text/plain')
   expect_equal(res$get_header('Last-Modified'), to_http_date(file.mtime(file)))
   res$attach(file)
-  expect_equal(res$get_header('Content-Disposition'), "attachment; filename=\"DESCRIPTION\"")
+  expect_equal(
+    res$get_header('Content-Disposition'),
+    "attachment; filename=\"DESCRIPTION\""
+  )
 
   expect_equal(res$as_list()$body, c(file = file))
 })
@@ -151,7 +171,10 @@ test_that('body formatting works', {
   res <- Response$new(req)
   res$body <- body
   expect_true(res$format(!!!default_formatters))
-  expect_equal(res$body, brotli::brotli_compress(charToRaw(jsonlite::toJSON(body))))
+  expect_equal(
+    res$body,
+    brotli::brotli_compress(charToRaw(jsonlite::toJSON(body)))
+  )
 
   rook2 <- fiery::fake_request(
     url = 'http://127.0.0.1:80/summary?id=2347&user=Thomas+Lin+Pedersen',
@@ -179,12 +202,19 @@ test_that("attach works correctly", {
   res$attach(temp_file, filename = "test-file.txt")
 
   # Check content disposition and type
-  expect_equal(res$get_header("Content-Disposition"), 'attachment; filename="test-file.txt"')
+  expect_equal(
+    res$get_header("Content-Disposition"),
+    'attachment; filename="test-file.txt"'
+  )
   expect_equal(res$type, "text/plain")
   expect_equal(res$file, file_path_as_absolute(temp_file))
 
   # Check with custom type
-  res$attach(temp_file, filename = "test.dat", type = "application/octet-stream")
+  res$attach(
+    temp_file,
+    filename = "test.dat",
+    type = "application/octet-stream"
+  )
   expect_equal(res$type, "application/octet-stream")
 })
 
@@ -200,7 +230,10 @@ test_that("as_download works correctly", {
 
   # Test with filename
   res$as_download(filename = "example.txt")
-  expect_equal(res$get_header("Content-Disposition"), 'attachment; filename="example.txt"')
+  expect_equal(
+    res$get_header("Content-Disposition"),
+    'attachment; filename="example.txt"'
+  )
 })
 
 test_that("status_with_text works correctly", {
@@ -266,12 +299,18 @@ test_that("problem creates HTTP problem response", {
   body <- fromJSON(res$body)
   expect_equal(body$detail, "Resource not found")
   expect_equal(body$title, "Not Found")
-  expect_equal(body$type, "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5")
+  expect_equal(
+    body$type,
+    "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5"
+  )
 })
 
 test_that("set_cookie and cookie management works correctly", {
   # Create a request/response pair
-  rook <- fiery::fake_request('http://example.com', headers = list(Cookies = "to_clear=value"))
+  rook <- fiery::fake_request(
+    'http://example.com',
+    headers = list(Cookies = "to_clear=value")
+  )
   req <- Request$new(rook)
   res <- req$respond()
 
@@ -301,8 +340,10 @@ test_that("set_cookie and cookie management works correctly", {
   # Test automatic secure flag for secure-prefixed cookies
   res$set_cookie("__Secure-auto", "value")
   cookies_list <- as.list(res)$headers
-  secure_cookie_header <- cookies_list[names(cookies_list) == "set-cookie" &
-                                       grepl("__Secure-auto", cookies_list)]
+  secure_cookie_header <- cookies_list[
+    names(cookies_list) == "set-cookie" &
+      grepl("__Secure-auto", cookies_list)
+  ]
   expect_match(secure_cookie_header[[1]], "; Secure")
 })
 
@@ -413,7 +454,11 @@ test_that("set_formatter works correctly", {
   no_match_res <- no_match_req$respond()
 
   expect_snapshot(
-    no_match_res$set_formatter(json = format_json(), xml = format_xml(), autofail = TRUE),
+    no_match_res$set_formatter(
+      json = format_json(),
+      xml = format_xml(),
+      autofail = TRUE
+    ),
     error = TRUE
   )
 
@@ -589,7 +634,9 @@ test_that("session management works correctly", {
 
   # Check that session data is included in response headers
   list_response <- res$as_list()
-  session_headers <- list_response$headers[names(list_response$headers) == "set-cookie"]
+  session_headers <- list_response$headers[
+    names(list_response$headers) == "set-cookie"
+  ]
   expect_true(any(grepl("test_session=", session_headers)))
 })
 

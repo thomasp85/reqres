@@ -39,7 +39,9 @@ metric_attributes <- function(request, response) {
   list2(
     http.request.method = toupper(request$method),
     url.scheme = request$protocol,
-    !!!if(response$status >= 500) list(error.type = as.character(response$status)),
+    !!!if (response$status >= 500) {
+      list(error.type = as.character(response$status))
+    },
     http.response.status_code = response$status,
     network.protocol.name = "http",
     network.protocol.version = "1.1",
@@ -107,14 +109,17 @@ record_response_body <- function(request, response, attributes) {
   if (meter$is_enabled()) {
     otel::histogram_record(
       "http.server.response.body.size",
-      value = if (is.raw(response$body)) length(response$body) else nchar(response$body, "bytes"),
+      value = if (is.raw(response$body)) {
+        length(response$body)
+      } else {
+        nchar(response$body, "bytes")
+      },
       attributes = attributes,
       context = request$otel,
       meter = meter
     )
   }
 }
-
 
 
 request_ospan <- function(request, start_time, tracer) {

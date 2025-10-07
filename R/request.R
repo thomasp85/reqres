@@ -64,7 +64,8 @@
 #' rm(fake_rook, req)
 #' gc()
 #'
-Request <- R6Class('Request',
+Request <- R6Class(
+  'Request',
   lock_object = FALSE,
   public = list(
     # Methods
@@ -94,7 +95,16 @@ Request <- R6Class('Request',
     #' handling to ensure that the span is closed and that the duration metric
     #' is correctly reported.
     #'
-    initialize = function(rook, trust = FALSE, key = NULL, session_cookie = NULL, compression_limit = 0, query_delim = NULL, response_headers = list(), with_otel = TRUE) {
+    initialize = function(
+      rook,
+      trust = FALSE,
+      key = NULL,
+      session_cookie = NULL,
+      compression_limit = 0,
+      query_delim = NULL,
+      response_headers = list(),
+      with_otel = TRUE
+    ) {
       private$START <- Sys.time()
 
       # otel support
@@ -117,16 +127,24 @@ Request <- R6Class('Request',
         }
       }
       private$KEY <- key
-      if (!is.null(session_cookie) && !is_session_cookie_settings(session_cookie)) {
+      if (
+        !is.null(session_cookie) && !is_session_cookie_settings(session_cookie)
+      ) {
         cli::cli_warn("Ignoring malformed {.arg session_cookie} argument")
         session_cookie <- NULL
       }
       if (is.null(key) && !is.null(session_cookie)) {
-        cli::cli_warn("Ignoring {.arg session_cookie} argument when {.arg key} is {.val {factor('NULL')}}")
+        cli::cli_warn(
+          "Ignoring {.arg session_cookie} argument when {.arg key} is {.val {factor('NULL')}}"
+        )
         session_cookie <- NULL
       }
       private$SESSION_COOKIE_SETTINGS <- session_cookie
-      private$HAS_SESSION_COOKIE <- !is.null(session_cookie) && isTRUE(grepl(paste0("(^|; )", session_cookie$name, "="), rook$HTTP_COOKIE))
+      private$HAS_SESSION_COOKIE <- !is.null(session_cookie) &&
+        isTRUE(grepl(
+          paste0("(^|; )", session_cookie$name, "="),
+          rook$HTTP_COOKIE
+        ))
       delayedAssign("HEADERS", get_headers(rook), assign.env = private)
       if (is.null(rook$HTTP_HOST)) {
         private$HOST <- paste(rook$SERVER_NAME, rook$SERVER_PORT, sep = ':')
@@ -145,11 +163,19 @@ Request <- R6Class('Request',
         private$QUERYSTRING <- paste0('?', sub('^\\?', '', private$QUERYSTRING))
       }
       private$IP <- rook$REMOTE_ADDR
-      delayedAssign("QUERY", private$parse_query(private$QUERYSTRING), assign.env = private)
+      delayedAssign(
+        "QUERY",
+        private$parse_query(private$QUERYSTRING),
+        assign.env = private
+      )
 
       delayedAssign("COOKIES", private$parse_cookies(), assign.env = private)
 
-      delayedAssign("SESSION", private$get_session_cookie(), assign.env = private)
+      delayedAssign(
+        "SESSION",
+        private$get_session_cookie(),
+        assign.env = private
+      )
 
       if (!(is_bare_list(response_headers) && is_named2(response_headers))) {
         stop_input_type(response_headers, "a named list")
@@ -163,7 +189,9 @@ Request <- R6Class('Request',
       rook$.__reqres_Request__ <- self
 
       tracer <- get_tracer()
-      private$OSPAN <- if (with_otel && tracer$is_enabled()) request_ospan(self, private$START, tracer)
+      private$OSPAN <- if (with_otel && tracer$is_enabled()) {
+        request_ospan(self, private$START, tracer)
+      }
       if (with_otel) push_active_request(self)
     },
     #' @description Pretty printing of the object
@@ -202,10 +230,14 @@ Request <- R6Class('Request',
     #'
     accepts = function(types) {
       accept <- format_mimes(self$headers$accept)
-      if (is.null(accept)) return(types[1])
+      if (is.null(accept)) {
+        return(types[1])
+      }
       full_types <- format_types(types)
       ind <- get_format_spec(full_types, accept)
-      if (is.null(ind)) return(NULL)
+      if (is.null(ind)) {
+        return(NULL)
+      }
       types[ind]
     },
     #' @description Given a vector of possible character encodings it returns
@@ -214,9 +246,13 @@ Request <- R6Class('Request',
     #'
     accepts_charsets = function(charsets) {
       accept <- format_charsets(self$headers$accept_charset)
-      if (is.null(accept)) return(charsets[1])
+      if (is.null(accept)) {
+        return(charsets[1])
+      }
       ind <- get_charset_spec(tolower(charsets), accept)
-      if (is.null(ind)) return(NULL)
+      if (is.null(ind)) {
+        return(NULL)
+      }
       charsets[ind]
     },
     #' @description Given a vector of possible content encodings (usually
@@ -227,10 +263,14 @@ Request <- R6Class('Request',
     #'
     accepts_encoding = function(encoding) {
       acc_enc <- self$get_header('Accept-Encoding')
-      if (is.null(acc_enc)) acc_enc <- 'identity'
+      if (is.null(acc_enc)) {
+        acc_enc <- 'identity'
+      }
       accept <- format_encodings(acc_enc)
       ind <- get_encoding_spec(tolower(encoding), accept)
-      if (is.null(ind)) return('identity')
+      if (is.null(ind)) {
+        return('identity')
+      }
       encoding[ind]
     },
     #' @description Given a vector of possible content languages it selects the
@@ -239,9 +279,13 @@ Request <- R6Class('Request',
     #'
     accepts_language = function(language) {
       accept <- format_languages(self$headers$accept_language)
-      if (is.null(accept)) return(language[1])
+      if (is.null(accept)) {
+        return(language[1])
+      }
       ind <- get_language_spec(tolower(language), accept)
-      if (is.null(ind)) return(NULL)
+      if (is.null(ind)) {
+        return(NULL)
+      }
       language[ind]
     },
     #' @description Queries whether the body of the request is in a given format
@@ -252,16 +296,22 @@ Request <- R6Class('Request',
     #'
     is = function(type) {
       accept <- self$get_header('Content-Type')
-      if (is.null(accept)) return(NULL)
+      if (is.null(accept)) {
+        return(NULL)
+      }
       accept <- trimws(stringi::stri_split_fixed(accept, ';', n = 2)[[1]])[1]
       content <- stringi::stri_split_fixed(accept, "/", n = 2)[[1]]
       type <- ifelse(type == "*", "*/*", type)
       ext <- !grepl('/', type)
-      type[ext] <- mimes$name[mimes_ext$index[match(sub('^[.]', '', type[ext]), mimes_ext$ext)]]
+      type[ext] <- mimes$name[mimes_ext$index[match(
+        sub('^[.]', '', type[ext]),
+        mimes_ext$ext
+      )]]
       type <- stringi::stri_split_fixed(type, '/', n = 2)
       main <- vapply(type, `[[`, character(1), 1L)
       sub <- vapply(type, `[[`, character(1), 2L)
-      match <- (main == content[1] | main == "*") & (sub == content[2] | sub == "*")
+      match <- (main == content[1] | main == "*") &
+        (sub == content[2] | sub == "*")
       priority <- order(main == "*", sub == "*", ext)
       attr(match, "pick") <- priority[which(match[priority])[1]]
       match
@@ -304,11 +354,17 @@ Request <- R6Class('Request',
     #' @param autofail Automatically populate the response if parsing fails
     #'
     parse = function(..., autofail = TRUE) {
-      if (!private$has_body()) return(TRUE)
+      if (!private$has_body()) {
+        return(TRUE)
+      }
 
       parsers <- list2(...)
       if (is.list(parsers[[1]])) {
-        lifecycle::deprecate_soft("0.3", I("Request$parse(list(...))"), I("Request$parse(!!!list(...))"))
+        lifecycle::deprecate_soft(
+          "0.3",
+          I("Request$parse(list(...))"),
+          I("Request$parse(!!!list(...))")
+        )
         first_parsers <- names(parsers)[-1]
         parsers <- modifyList(parsers[[1]], list2(...)[-1])
         first_parsers <- names(parsers) %in% first_parsers
@@ -331,9 +387,15 @@ Request <- R6Class('Request',
       if (!any(parser_match)) {
         if (autofail) {
           if (self$method == "post") {
-            self$response$set_header("Accept-Post", paste0(format_types(names(parsers)), collapse = ", "))
+            self$response$set_header(
+              "Accept-Post",
+              paste0(format_types(names(parsers)), collapse = ", ")
+            )
           } else if (self$method == "patch") {
-            self$response$set_header("Accept-Patch", paste0(format_types(names(parsers)), collapse = ", "))
+            self$response$set_header(
+              "Accept-Patch",
+              paste0(format_types(names(parsers)), collapse = ", ")
+            )
           }
           abort_status(415L)
         }
@@ -343,7 +405,12 @@ Request <- R6Class('Request',
       content <- private$get_body()
       content <- tri(private$unpack(content))
       if (is_condition(content)) {
-        if (autofail) abort_bad_request("Request body failed to be decoded", parent = content)
+        if (autofail) {
+          abort_bad_request(
+            "Request body failed to be decoded",
+            parent = content
+          )
+        }
         return(FALSE)
       }
 
@@ -360,7 +427,9 @@ Request <- R6Class('Request',
       if (is_reqres_problem(content)) {
         cnd_signal(content)
       } else if (is_condition(content)) {
-        if (autofail) abort_status(400L, "Error parsing the request body", parent = content)
+        if (autofail) {
+          abort_status(400L, "Error parsing the request body", parent = content)
+        }
         return(FALSE)
       }
 
@@ -377,7 +446,12 @@ Request <- R6Class('Request',
       content <- private$get_body()
       content <- tri(private$unpack(content))
       if (is_condition(content)) {
-        if (autofail) abort_bad_request("Request body failed to be decoded", parent = content)
+        if (autofail) {
+          abort_bad_request(
+            "Request body failed to be decoded",
+            parent = content
+          )
+        }
         return(FALSE)
       }
       private$BODY <- content
@@ -387,7 +461,17 @@ Request <- R6Class('Request',
     #' stream.
     #'
     as_message = function() {
-      cat(toupper(self$method), ' ', self$root, self$path, self$querystring, ' ', toupper(self$protocol), '/1.1\n', sep = '')
+      cat(
+        toupper(self$method),
+        ' ',
+        self$root,
+        self$path,
+        self$querystring,
+        ' ',
+        toupper(self$protocol),
+        '/1.1\n',
+        sep = ''
+      )
       if (is.null(self$get_header('Host'))) {
         cat('Host: ', self$host, '\n', sep = '')
       }
@@ -401,7 +485,11 @@ Request <- R6Class('Request',
       } else {
         body <- gsub('\n', '\\\\n', body)
         body <- gsub('\t', '\\\\t', body)
-        cat(substr(body, 1, 77), if (nchar(body) > 77) '...\n' else '\n', sep = '')
+        cat(
+          substr(body, 1, 77),
+          if (nchar(body) > 77) '...\n' else '\n',
+          sep = ''
+        )
       }
     },
     #' @description base64-encode a string. If a key has been provided during
@@ -413,7 +501,9 @@ Request <- R6Class('Request',
     #' @importFrom base64enc base64encode
     encode_string = function(val) {
       check_string(val)
-      if (length(val) == 0 || val == "") return("")
+      if (length(val) == 0 || val == "") {
+        return("")
+      }
       val <- charToRaw(val)
       if (is.null(private$KEY)) {
         base64encode(val)
@@ -432,7 +522,9 @@ Request <- R6Class('Request',
     #'
     #' @importFrom base64enc base64decode
     decode_string = function(val) {
-      if (length(val) == 0 || val == "") return("")
+      if (length(val) == 0 || val == "") {
+        return("")
+      }
       if (is.null(private$KEY)) {
         val <- base64decode(val)
       } else {
@@ -501,7 +593,15 @@ Request <- R6Class('Request',
     #' @importFrom mirai mirai
     #' @importFrom promises then
     #'
-    forward = function(url, query = NULL, method = NULL, headers = NULL, body = NULL, return = NULL, ...) {
+    forward = function(
+      url,
+      query = NULL,
+      method = NULL,
+      headers = NULL,
+      body = NULL,
+      return = NULL,
+      ...
+    ) {
       return_fun <- return %||% identity
       if (!is.null(query) && substr(query, 1, 1) != "?") {
         query <- paste0("?", query)
@@ -526,7 +626,11 @@ Request <- R6Class('Request',
       }
       header_elem <- grep("^HTTP_", ls(private$ORIGIN), value = TRUE)
       cur_headers <- lapply(header_elem, function(x) private$ORIGIN[[x]])
-      names(cur_headers) <- tolower(gsub("_", "-", sub("^HTTP_", "", header_elem)))
+      names(cur_headers) <- tolower(gsub(
+        "_",
+        "-",
+        sub("^HTTP_", "", header_elem)
+      ))
       if (!is.null(headers)) {
         names(headers) <- tolower(names(headers))
         headers <- modifyList(cur_headers, headers)
@@ -545,7 +649,9 @@ Request <- R6Class('Request',
           res$status <- response$status_code
           res$body <- response$content
           fwd_headers <- curl::parse_headers_list(response$headers)
-          fwd_headers <- fwd_headers[!tolower(names(fwd_headers)) %in% excluded_headers]
+          fwd_headers <- fwd_headers[
+            !tolower(names(fwd_headers)) %in% excluded_headers
+          ]
           for (name in names(fwd_headers)) {
             res$set_header(name, fwd_headers[[name]])
           }
@@ -562,7 +668,9 @@ Request <- R6Class('Request',
     #' @field trust A logical indicating whether the request is trusted. *Mutable*
     #'
     trust = function(value) {
-      if (missing(value)) return(private$TRUST)
+      if (missing(value)) {
+        return(private$TRUST)
+      }
       check_bool(value)
       private$TRUST <- value
     },
@@ -589,7 +697,9 @@ Request <- R6Class('Request',
     #' `Response$session` field and using either produces the same result
     #'
     session = function(value) {
-      if (missing(value)) return(private$SESSION %||% list())
+      if (missing(value)) {
+        return(private$SESSION %||% list())
+      }
       if (is.null(private$SESSION_COOKIE_SETTINGS)) {
         cli::cli_warn(c(
           "Session cookie is not active",
@@ -697,11 +807,14 @@ Request <- R6Class('Request',
     },
     #' @field url The full URL of the request. *Immutable*
     url = function() {
-      paste0(self$protocol, '://',
-             self$host,
-             self$root,
-             self$path,
-             self$querystring)
+      paste0(
+        self$protocol,
+        '://',
+        self$host,
+        self$root,
+        self$path,
+        self$querystring
+      )
     },
     #' @field query The query string of the request (anything following "?" in
     #' the URL) parsed into a named list. The query has been url decoded and "+"
@@ -718,10 +831,18 @@ Request <- R6Class('Request',
     #' can be provided in a single key-value pair, e.g. `?arg1=3|7`
     #'
     query_delim = function(value) {
-      if (missing(value)) return(private$QUERYDELIM)
-      if (!is.null(value)) value <- arg_match0(value, c(",", "|", " "))
+      if (missing(value)) {
+        return(private$QUERYDELIM)
+      }
+      if (!is.null(value)) {
+        value <- arg_match0(value, c(",", "|", " "))
+      }
       private$QUERYDELIM <- value
-      delayedAssign("QUERY", private$parse_query(private$QUERYSTRING), assign.env = private)
+      delayedAssign(
+        "QUERY",
+        private$parse_query(private$QUERYSTRING),
+        assign.env = private
+      )
     },
     #' @field querystring The unparsed query string of the request, including
     #' "?". If no query string exists it will be `""` rather than `"?"`
@@ -748,7 +869,9 @@ Request <- R6Class('Request',
     #' itself.
     #'
     origin = function(value) {
-      if (missing(value)) return(private$ORIGIN)
+      if (missing(value)) {
+        return(private$ORIGIN)
+      }
       if (!identical(private$ORIGIN, value)) {
         cli::cli_abort("It is not allowed to replace the origin store")
       }
@@ -759,7 +882,9 @@ Request <- R6Class('Request',
     #' it is accessible through this field. *Immutable*
     #'
     response = function(res) {
-      if (missing(res)) return(private$RESPONSE)
+      if (missing(res)) {
+        return(private$RESPONSE)
+      }
       if (!is.null(private$RESPONSE)) {
         cli::cli_abort('Response can only be assigned once')
       }
@@ -767,7 +892,9 @@ Request <- R6Class('Request',
         cli::cli_abort('{.arg res} must be a {.cls Response} object')
       }
       if (!identical(self, res$request)) {
-        cli::cli_abort('{.arg res} must be a Response responding to this request')
+        cli::cli_abort(
+          '{.arg res} must be a Response responding to this request'
+        )
       }
       private$RESPONSE <- res
     },
@@ -776,7 +903,9 @@ Request <- R6Class('Request',
     #' frameworks to signal that the request should not be altered in some way
     #'
     locked = function(value) {
-      if (missing(value)) return(private$LOCKED)
+      if (missing(value)) {
+        return(private$LOCKED)
+      }
       check_bool(value)
       private$LOCKED <- value
     },
@@ -863,8 +992,13 @@ Request <- R6Class('Request',
       }
     },
     parse_cookies = function() {
-      if (is.null(self$headers$cookie)) return(list())
-      cookies <- stri_trim_both(stri_split_regex(self$headers$cookie, ";(?=\\s*[a-zA-Z0-9!#$%&'()*+-.\\/:<>?@\\[\\]^_`{|}~]{1,})")[[1]])
+      if (is.null(self$headers$cookie)) {
+        return(list())
+      }
+      cookies <- stri_trim_both(stri_split_regex(
+        self$headers$cookie,
+        ";(?=\\s*[a-zA-Z0-9!#$%&'()*+-.\\/:<>?@\\[\\]^_`{|}~]{1,})"
+      )[[1]])
       cookies <- unlist(stri_split_fixed(cookies, '=', n = 2))
       structure(
         as.list(url_decode(cookies[c(FALSE, TRUE)])),
@@ -876,23 +1010,29 @@ Request <- R6Class('Request',
     },
     unpack = function(raw) {
       compression <- self$get_header('Content-Encoding')
-      if (is.null(compression)) return(raw)
+      if (is.null(compression)) {
+        return(raw)
+      }
       compression <- rev(trimws(strsplit(compression, ',')[[1]]))
-      Reduce(function(l, r) {
-        switch(
-          r,
-          identity = l,
-          br = brotli_decompress(l),
-          gzip =,
-          "x-gzip" = {
-            con <- gzcon(rawConnection(l))
-            on.exit(close(con), add = TRUE)
-            readBin(con, "raw", length(l))
-          },
-          deflate = memDecompress(l, type = 'gzip'),
-          cli::cli_abort('Unsupported compression {.val {r}}')
-        )
-      }, x = compression, init = raw)
+      Reduce(
+        function(l, r) {
+          switch(
+            r,
+            identity = l,
+            br = brotli_decompress(l),
+            gzip = ,
+            "x-gzip" = {
+              con <- gzcon(rawConnection(l))
+              on.exit(close(con), add = TRUE)
+              readBin(con, "raw", length(l))
+            },
+            deflate = memDecompress(l, type = 'gzip'),
+            cli::cli_abort('Unsupported compression {.val {r}}')
+          )
+        },
+        x = compression,
+        init = raw
+      )
     },
     has_body = function() {
       first <- private$ORIGIN$rook.input$read(1)
@@ -911,7 +1051,9 @@ Request <- R6Class('Request',
       val <- self$decode_string(
         private$COOKIES[[private$SESSION_COOKIE_SETTINGS$name]]
       )
-      if (is.null(val)) return(list())
+      if (is.null(val)) {
+        return(list())
+      }
       try_fetch(
         jsonlite::fromJSON(val),
         error = function(e) {
@@ -922,9 +1064,17 @@ Request <- R6Class('Request',
     },
     reset = function() {
       private$METHOD <- tolower(private$ORIGIN$REQUEST_METHOD)
-      delayedAssign("HEADERS", get_headers(private$ORIGIN), assign.env = private)
+      delayedAssign(
+        "HEADERS",
+        get_headers(private$ORIGIN),
+        assign.env = private
+      )
       if (is.null(private$ORIGIN$HTTP_HOST)) {
-        private$HOST <- paste(private$ORIGIN$SERVER_NAME, private$ORIGIN$SERVER_PORT, sep = ':')
+        private$HOST <- paste(
+          private$ORIGIN$SERVER_NAME,
+          private$ORIGIN$SERVER_PORT,
+          sep = ':'
+        )
       } else {
         private$HOST <- private$ORIGIN$HTTP_HOST
       }
@@ -935,15 +1085,26 @@ Request <- R6Class('Request',
       if (private$QUERYSTRING != private$ORIGIN$QUERY_STRING) {
         private$QUERYSTRING <- private$ORIGIN$QUERY_STRING
         if (private$QUERYSTRING != '') {
-          private$QUERYSTRING <- paste0('?', sub('^\\?', '', private$QUERYSTRING))
+          private$QUERYSTRING <- paste0(
+            '?',
+            sub('^\\?', '', private$QUERYSTRING)
+          )
         }
         private$IP <- private$ORIGIN$REMOTE_ADDR
-        delayedAssign("QUERY", private$parse_query(private$QUERYSTRING), assign.env = private)
+        delayedAssign(
+          "QUERY",
+          private$parse_query(private$QUERYSTRING),
+          assign.env = private
+        )
       }
 
       delayedAssign("COOKIES", private$parse_cookies(), assign.env = private)
 
-      delayedAssign("SESSION", private$get_session_cookie(), assign.env = private)
+      delayedAssign(
+        "SESSION",
+        private$get_session_cookie(),
+        assign.env = private
+      )
     }
   )
 )
@@ -1001,65 +1162,108 @@ get_headers <- function(rook) {
   headers <- vars[grepl('^HTTP_', vars)]
   ans <- lapply(headers, function(head) {
     # FIXME: This doesn't detect if the escape has been escaped
-    literals <- stringi::stri_locate_all_regex(rook[[head]], "(?<!\\\\)\".*?[^\\\\]\"", omit_no_match = TRUE)[[1]]
+    literals <- stringi::stri_locate_all_regex(
+      rook[[head]],
+      "(?<!\\\\)\".*?[^\\\\]\"",
+      omit_no_match = TRUE
+    )[[1]]
     if (length(literals) == 0) {
-      stringi::stri_split_regex(rook[[head]], "(?<!Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s?")[[1]]
+      stringi::stri_split_regex(
+        rook[[head]],
+        "(?<!Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s?"
+      )[[1]]
     } else {
-      splits <- stringi::stri_locate_all_regex(rook[[head]], "(?<!Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s?", omit_no_match = TRUE)[[1]]
+      splits <- stringi::stri_locate_all_regex(
+        rook[[head]],
+        "(?<!Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s?",
+        omit_no_match = TRUE
+      )[[1]]
       if (length(splits) == 0) {
         return(rook[[head]])
       }
       split_ind <- rep(seq_len(nrow(splits)), each = nrow(literals))
       splits2 <- splits[split_ind, ]
-      inside <- splits2[,1] > literals[,1] & splits2[,2] < literals[,2]
-      splits <- splits[-split_ind[inside],, drop = FALSE]
+      inside <- splits2[, 1] > literals[, 1] & splits2[, 2] < literals[, 2]
+      splits <- splits[-split_ind[inside], , drop = FALSE]
       if (length(splits) == 0) {
         return(rook[[head]])
       }
       splits <- c(0, t(splits) + c(-1, 1), stringi::stri_length(rook[[head]]))
-      stringi::stri_sub_all(rook[[head]], splits[c(TRUE, FALSE)], splits[c(FALSE, TRUE)])[[1]]
+      stringi::stri_sub_all(
+        rook[[head]],
+        splits[c(TRUE, FALSE)],
+        splits[c(FALSE, TRUE)]
+      )[[1]]
     }
   })
   names(ans) <- tolower(sub('^HTTP_', '', headers))
   ans
 }
 format_mimes <- function(type) {
-  if (is.null(type) || length(type) == 0) return(NULL)
-  type <- stri_match_first_regex(tolower(type), '^\\s*([^\\s\\/;]+)\\/([^;\\s]+)\\s*(?:;(.*))?$')
+  if (is.null(type) || length(type) == 0) {
+    return(NULL)
+  }
+  type <- stri_match_first_regex(
+    tolower(type),
+    '^\\s*([^\\s\\/;]+)\\/([^;\\s]+)\\s*(?:;(.*))?$'
+  )
   type <- as.data.frame(type, stringsAsFactors = FALSE)
   names(type) <- c('full', 'main', 'sub', 'q')
   type$q <- get_quality(type$q)
   type
 }
 format_charsets <- function(charsets) {
-  if (is.null(charsets) || length(charsets) == 0) return(NULL)
-  charsets <- stri_match_first_regex(tolower(charsets), '^\\s*([^\\s;]+)\\s*(?:;(.*))?$')
+  if (is.null(charsets) || length(charsets) == 0) {
+    return(NULL)
+  }
+  charsets <- stri_match_first_regex(
+    tolower(charsets),
+    '^\\s*([^\\s;]+)\\s*(?:;(.*))?$'
+  )
   charsets <- as.data.frame(charsets, stringsAsFactors = FALSE)
   names(charsets) <- c('full', 'main', 'q')
   charsets$q <- get_quality(charsets$q)
   charsets
 }
 format_encodings <- function(encodings) {
-  if (is.null(encodings) || length(encodings) == 0) return(NULL)
-  encodings <- stri_match_first_regex(tolower(encodings), '^\\s*([^\\s;]+)\\s*(?:;(.*))?$')
+  if (is.null(encodings) || length(encodings) == 0) {
+    return(NULL)
+  }
+  encodings <- stri_match_first_regex(
+    tolower(encodings),
+    '^\\s*([^\\s;]+)\\s*(?:;(.*))?$'
+  )
   encodings <- as.data.frame(encodings, stringsAsFactors = FALSE)
   names(encodings) <- c('full', 'main', 'q')
   encodings$q <- get_quality(encodings$q)
   if (!'identity' %in% encodings$main) {
-    encodings  <- rbind(
+    encodings <- rbind(
       encodings,
-      data.frame(full = 'identity;q=0', main = 'identity', q = min(encodings$q), stringsAsFactors = FALSE)
+      data.frame(
+        full = 'identity;q=0',
+        main = 'identity',
+        q = min(encodings$q),
+        stringsAsFactors = FALSE
+      )
     )
   }
   encodings
 }
 format_languages <- function(lang) {
-  if (is.null(lang) || length(lang) == 0) return(NULL)
-  lang <- stri_match_first_regex(tolower(lang), '^\\s*([^\\s\\-;]+)(?:-([^\\s;]+))?\\s*(?:;(.*))?$')
+  if (is.null(lang) || length(lang) == 0) {
+    return(NULL)
+  }
+  lang <- stri_match_first_regex(
+    tolower(lang),
+    '^\\s*([^\\s\\-;]+)(?:-([^\\s;]+))?\\s*(?:;(.*))?$'
+  )
   lang <- as.data.frame(lang, stringsAsFactors = FALSE)
   names(lang) <- c('full', 'main', 'sub', 'q')
   lang$q <- get_quality(lang$q)
-  lang$complete <- paste0(lang$main, ifelse(is.na(lang$sub), '', paste0('-', lang$sub)))
+  lang$complete <- paste0(
+    lang$main,
+    ifelse(is.na(lang$sub), '', paste0('-', lang$sub))
+  )
   lang
 }
 format_types <- function(formats) {
@@ -1072,59 +1276,108 @@ format_types <- function(formats) {
 }
 get_format_spec <- function(format, accepts) {
   f_split <- strsplit(format$name, '/')
-  spec <- do.call(rbind, lapply(f_split, function(n) {
-    spec <- ifelse(n[1] == accepts$main, 4, ifelse(accepts$main == '*', 0, NA))
-    spec <- spec + ifelse(n[2] == accepts$sub, 2, ifelse(accepts$sub == '*', 0, NA))
-    win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
-    if (is.na(spec[win])) {
-      c(NA, NA)
-    } else {
-      c(spec[win], win)
-    }
-  }))
-  if (all(is.na(spec[, 1]))) return(NULL)
-  order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(f_split), decreasing = TRUE)[1]
+  spec <- do.call(
+    rbind,
+    lapply(f_split, function(n) {
+      spec <- ifelse(
+        n[1] == accepts$main,
+        4,
+        ifelse(accepts$main == '*', 0, NA)
+      )
+      spec <- spec +
+        ifelse(n[2] == accepts$sub, 2, ifelse(accepts$sub == '*', 0, NA))
+      win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
+      if (is.na(spec[win])) {
+        c(NA, NA)
+      } else {
+        c(spec[win], win)
+      }
+    })
+  )
+  if (all(is.na(spec[, 1]))) {
+    return(NULL)
+  }
+  order(
+    accepts$q[spec[, 2]],
+    spec[, 1],
+    -spec[, 2],
+    -seq_along(f_split),
+    decreasing = TRUE
+  )[1]
 }
 get_charset_spec <- function(charset, accepts) {
-  spec <- do.call(rbind, lapply(charset, function(n) {
-    spec <- ifelse(n == accepts$main, 1, ifelse(accepts$main == '*', 0, NA))
-    win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
-    if (is.na(spec[win])) {
-      c(NA, NA)
-    } else {
-      c(spec[win], win)
-    }
-  }))
-  if (all(is.na(spec[, 1]))) return(NULL)
-  order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(charset), decreasing = TRUE)[1]
+  spec <- do.call(
+    rbind,
+    lapply(charset, function(n) {
+      spec <- ifelse(n == accepts$main, 1, ifelse(accepts$main == '*', 0, NA))
+      win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
+      if (is.na(spec[win])) {
+        c(NA, NA)
+      } else {
+        c(spec[win], win)
+      }
+    })
+  )
+  if (all(is.na(spec[, 1]))) {
+    return(NULL)
+  }
+  order(
+    accepts$q[spec[, 2]],
+    spec[, 1],
+    -spec[, 2],
+    -seq_along(charset),
+    decreasing = TRUE
+  )[1]
 }
 get_encoding_spec <- function(encoding, accepts) {
-  spec <- do.call(rbind, lapply(encoding, function(n) {
-    spec <- ifelse(n == accepts$main, 1, ifelse(accepts$main == '*', 0, NA))
-    win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
-    if (is.na(spec[win])) {
-      c(NA, NA)
-    } else {
-      c(spec[win], win)
-    }
-  }))
-  if (all(is.na(spec[, 1]))) return(NULL)
-  order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(encoding), decreasing = TRUE)[1]
+  spec <- do.call(
+    rbind,
+    lapply(encoding, function(n) {
+      spec <- ifelse(n == accepts$main, 1, ifelse(accepts$main == '*', 0, NA))
+      win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
+      if (is.na(spec[win])) {
+        c(NA, NA)
+      } else {
+        c(spec[win], win)
+      }
+    })
+  )
+  if (all(is.na(spec[, 1]))) {
+    return(NULL)
+  }
+  order(
+    accepts$q[spec[, 2]],
+    spec[, 1],
+    -spec[, 2],
+    -seq_along(encoding),
+    decreasing = TRUE
+  )[1]
 }
 get_language_spec <- function(lang, accepts) {
   l_split <- strsplit(lang, '-')
-  spec <- do.call(rbind, lapply(seq_along(lang), function(i) {
-    spec <- ifelse(lang[i] == accepts$complete, 4, NA)
-    spec <- ifelse(is.na(spec) & lang[i] == accepts$main, 2, spec)
-    spec <- ifelse(is.na(spec) & l_split[[i]][1] == accepts$complete, 1, spec)
-    spec <- ifelse(is.na(spec) & accepts$complete == '*', 0, spec)
-    win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
-    if (is.na(spec[win])) {
-      c(NA, NA)
-    } else {
-      c(spec[win], win)
-    }
-  }))
-  if (all(is.na(spec[, 1]))) return(NULL)
-  order(accepts$q[spec[,2]], spec[,1], -spec[,2], -seq_along(lang), decreasing = TRUE)[1]
+  spec <- do.call(
+    rbind,
+    lapply(seq_along(lang), function(i) {
+      spec <- ifelse(lang[i] == accepts$complete, 4, NA)
+      spec <- ifelse(is.na(spec) & lang[i] == accepts$main, 2, spec)
+      spec <- ifelse(is.na(spec) & l_split[[i]][1] == accepts$complete, 1, spec)
+      spec <- ifelse(is.na(spec) & accepts$complete == '*', 0, spec)
+      win <- order(spec, accepts$q, -seq_along(spec), decreasing = TRUE)[1]
+      if (is.na(spec[win])) {
+        c(NA, NA)
+      } else {
+        c(spec[win], win)
+      }
+    })
+  )
+  if (all(is.na(spec[, 1]))) {
+    return(NULL)
+  }
+  order(
+    accepts$q[spec[, 2]],
+    spec[, 1],
+    -spec[, 2],
+    -seq_along(lang),
+    decreasing = TRUE
+  )[1]
 }
