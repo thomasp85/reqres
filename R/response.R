@@ -804,7 +804,9 @@ Response <- R6Class(
     #'
     file = function(path) {
       if (missing(path)) {
-        if (length(private$BODY) != 1 || names(private$BODY) != 'file') {
+        if (
+          length(private$BODY) != 1 || isTRUE(names(private$BODY) != 'file')
+        ) {
           return(NULL)
         } else {
           return(private$BODY[['file']])
