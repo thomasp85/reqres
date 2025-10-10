@@ -124,7 +124,7 @@ record_response_body <- function(request, response, attributes) {
 
 request_ospan <- function(request, start_time, tracer) {
   # OpenTelemetry
-  # TODO: Allow server introspection of actual server host and port (network.local.address and network.local.port)
+  # network.local.address and network.local.port must be set by the framework
   # http.response.status_code and http.response.header.<key> can only be set later
   span <- otel::start_span(
     tolower(paste0(request$method, "_", request$path)),

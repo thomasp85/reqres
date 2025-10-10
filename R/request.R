@@ -631,6 +631,10 @@ Request <- R6Class(
         "-",
         sub("^HTTP_", "", header_elem)
       ))
+      if (!is.null(private$OSPAN)) {
+        otel_headers <- private$OSPAN$get_context()$to_http_headers()
+        headers <- modifyList(headers %||% list(), as.list(otel_headers))
+      }
       if (!is.null(headers)) {
         names(headers) <- tolower(names(headers))
         headers <- modifyList(cur_headers, headers)
