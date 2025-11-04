@@ -4,6 +4,8 @@
   close it once done. spans created during the handling of the request should
   use this span as a parent. Further, support the metrics defined in the HTTP
   semantics
+* Added `body_raw` field to `Request` to read the raw, unparsed and unpacked,
+  content of the request body
 
 # reqres 1.0.0
 

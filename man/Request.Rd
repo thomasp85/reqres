@@ -89,6 +89,10 @@ string by default and needs to be populated using the \code{set_body()} method
 (this is often done using a body parser that accesses the Rook$input
 stream). \emph{Immutable}}
 
+\item{\code{body_raw}}{The raw content of the request body as a raw vector. No
+unpacking or parsing has been performed on this, even if the request has
+been parsed.}
+
 \item{\code{session}}{The content of the session cookie. If session cookies has
 not been activated it will be an empty write-protected list. If session
 cookies are activated but the request did not contain one it will be an

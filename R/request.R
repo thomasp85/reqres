@@ -692,6 +692,13 @@ Request <- R6Class(
     body = function() {
       private$BODY
     },
+    #' @field body_raw The raw content of the request body as a raw vector. No
+    #' unpacking or parsing has been performed on this, even if the request has
+    #' been parsed.
+    #'
+    body_raw = function() {
+      private$get_body()
+    },
     #' @field session The content of the session cookie. If session cookies has
     #' not been activated it will be an empty write-protected list. If session
     #' cookies are activated but the request did not contain one it will be an
