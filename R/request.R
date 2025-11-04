@@ -1174,43 +1174,45 @@ excluded_headers <- c(
 get_headers <- function(rook) {
   vars <- ls(rook)
   headers <- vars[grepl('^HTTP_', vars)]
-  ans <- lapply(headers, function(head) {
+  ans <- mget(headers, rook)
+  may_split <- !headers %in% scalar_headers
+  ans[may_split] <- lapply(ans[may_split], function(head) {
     # FIXME: This doesn't detect if the escape has been escaped
     literals <- stringi::stri_locate_all_regex(
-      rook[[head]],
+      head,
       "(?<!\\\\)\".*?[^\\\\]\"",
       omit_no_match = TRUE
     )[[1]]
     if (length(literals) == 0) {
       stringi::stri_split_regex(
-        rook[[head]],
+        head,
         "(?<!Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s?"
       )[[1]]
     } else {
       splits <- stringi::stri_locate_all_regex(
-        rook[[head]],
+        head,
         "(?<!Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s?",
         omit_no_match = TRUE
       )[[1]]
       if (length(splits) == 0) {
-        return(rook[[head]])
+        return(head)
       }
       split_ind <- rep(seq_len(nrow(splits)), each = nrow(literals))
       splits2 <- splits[split_ind, ]
       inside <- splits2[, 1] > literals[, 1] & splits2[, 2] < literals[, 2]
       splits <- splits[-split_ind[inside], , drop = FALSE]
       if (length(splits) == 0) {
-        return(rook[[head]])
+        return(head)
       }
-      splits <- c(0, t(splits) + c(-1, 1), stringi::stri_length(rook[[head]]))
+      splits <- c(0, t(splits) + c(-1, 1), stringi::stri_length(head))
       stringi::stri_sub_all(
-        rook[[head]],
+        head,
         splits[c(TRUE, FALSE)],
         splits[c(FALSE, TRUE)]
       )[[1]]
     }
   })
-  names(ans) <- tolower(sub('^HTTP_', '', headers))
+  names(ans) <- tolower(sub('^HTTP_', '', names(ans)))
   ans
 }
 format_mimes <- function(type) {
@@ -1395,3 +1397,29 @@ get_language_spec <- function(lang, accepts) {
     decreasing = TRUE
   )[1]
 }
+
+scalar_headers <- toupper(paste0(
+  "HTTP_",
+  gsub("-", "_", c(
+    "Authorization",
+    "Proxy-Authorization",
+    "Content-Length",
+    "Content-Type",
+    "Content-Disposition",
+    "Content-Location",
+    "Host",
+    "Referer",
+    "User-Agent",
+    "If-Match",
+    "If-None-Match",
+    "If-Modified-Since",
+    "If-Unmodified-Since",
+    "If-Range",
+    "Date",
+    "Max-Forwards",
+    "Range",
+    "Content-MD5",
+    "From",
+    "Cookie"
+  ), fixed = TRUE)
+))
