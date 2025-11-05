@@ -41,6 +41,9 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="reqres-development-version">reqres (development version)<a class="anchor" aria-label="anchor" href="#reqres-development-version"></a></h2>
 <ul><li>Add support for otel OpenTelemetry by creating a span along with a request and close it once done. spans created during the handling of the request should use this span as a parent. Further, support the metrics defined in the HTTP semantics</li>
+<li>Added <code>body_raw</code> field to <code>Request</code> to read the raw, unparsed and unpacked, content of the request body</li>
+<li>
+<code>set_header()</code> and <code>append_header()</code> now allows vector input to set multiple values to a header</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.0" id="reqres-100">reqres 1.0.0<a class="anchor" aria-label="anchor" href="#reqres-100"></a></h2><p class="text-muted">CRAN release: 2025-08-20</p>
