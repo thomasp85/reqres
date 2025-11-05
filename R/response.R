@@ -159,7 +159,7 @@ Response <- R6Class(
     #' @param value The value to assign to the header
     #'
     set_header = function(name, value) {
-      check_string(name)
+      check_character(name)
       private$HEADERS[[tolower(name)]] <- as.character(value)
       invisible(self)
     },
@@ -191,7 +191,7 @@ Response <- R6Class(
     #' @param value The value to assign to the header
     #'
     append_header = function(name, value) {
-      check_string(name)
+      check_character(name)
       name <- tolower(name)
       private$HEADERS[[name]] <- c(private$HEADERS[[name]], value)
       invisible(self)

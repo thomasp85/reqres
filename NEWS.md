@@ -6,6 +6,8 @@
   semantics
 * Added `body_raw` field to `Request` to read the raw, unparsed and unpacked,
   content of the request body
+* `set_header()` and `append_header()` now allows vector input to set multiple
+  values to a header
 
 # reqres 1.0.0
 
