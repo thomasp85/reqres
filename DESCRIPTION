@@ -8,7 +8,6 @@ Authors@R:
              role = c("cre", "aut"),
              email = "thomasp85@gmail.com",
              comment = c(ORCID = "0000-0002-5147-4711")))
-Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>
 Description: In order to facilitate parsing of http requests and creating
     appropriate responses this package provides two classes to handle a lot of
     the housekeeping involved in working with http exchanges. The infrastructure
