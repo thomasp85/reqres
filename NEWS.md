@@ -1,4 +1,4 @@
-# reqres (development version)
+# reqres 1.1.0
 
 * Add support for otel OpenTelemetry by creating a span along with a request and
   close it once done. spans created during the handling of the request should
