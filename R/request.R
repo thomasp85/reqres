@@ -200,8 +200,8 @@ Request <- R6Class(
     print = function(...) {
       cli::cli_rule('An HTTP request')
       cli::cli_dl(c(
-        Trusted = '{if (self$trust) cli::col_green("Yes") else cli::col_red("No")}',
-        Method = self$method,
+        Trusted = '{if (private$TRUST) cli::col_green("Yes") else cli::col_red("No")}',
+        Method = private$METHOD,
         URL = self$url
       ))
       invisible(self)
@@ -229,7 +229,7 @@ Request <- R6Class(
     #' @param types A vector of types
     #'
     accepts = function(types) {
-      accept <- format_mimes(self$headers$accept)
+      accept <- format_mimes(private$HEADERS$accept)
       if (is.null(accept)) {
         return(types[1])
       }
@@ -245,7 +245,7 @@ Request <- R6Class(
     #' @param charsets A vector of charsets
     #'
     accepts_charsets = function(charsets) {
-      accept <- format_charsets(self$headers$accept_charset)
+      accept <- format_charsets(private$HEADERS$accept_charset)
       if (is.null(accept)) {
         return(charsets[1])
       }
@@ -262,7 +262,7 @@ Request <- R6Class(
     #' @param encoding A vector of encoding names
     #'
     accepts_encoding = function(encoding) {
-      acc_enc <- self$get_header('Accept-Encoding')
+      acc_enc <- private$HEADERS$accept_encoding
       if (is.null(acc_enc)) {
         acc_enc <- 'identity'
       }
@@ -278,7 +278,7 @@ Request <- R6Class(
     #' @param language A vector of languages
     #'
     accepts_language = function(language) {
-      accept <- format_languages(self$headers$accept_language)
+      accept <- format_languages(private$HEADERS$accept_language)
       if (is.null(accept)) {
         return(language[1])
       }
@@ -295,7 +295,7 @@ Request <- R6Class(
     #' qualified MIME types, a file extension, or a mime type with wildcards
     #'
     is = function(type) {
-      accept <- self$get_header('Content-Type')
+      accept <- private$HEADERS$content_type
       if (is.null(accept)) {
         return(NULL)
       }
@@ -320,21 +320,22 @@ Request <- R6Class(
     #' @param name The name of the header to get
     #'
     get_header = function(name) {
-      self$headers[[tolower(gsub('-', '_', name))]]
+      private$HEADERS[[tolower(gsub('-', '_', name))]]
     },
     #' @description Test for the existence of any header given by `name`
     #' @param name The name of the header to look for
     #'
     has_header = function(name) {
-      !is.null(self$headers[[tolower(gsub('-', '_', name))]])
+      !is.null(private$HEADERS[[tolower(gsub('-', '_', name))]])
     },
     #' @description Creates a new `Response` object from the request
     #'
     respond = function() {
-      if (is.null(self$response)) {
+      res <- private$RESPONSE
+      if (is.null(res)) {
         Response$new(self)
       } else {
-        self$response
+        res
       }
     },
     #' @description Based on provided parsers it selects the appropriate one by
@@ -374,7 +375,7 @@ Request <- R6Class(
         cli::cli_abort("Provided parsers must be named")
       }
 
-      type <- self$get_header('Content-Type')
+      type <- private$HEADERS$content_type
       if (is.null(type)) {
         if (autofail) {
           abort_bad_request("Missing Content-Type header")
@@ -386,13 +387,14 @@ Request <- R6Class(
 
       if (!any(parser_match)) {
         if (autofail) {
-          if (self$method == "post") {
-            self$response$set_header(
+          method <- private$METHOD
+          if (method == "post") {
+            private$RESPONSE$set_header(
               "Accept-Post",
               paste0(format_types(names(parsers)), collapse = ", ")
             )
-          } else if (self$method == "patch") {
-            self$response$set_header(
+          } else if (method == "patch") {
+            private$RESPONSE$set_header(
               "Accept-Patch",
               paste0(format_types(names(parsers)), collapse = ", ")
             )
@@ -462,20 +464,21 @@ Request <- R6Class(
     #'
     as_message = function() {
       cat(
-        toupper(self$method),
+        toupper(private$METHOD),
         ' ',
-        self$root,
-        self$path,
-        self$querystring,
+        private$ROOT,
+        private$PATH,
+        private$QUERYSTRING,
         ' ',
         toupper(self$protocol),
         '/1.1\n',
         sep = ''
       )
-      if (is.null(self$get_header('Host'))) {
-        cat('Host: ', self$host, '\n', sep = '')
+      host <- private$HEADERS$host
+      if (is.null(host)) {
+        cat('Host: ', host, '\n', sep = '')
       }
-      headers <- split_headers(self$headers)
+      headers <- split_headers(private$HEADERS)
       cat_headers(headers$request)
       cat_headers(headers$entity)
       body <- rawToChar(private$get_body())
@@ -764,8 +767,8 @@ Request <- R6Class(
     #' instead. *Immutable*
     #'
     host = function() {
-      if (self$trust && !is.null(self$headers$x_forwarded_host)) {
-        self$headers$x_forwarded_host
+      if (private$TRUST && !is.null(private$HEADERS$x_forwarded_host)) {
+        private$HEADERS$x_forwarded_host
       } else {
         private$HOST
       }
@@ -775,8 +778,8 @@ Request <- R6Class(
     #' `X-Forwarded-For` header. *Immutable*
     #'
     ip = function() {
-      if (self$trust && !is.null(self$headers$x_forwarded_for)) {
-        self$headers$x_forwarded_for[1]
+      if (private$TRUST && !is.null(private$HEADERS$x_forwarded_for)) {
+        private$HEADERS$x_forwarded_for[1]
       } else {
         private$IP
       }
@@ -786,8 +789,8 @@ Request <- R6Class(
     #' vector. *Immutable*
     #'
     ips = function() {
-      if (self$trust && !is.null(self$headers$x_forwarded_for)) {
-        self$headers$x_forwarded_for
+      if (private$TRUST && !is.null(private$HEADERS$x_forwarded_for)) {
+        private$HEADERS$x_forwarded_for
       } else {
         character(0)
       }
@@ -797,8 +800,8 @@ Request <- R6Class(
     #' *Immutable*
     #'
     protocol = function() {
-      if (self$trust && !is.null(self$headers$x_forwarded_proto)) {
-        self$headers$x_forwarded_proto
+      if (private$TRUST && !is.null(private$HEADERS$x_forwarded_proto)) {
+        private$HEADERS$x_forwarded_proto
       } else {
         private$PROTOCOL
       }
@@ -822,9 +825,9 @@ Request <- R6Class(
         self$protocol,
         '://',
         self$host,
-        self$root,
-        self$path,
-        self$querystring
+        private$ROOT,
+        private$PATH,
+        private$QUERYSTRING
       )
     },
     #' @field query The query string of the request (anything following "?" in
@@ -866,7 +869,7 @@ Request <- R6Class(
     #' using JavaScript library such as jQuery. *Immutable*
     #'
     xhr = function() {
-      xhr <- self$get_header('X-Requested-With')
+      xhr <- private$HEADERS$x_requested_with
       !is.null(xhr) && xhr == 'XMLHttpRequest'
     },
     #' @field secure A logical indicating whether the request was performed
@@ -1003,11 +1006,12 @@ Request <- R6Class(
       }
     },
     parse_cookies = function() {
-      if (is.null(self$headers$cookie)) {
+      cookies <- private$HEADERS$cookie
+      if (is.null(cookies)) {
         return(list())
       }
       cookies <- stri_trim_both(stri_split_regex(
-        self$headers$cookie,
+        cookies,
         ";(?=\\s*[a-zA-Z0-9!#$%&'()*+-.\\/:<>?@\\[\\]^_`{|}~]{1,})"
       )[[1]])
       cookies <- unlist(stri_split_fixed(cookies, '=', n = 2))
@@ -1020,7 +1024,7 @@ Request <- R6Class(
       query_parser(query, private$QUERYDELIM)
     },
     unpack = function(raw) {
-      compression <- self$get_header('Content-Encoding')
+      compression <- private$HEADERS$content_encoding
       if (is.null(compression)) {
         return(raw)
       }
@@ -1149,6 +1153,31 @@ as.Request.environment <- function(x, ...) {
 #' @usage is.Request(x)
 #' @export
 is.Request <- function(x) inherits(x, 'Request')
+
+#' Check if object is request-like
+#'
+#' This function checks an object without looking at the class. Due to a slight
+#' overhead in R6 method dispatch there can be a small gain by removing the
+#' class of the object and treating it as a bare environment. However, in that
+#' case [is.Request] will no longer work
+#'
+#' @param x An object to check
+#'
+#' @return A boolean indicating with some certainty if the object is a request
+#'
+#' @export
+#' @keywords internal
+maybe_request <- function(x) is.environment(x$.__enclos_env__$private$ORIGIN)
+
+#' @rdname maybe_request
+#' @export
+unclass_request <- function(x) {
+  class(x) <- NULL
+  res <- x$respond()
+  class(res) <- NULL
+  x
+}
+
 #' @importFrom stringi stri_extract_first_regex
 get_quality <- function(q) {
   q <- stri_extract_first_regex(q, 'q=([0-9]*[.])?[0-9]+')

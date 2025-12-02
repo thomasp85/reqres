@@ -1,5 +1,9 @@
 # reqres (development version)
 
+* Added `unclass_request()` and `maybe_request()` to allow you to strip off a
+  bit of overhead by working with the objects as bare environments
+* Added `mock_request()` to create a mock request
+
 # reqres 1.1.0
 
 * Add support for otel OpenTelemetry by creating a span along with a request and

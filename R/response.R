@@ -144,8 +144,8 @@ Response <- R6Class(
     print = function(...) {
       cli::cli_rule('An HTTP response')
       cli::cli_dl(c(
-        "Status" = '{self$status} - {status_phrase(self$status)}',
-        "Content type" = self$type
+        "Status" = '{private$STATUS} - {status_phrase(private$STATUS)}',
+        "Content type" = private$HEADERS$`content-type`
       ))
       cli::cli_text(cli::style_italic(
         '{cli::symbol$arrow_right} Responding to: {private$REQUEST$url}'
@@ -330,10 +330,11 @@ Response <- R6Class(
         xml = format_xml(),
         default = "json"
       )
-      if (isTRUE(self$type == "application/json")) {
+      type <- private$HEADERS$`content-type`
+      if (isTRUE(type == "application/json")) {
         self$type <- "application/problem+json"
       }
-      if (isTRUE(self$type == "application/xml")) {
+      if (isTRUE(type == "application/xml")) {
         self$type <- "application/problem+xml"
       }
       invisible(self)
@@ -460,7 +461,7 @@ Response <- R6Class(
     #' is always selected
     #'
     format = function(..., autofail = TRUE, compress = TRUE, default = NULL) {
-      if (self$is_formatted) {
+      if (private$IS_FORMATTED) {
         cli::cli_warn(
           "The response has already been formatted. Will not format again"
         )
@@ -519,7 +520,7 @@ Response <- R6Class(
         return(FALSE)
       }
 
-      content <- tri(formatters[[format]](self$body))
+      content <- tri(formatters[[format]](private$BODY))
       if (is_reqres_problem(content)) {
         cnd_signal(content)
       } else if (is_condition(content)) {
@@ -606,28 +607,28 @@ Response <- R6Class(
       limit = NULL
     ) {
       if (!force) {
-        type <- self$type
+        type <- private$HEADERS$`content-type`
         if (!is.null(type) && isFALSE(mimes$compressible[mimes$name == type])) {
           return(FALSE)
         }
       }
-      if (!is_string(self$body)) {
+      if (!is_string(private$BODY)) {
         return(FALSE)
       }
       limit <- limit %||% private$REQUEST$compression_limit
-      if (limit > nchar(self$body, "bytes")) {
+      if (limit > nchar(private$BODY, "bytes")) {
         return(FALSE)
       }
-      encoding <- self$request$accepts_encoding(priority)
+      encoding <- private$REQUEST$accepts_encoding(priority)
       if (is.null(encoding)) {
         return(FALSE)
       }
       content <- switch(
         encoding,
-        identity = self$body,
-        gzip = gzip(charToRaw(self$body)),
-        deflate = memCompress(charToRaw(self$body)),
-        br = brotli_compress(charToRaw(self$body))
+        identity = private$BODY,
+        gzip = gzip(charToRaw(private$BODY)),
+        deflate = memCompress(charToRaw(private$BODY)),
+        br = brotli_compress(charToRaw(private$BODY))
       )
       private$BODY <- content
       self$set_header('Content-Encoding', encoding)
@@ -656,9 +657,9 @@ Response <- R6Class(
     #' been formatted. Will add a Date header if none exist.
     #'
     as_list = function() {
-      if (!self$is_formatted && !is.null(self$formatter)) {
+      if (!private$IS_FORMATTED && !is.null(private$FORMATTER)) {
         private$IS_FORMATTED <- TRUE
-        content <- tri(self$formatter(self$body))
+        content <- tri(private$FORMATTER(private$BODY))
         if (is_reqres_problem(content)) {
           cnd_signal(content)
         } else if (is_condition(content)) {
@@ -672,7 +673,7 @@ Response <- R6Class(
           self$compress()
         }
       }
-      if (!self$has_header("Date")) {
+      if (is.null(private$HEADERS$date)) {
         self$timestamp()
       }
       list(
@@ -687,7 +688,7 @@ Response <- R6Class(
     as_message = function() {
       response <- self$as_list()
       cat(
-        toupper(self$request$protocol),
+        toupper(private$REQUEST$protocol),
         '/1.1 ',
         response$status,
         ' ',
@@ -826,7 +827,7 @@ Response <- R6Class(
     #'
     type = function(type) {
       if (missing(type)) {
-        return(self$get_header('Content-Type'))
+        return(private$HEADERS$`content-type`)
       }
       if (!grepl('/', type)) {
         content_index <- mimes_ext$index[match(tolower(type), mimes_ext$ext)]
@@ -919,15 +920,17 @@ Response <- R6Class(
         names = rep(names(headers), lengths(headers))
       )
       session_cookie <- character()
-      if (length(self$session) != 0 && !is.null(self$session_cookie_settings)) {
+      session <- private$REQUEST$session
+      session_cookie_settings <- private$REQUEST$session_cookie_settings
+      if (length(session) != 0 && !is.null(session_cookie_settings)) {
         session_cookie <- paste0(
-          self$session_cookie_settings$name,
+          session_cookie_settings$name,
           "=",
-          url_encode(self$encode_string(jsonlite::toJSON(self$session))),
-          self$session_cookie_settings$options
+          url_encode(self$encode_string(jsonlite::toJSON(session))),
+          session_cookie_settings$options
         )
       } else if (private$REQUEST$has_session_cookie) {
-        self$clear_cookie(self$session_cookie_settings$name)
+        self$clear_cookie(session_cookie_settings$name)
       }
       cookies <- as.list(private$COOKIES)
       cookies <- c(paste0(names(cookies), unlist(cookies)), session_cookie)

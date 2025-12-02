@@ -35,7 +35,7 @@ Imports:
     promises,
     mirai,
     otel
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 Suggests:
     fiery,
@@ -47,3 +47,16 @@ URL: https://reqres.data-imaginist.com, https://github.com/thomasp85/reqres
 BugReports: https://github.com/thomasp85/reqres/issues
 Config/testthat/edition: 3
 Config/build/compilation-database: true
+Collate: 
+    'aaa.R'
+    'formatters.R'
+    'import-standalone-obj-type.R'
+    'import-standalone-types-check.R'
+    'mock_request.R'
+    'otel.R'
+    'parsers.R'
+    'problems.R'
+    'reqres-package.R'
+    'request.R'
+    'response.R'
+    'zzz.R'

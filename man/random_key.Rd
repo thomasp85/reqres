@@ -29,7 +29,7 @@ as environment variables.
 OTHER VERSION CONTROL SOFTWARE}
 }
 \examples{
-\dontshow{if (FALSE) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (FALSE) withAutoprint(\{ # examplesIf}
 # Store a key with keyring and use it
 keyring::key_set_with_value("reqres_key", random_key())
 
