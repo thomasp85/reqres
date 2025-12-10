@@ -71,3 +71,4 @@ reference:
       - query_parser
       - session_cookie
       - random_key
+      - mock_request
