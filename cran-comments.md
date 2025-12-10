@@ -1,4 +1,4 @@
-This is a minor release of reqres. The major new feature is support for otel.
+This is a minor release of reqres. It contains mainly performance improvements.
 There are no breaking changes in this release
 
 ## revdepcheck results

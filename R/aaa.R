@@ -309,3 +309,10 @@ status_phrase <- function(code) {
 status_link <- function(code) {
   status$link[match(code, status$code)]
 }
+
+check_scalar <- function(x, arg = caller_arg(x), call = caller_env()) {
+  if (length(x) != 1) {
+    stop_input_type(x, "a scalar object", arg = arg, call = call)
+  }
+  invisible(NULL)
+}
