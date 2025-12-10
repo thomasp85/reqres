@@ -1,4 +1,4 @@
-# reqres (development version)
+# reqres 1.2.0
 
 * Added `unclass_request()` and `maybe_request()` to allow you to strip off a
   bit of overhead by working with the objects as bare environments
