@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">reqres</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -281,7 +281,7 @@
 <p>It is easy to define your own formatters and add them along the defaults</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span><span class="op">$</span><span class="va">body</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span>
-<span><span class="va">res</span><span class="op">$</span><span class="fu">format</span><span class="op">(</span><span class="st">'text/yaml'</span> <span class="op">=</span> <span class="fu">yaml</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/yaml/man/as.yaml.html" class="external-link">as.yaml</a></span>, compress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">res</span><span class="op">$</span><span class="fu">format</span><span class="op">(</span><span class="st">'text/yaml'</span> <span class="op">=</span> <span class="fu">yaml</span><span class="fu">::</span><span class="va"><a href="https://yaml.r-lib.org/reference/as.yaml.html" class="external-link">as.yaml</a></span>, compress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="va">body</span></span>
 <span><span class="co">#&gt; [1] "mpg:\n- 21.0\n- 21.0\n- 22.8\n- 21.4\n- 18.7\n- 18.1\ncyl:\n- 6.0\n- 6.0\n- 4.0\n- 6.0\n- 8.0\n- 6.0\ndisp:\n- 160.0\n- 160.0\n- 108.0\n- 258.0\n- 360.0\n- 225.0\nhp:\n- 110.0\n- 110.0\n- 93.0\n- 110.0\n- 175.0\n- 105.0\ndrat:\n- 3.9\n- 3.9\n- 3.85\n- 3.08\n- 3.15\n- 2.76\nwt:\n- 2.62\n- 2.875\n- 2.32\n- 3.215\n- 3.44\n- 3.46\nqsec:\n- 16.46\n- 17.02\n- 18.61\n- 19.44\n- 17.02\n- 20.22\nvs:\n- 0.0\n- 0.0\n- 1.0\n- 1.0\n- 0.0\n- 1.0\nam:\n- 1.0\n- 1.0\n- 1.0\n- 0.0\n- 0.0\n- 0.0\ngear:\n- 4.0\n- 4.0\n- 4.0\n- 3.0\n- 3.0\n- 3.0\ncarb:\n- 4.0\n- 4.0\n- 1.0\n- 1.0\n- 2.0\n- 1.0\n"</span></span></code></pre></div>
@@ -352,7 +352,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

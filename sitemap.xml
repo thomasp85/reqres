@@ -13,7 +13,9 @@
 <url><loc>https://reqres.data-imaginist.com/reference/formatters.html</loc></url>
 <url><loc>https://reqres.data-imaginist.com/reference/http_date.html</loc></url>
 <url><loc>https://reqres.data-imaginist.com/reference/index.html</loc></url>
+<url><loc>https://reqres.data-imaginist.com/reference/maybe_request.html</loc></url>
 <url><loc>https://reqres.data-imaginist.com/reference/mime_type_from_file.html</loc></url>
+<url><loc>https://reqres.data-imaginist.com/reference/mock_request.html</loc></url>
 <url><loc>https://reqres.data-imaginist.com/reference/parsers.html</loc></url>
 <url><loc>https://reqres.data-imaginist.com/reference/query_parser.html</loc></url>
 <url><loc>https://reqres.data-imaginist.com/reference/random_key.html</loc></url>
