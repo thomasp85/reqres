@@ -33,7 +33,7 @@ from_http_date(time)
 ``` r
 time <- to_http_date(Sys.time())
 time
-#> [1] "Thu, 11 Dec 2025 06:51:16 GMT"
+#> [1] "Thu, 11 Dec 2025 06:53:17 GMT"
 from_http_date(time)
-#> [1] "2025-12-11 06:51:16 GMT"
+#> [1] "2025-12-11 06:53:17 GMT"
 ```

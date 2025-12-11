@@ -947,6 +947,6 @@ res$get_header('Content-Disposition')
 rm(fake_rook, req, res)
 gc()
 #>           used (Mb) gc trigger (Mb) max used (Mb)
-#> Ncells 1152573 61.6    2190082  117  2190082  117
-#> Vcells 2150443 16.5    8388608   64  8388606   64
+#> Ncells 1152574 61.6    2190065  117  2190065  117
+#> Vcells 2150444 16.5    8388608   64  8388559   64
 ```

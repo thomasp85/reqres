@@ -195,6 +195,6 @@ res$body
 rm(fake_rook, req, res)
 gc()
 #>           used (Mb) gc trigger (Mb) max used (Mb)
-#> Ncells 1162604 62.1    2190082  117  2190082  117
-#> Vcells 2169437 16.6    8388608   64  8388606   64
+#> Ncells 1162605 62.1    2190065  117  2190065  117
+#> Vcells 2169438 16.6    8388608   64  8388559   64
 ```
